@@ -10,12 +10,16 @@
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
     "sourceMap": true,
-    "baseUrl": ".",
-    "types": [
-      "webpack-env",
-      "node",
-      "electron"
-    ],
+    "baseUrl": "types",
+    "typeRoots": ["types"],
+//    "types": [
+//      "webpack-env",
+//      "node",
+//      "electron",
+//      "vue-router",
+//      "node-sass",
+//      "node-sass-loader"
+//    ],
     "paths": {
       "@/*": [
         "src/*"

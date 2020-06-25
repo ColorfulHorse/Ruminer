@@ -1,13 +1,16 @@
 'use strict'
 
-import { app, protocol, BrowserWindow, ipcMain } from 'electron'
+import { app, protocol, Menu, Tray, BrowserWindow, ipcMain } from 'electron'
 import {
   createProtocol,
   /* installVueDevtools */
 } from 'vue-cli-plugin-electron-builder/lib'
 import { stringify } from "querystring";
+import { IPC } from './constant/Constants'
+
 
 const isDevelopment = process.env.NODE_ENV !== 'production'
+const path = require('path');
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
@@ -20,14 +23,68 @@ function createWindow() {
 
   // Create the browser window.
   win = new BrowserWindow({
-    width: 800, height: 600, webPreferences: {
+    width: 800,
+    height: 600,
+    maximizable: false,
+    webPreferences: {
       // Use pluginOptions.nodeIntegration, leave this alone
       // See nklayman.github.io/vue-cli-plugin-electron-builder/guide/security.html#node-integration for more info
       nodeIntegration: Boolean(process.env.ELECTRON_NODE_INTEGRATION)
     }
   })
+  Menu.setApplicationMenu(null)
+  win.on('close', (event) => {
+    if (win != null) {
+      win.hide();
+      win.setSkipTaskbar(true);
+    }
+    event.preventDefault();
+  })
 
-  ipcMain.on('open-devtools', () => {
+  // win.on('show', () => {
+  //   tray?.setHighlightMode('always')
+  // })
+  // win.on('hide', () => {
+  //   tray?.setHighlightMode('never')
+  // });
+  // win.on('hide', () => {
+  //   tray?.setHighlightMode('never')
+  // })
+  //
+  // let tray: Tray | null
+  // //创建系统通知区菜单
+  // tray = new Tray(path.join(__dirname, '/assets/logo.png'));
+  // const contextMenu = Menu.buildFromTemplate([
+  //   {
+  //     label: '退出', click: () => {
+  //       win.destroy()
+  //     }
+  //   },//我们需要在这里有一个真正的退出（这里直接强制退出）
+  // ])
+  // tray.setToolTip('My托盘测试')
+  // // tray.setContextMenu(contextMenu)
+  // tray.on('click', () => { //我们这里模拟桌面程序点击通知区图标实现打开关闭应用的功能
+  //   if (win != null) {
+  //     win!.isVisible() ? win.hide() : win.show()
+  //     win.isVisible() ? win.setSkipTaskbar(false) : win.setSkipTaskbar(true);
+  //   }
+  // })
+  let indexUrl: string
+  if (process.env.WEBPACK_DEV_SERVER_URL) {
+    // Load the url of the dev server if in development mode
+    indexUrl = process.env.WEBPACK_DEV_SERVER_URL as string
+  } else {
+    createProtocol('app')
+    // Load the index.html when not in development
+    indexUrl = 'app://./index.html'
+  }
+  win.loadURL(indexUrl)
+
+  win.on('closed', () => {
+    win = null
+  })
+
+  ipcMain.on(IPC.OPEN_DEVTOOL, () => {
     if (!process.env.IS_TEST) {
       if (win != null) {
         win.webContents.openDevTools()
@@ -35,18 +92,16 @@ function createWindow() {
     }
   })
 
-  if (process.env.WEBPACK_DEV_SERVER_URL) {
-    // Load the url of the dev server if in development mode
-    win.loadURL(process.env.WEBPACK_DEV_SERVER_URL as string)
-    if (!process.env.IS_TEST) win.webContents.openDevTools()
-  } else {
-    createProtocol('app')
-    // Load the index.html when not in development
-    win.loadURL('app://./index.html')
-  }
-
-  win.on('closed', () => {
-    win = null
+  ipcMain.on(IPC.SELECT_AREA, () => {
+    if (!process.env.IS_TEST) {
+      let window = new BrowserWindow({
+        maximizable: true,
+        fullscreen: true,
+        frame: false
+      })
+      window.loadURL(indexUrl + '/#/overlay')
+      window.webContents.openDevTools()
+    }
   })
 }
 

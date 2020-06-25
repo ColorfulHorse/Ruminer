@@ -1,0 +1,14 @@
+$primary : teal;
+
+$menuText:#bfcbd9;
+$menuActiveText: #409eff;
+
+$menuBg:#304156;
+$menuHover:#263445;
+
+:export{
+  menuText: $menuText;
+  menuActiveText: $menuActiveText;
+  menuBg: $menuBg;
+  menuHover: $menuHover;
+}

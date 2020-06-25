@@ -1,6 +1,10 @@
 import Vue from 'vue'
 import VueRouter, { RouteConfig } from 'vue-router'
-import Home from '../views/Home.vue'
+import Home from '@/views/Home.vue'
+import Main from '@/views/Main.vue'
+import KeyMap from '@/views/KeyMap.vue'
+import Config from '@/views/Config.vue'
+import Overlay from '@/views/Overlay.vue'
 
 Vue.use(VueRouter)
 
@@ -8,15 +12,41 @@ const routes: Array<RouteConfig> = [
   {
     path: '/',
     name: 'Home',
-    component: Home
+    component: Home,
+    children: [
+      {
+        path: '/main',
+        name: 'Main',
+        component: Main,
+        meta: {
+          name: '主页',
+          icon: 'el-icon-house'
+        }
+      },
+      {
+        path: '/config',
+        name: 'Config',
+        component: Config,
+        meta: {
+          name: '配置',
+          icon: 'el-icon-setting'
+        }
+      },
+      {
+        path: '/keymap',
+        name: 'KeyMap',
+        component: KeyMap,
+        meta: {
+          name: '快捷键',
+          icon: 'el-icon-jianpan'
+        }
+      }
+    ]
   },
   {
-    path: '/about',
-    name: 'About',
-    // route level code-splitting
-    // this generates a separate chunk (about.[hash].js) for this route
-    // which is lazy-loaded when the route is visited.
-    component: () => import(/* webpackChunkName: "about" */ '../views/About.vue')
+    path: '/overlay',
+    name: 'Overlay',
+    component: Overlay
   }
 ]
 

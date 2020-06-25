@@ -1,0 +1,19 @@
+@import './colors.scss';
+@import './transition.scss';
+
+*{
+  padding:0;
+  margin:0;
+}
+
+html, body {
+  height: 100%;
+}
+
+.el-menu-item [class^="custom-icon-"] {
+  margin-right: 5px;
+  width: 24px;
+  text-align: center;
+  font-size: 18px;
+  vertical-align: middle;
+}
