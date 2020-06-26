@@ -12,7 +12,7 @@ import { IPC } from './constant/Constants'
 @Component
 export default class App extends Vue {
   created() {
-    window.addEventListener('keydown', (event) => {
+    window.addEventListener('keyup', (event) => {
       if (event.code === 'F12') {
         ipcRenderer.send(IPC.OPEN_DEVTOOL)
       }

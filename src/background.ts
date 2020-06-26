@@ -5,7 +5,6 @@ import {
   createProtocol,
   /* installVueDevtools */
 } from 'vue-cli-plugin-electron-builder/lib'
-import { stringify } from "querystring";
 import { IPC } from './constant/Constants'
 
 
@@ -14,7 +13,9 @@ const path = require('path');
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
-let win: BrowserWindow | null
+let mainWin: BrowserWindow | null
+// 选择区域
+let frameWin: BrowserWindow | null
 
 // Scheme must be registered before the app is ready
 protocol.registerSchemesAsPrivileged([{scheme: 'app', privileges: {secure: true, standard: true}}])
@@ -22,7 +23,7 @@ protocol.registerSchemesAsPrivileged([{scheme: 'app', privileges: {secure: true,
 function createWindow() {
 
   // Create the browser window.
-  win = new BrowserWindow({
+  mainWin = new BrowserWindow({
     width: 800,
     height: 600,
     maximizable: false,
@@ -33,10 +34,10 @@ function createWindow() {
     }
   })
   Menu.setApplicationMenu(null)
-  win.on('close', (event) => {
-    if (win != null) {
-      win.hide();
-      win.setSkipTaskbar(true);
+  mainWin.on('close', (event) => {
+    if (mainWin != null) {
+      mainWin.hide();
+      mainWin.setSkipTaskbar(true);
     }
     event.preventDefault();
   })
@@ -78,29 +79,50 @@ function createWindow() {
     // Load the index.html when not in development
     indexUrl = 'app://./index.html'
   }
-  win.loadURL(indexUrl)
+  mainWin.loadURL(indexUrl)
+  mainWin.webContents.openDevTools()
 
-  win.on('closed', () => {
-    win = null
+  mainWin.on('closed', () => {
+    mainWin = null
   })
 
   ipcMain.on(IPC.OPEN_DEVTOOL, () => {
     if (!process.env.IS_TEST) {
-      if (win != null) {
-        win.webContents.openDevTools()
+      if (mainWin != null && mainWin.isFocused()) {
+        mainWin.webContents.openDevTools()
+      }
+      if (frameWin != null && frameWin.isFocused()) {
+        frameWin.webContents.openDevTools()
       }
     }
   })
 
   ipcMain.on(IPC.SELECT_AREA, () => {
     if (!process.env.IS_TEST) {
-      let window = new BrowserWindow({
-        maximizable: true,
-        fullscreen: true,
-        frame: false
-      })
-      window.loadURL(indexUrl + '/#/overlay')
-      window.webContents.openDevTools()
+      if (frameWin == null) {
+          frameWin = new BrowserWindow({
+          maximizable: true,
+          fullscreen: true,
+          frame: false,
+          transparent: true,
+          webPreferences: {
+            nodeIntegration: Boolean(process.env.ELECTRON_NODE_INTEGRATION)
+          }
+        })
+        frameWin.on('closed', () => {
+          frameWin = null
+        })
+        frameWin.loadURL(indexUrl + '/#/overlay')
+        // frameWin.webContents.openDevTools()
+      }else {
+        frameWin.show()
+      }
+    }
+  })
+
+  ipcMain.on(IPC.CLOSE_OVERLAY, () => {
+    if (frameWin != null) {
+      frameWin.close()
     }
   })
 }
@@ -117,7 +139,7 @@ app.on('window-all-closed', () => {
 app.on('activate', () => {
   // On macOS it's common to re-create a window in the app when the
   // dock icon is clicked and there are no other windows open.
-  if (win === null) {
+  if (mainWin === null) {
     createWindow()
   }
 })

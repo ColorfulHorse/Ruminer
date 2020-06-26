@@ -8,6 +8,10 @@ import store from './store'
 
 Vue.config.productionTip = false
 
+Vue.config.keyCodes = {
+  f12: 123
+}
+
 new Vue({
   router,
   store,
