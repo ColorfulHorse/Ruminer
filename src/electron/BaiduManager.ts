@@ -1,6 +1,6 @@
+import { BaiduApi } from '../constant/Constants'
 const AipOcrClient = require('baidu-aip-sdk').ocr
 const HttpClient = require('baidu-aip-sdk').HttpClient
-import { BaiduApi } from '../constant/Constants'
 
 export class OcrClient {
   private static client: any

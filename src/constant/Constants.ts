@@ -1,4 +1,4 @@
-import { Rect } from '../graphics/Graphics';
+import { Rect } from '../graphics/Graphics'
 
 export class IPC {
   static OPEN_DEVTOOL = 'OPEN_DEVTOOL'
@@ -9,4 +9,10 @@ export class IPC {
 
 export class Capture {
   static RECT: Rect | null = null
+}
+
+export class BaiduApi {
+  static APP_ID = '20624645'
+  static API_KEY = 'C0TsZkb1hYEg1s7LpoQ2FsxQ'
+  static SECRET_KEY = 'xa6ibr45YAdfNOXyv8SVy181NcLN959z'
 }

@@ -9,7 +9,6 @@
 </template>
 
 <script lang="ts">
-// @ is an alias to /src
 import { Component, Vue } from 'vue-property-decorator'
 import { ipcRenderer } from 'electron'
 import { IPC, Capture } from '../constant/Constants'
@@ -19,9 +18,9 @@ import { Point, Rect } from '../graphics/Graphics'
 export default class Overlay extends Vue {
   capturing = false
   showAction = false
-  rect: Rect = new Rect()
-  startPoint = new Point()
-  endPoint = new Point()
+  private rect: Rect = new Rect()
+  private startPoint = new Point()
+  private endPoint = new Point()
 
   canvas: HTMLCanvasElement | null = null
 

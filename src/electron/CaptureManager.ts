@@ -2,9 +2,22 @@ import { desktopCapturer, remote } from 'electron'
 import { Rect } from '../graphics/Graphics'
 import { Capture } from '../constant/Constants'
 
-class CaptureManager {
-  static start() {
-    const { width, height } = remote.screen.getPrimaryDisplay().workArea
+export class CaptureManager {
+  videoStream: MediaStream | null = null
+
+  private static _instance: CaptureManager
+
+  private constructor() {
+  }
+
+  static getInstance() {
+    if (this._instance == null) {
+      this._instance = new CaptureManager()
+    }
+  }
+
+  start() {
+    const {width, height} = remote.screen.getPrimaryDisplay().workArea
     desktopCapturer.getSources({types: ['window']})
       .then(async sources => {
         sources.forEach(source => {
@@ -25,22 +38,29 @@ class CaptureManager {
             })
           })
             .then(stream => {
+              this.videoStream = stream
               const video = document.querySelector('video')
               if (video != null) {
                 video.srcObject = stream
                 video.onloadedmetadata = (event) => {
                   video.play()
-                    const rect = Capture.RECT
-                    if (rect != null) {
-                      createImageBitmap(video, rect.left, rect.top, rect.right, rect.bottom).then(bm => {
+                  const rect = Capture.RECT
+                  if (rect != null) {
+                    createImageBitmap(video, rect.left, rect.top, rect.right, rect.bottom).then(bm => {
 
-                      })
-                    }
+                    })
+                  }
                 }
               }
             })
             .catch(err => console.log('capture', err))
         })
       })
+  }
+
+  stop() {
+    if (this.videoStream != null) {
+      this.videoStream.getVideoTracks()[0].stop()
+    }
   }
 }
