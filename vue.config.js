@@ -13,7 +13,12 @@ module.exports = {
   // },
   pluginOptions: {
     electronBuilder: {
-      nodeIntegration: true
+      nodeIntegration: true,
+      disableMainProcessTypescript: false, // Manually disable typescript plugin for main process. Enable if you want to use regular js for the main process (src/background.js by default).
+      mainProcessTypeChecking: false // Manually enable type checking during webpck bundling for background file.
     }
+  },
+  configureWebpack: {
+    devtool: 'source-map'
   }
 }

@@ -13,8 +13,10 @@
     "postuninstall": "electron-builder install-app-deps"
   },
   "dependencies": {
+    "baidu-aip-sdk": "^2.4.6",
     "core-js": "^3.6.5",
     "element-ui": "^2.4.5",
+    "ts-node": "^8.10.2",
     "vue": "^2.6.11",
     "vue-class-component": "^7.2.3",
     "vue-property-decorator": "^8.4.2",
@@ -24,6 +26,7 @@
     "@types/electron": "^1.6.10",
     "@types/node": "^12.0.12",
     "@types/node-sass": "^4.11.1",
+    "@types/request": "^2.48.5",
     "@types/sass-loader": "^8.0.0",
     "@typescript-eslint/eslint-plugin": "^2.33.0",
     "@typescript-eslint/parser": "^2.33.0",
