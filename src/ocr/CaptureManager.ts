@@ -83,7 +83,12 @@ export class CaptureManager {
   async startCaptureImage(stream: MediaStream) {
     this.videoStream = stream
     this.scheduler = createScheduler()
-    const worker = createWorker()
+    const worker = createWorker({
+      workerBlobURL: false,
+      errorHandler: (err) => {
+        const s = err
+      }
+    })
     await worker.load()
     await worker.loadLanguage('eng+jpn')
     await worker.initialize('eng+jpn')
@@ -112,13 +117,13 @@ export class CaptureManager {
             }
           }
         }
-      }, 100);
+      }, 100)
     }
   }
 
   stop() {
     this.capturing = false
-    if (this.timer != -1) {
+    if (this.timer !== -1) {
       window.clearInterval(this.timer)
     }
     if (this.videoStream != null) {

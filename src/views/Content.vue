@@ -1,5 +1,6 @@
 <template>
   <div id="root">
+    <el-button @click="start">start</el-button>
     <p id="content">测试文本。。。。。。</p>
   </div>
 </template>
@@ -12,6 +13,10 @@ import { CaptureManager } from '../ocr/CaptureManager'
 @Component
 export default class Content extends Vue {
   mounted() {
+    // CaptureManager.getInstance().start()
+  }
+
+  start() {
     CaptureManager.getInstance().start()
   }
 

@@ -24,7 +24,7 @@ export class ContentWin extends BrowserWindow {
             this.app.contentWin = null
         })
         this.loadURL(this.app.indexUrl + '/#/content').then(() => {
-            this.webContents.openDevTools()
+            // this.webContents.openDevTools()
         })
     }
 }
