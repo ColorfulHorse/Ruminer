@@ -5,10 +5,11 @@ export class IPC {
   // 选择区域
   static SELECT_AREA = 'SELECT_AREA'
   static CLOSE_OVERLAY = 'CLOSE_OVERLAY'
+  static OPEN_CONTENT = 'OPEN_CONTENT'
 }
 
-export class Capture {
-  static RECT: Rect | null = null
+export class StoreKey {
+  static CAPTURE_RECT = 'CAPTURE_RECT'
 }
 
 export class BaiduApi {

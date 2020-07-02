@@ -1,22 +1,33 @@
 module.exports = {
   root: true,
+
   env: {
     node: true
   },
+
   extends: [
     'plugin:vue/essential',
     '@vue/standard',
-    '@vue/typescript/recommended'
+    '@vue/typescript/recommended',
   ],
+
   parserOptions: {
     ecmaVersion: 2020,
     ecmaFeatures: {
       legacyDecorators: true
     }
   },
+
   rules: {
-    'no-console': process.env.NODE_ENV === 'production' ? 'warn' : 'off',
-    'no-debugger': process.env.NODE_ENV === 'production' ? 'warn' : 'off',
-    'space-before-function-paren': 0
+    'no-console': 'off',
+    'no-debugger': 'off',
+    'no-useless-constructor': 'warn',
+    'space-before-function-paren': 0,
+    'vue/no-unused-components': 'warn',
+    'vue/no-unused-vars': 'warn',
+    '@typescript-eslint/no-empty-function': 'warn',
+    '@typescript-eslint/no-useless-constructor': 'off',
+    '@typescript-eslint/explicit-module-boundary-types': 'off',
+    '@typescript-eslint/no-unused-vars': 'warn'
   }
 }

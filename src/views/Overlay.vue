@@ -11,12 +11,14 @@
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
 import { ipcRenderer } from 'electron'
-import { IPC, Capture } from '../constant/Constants'
+import { IPC, StoreKey } from '../constant/Constants'
 import { Point, Rect } from '../graphics/Graphics'
+import ElectronStore from 'electron-store'
 
 @Component
 export default class Overlay extends Vue {
   capturing = false
+  // 显示操作按钮
   showAction = false
   private rect: Rect = new Rect()
   private startPoint = new Point()
@@ -105,9 +107,11 @@ export default class Overlay extends Vue {
 
   confirm() {
     this.showAction = false
-    Capture.RECT = this.rect
+    const store = new ElectronStore()
+    store.set(StoreKey.CAPTURE_RECT, this.rect)
     this.clear()
-    ipcRenderer.send(IPC.CLOSE_OVERLAY)
+    // 打开显示翻译结果窗口
+    ipcRenderer.send(IPC.OPEN_CONTENT)
   }
 
   clear() {

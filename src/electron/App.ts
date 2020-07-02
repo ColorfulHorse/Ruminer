@@ -1,19 +1,24 @@
 'use strict'
+import ElectronStore from 'electron-store'
+import { ContentWin } from './windows/ContentWin'
 
 import { app, protocol, Menu, Tray, BrowserWindow, ipcMain } from 'electron'
 import {
   createProtocol,
   /* installVueDevtools */
 } from 'vue-cli-plugin-electron-builder/lib'
-import { IPC } from '../constant/Constants'
+import { IPC, StoreKey } from '../constant/Constants'
 import { MainWin } from './windows/MainWin'
 import { CaptureWin } from './windows/CaptureWin'
-
+import { Rect } from '../graphics/Graphics'
 export class App {
   isDevelopment = process.env.NODE_ENV !== 'production'
   indexUrl: string = ''
   mainWin: MainWin | null = null
   captureWin: CaptureWin | null = null
+  contentWin: ContentWin | null = null
+
+  store = new ElectronStore()
 
   constructor() {
     protocol.registerSchemesAsPrivileged([{ scheme: 'app', privileges: { secure: true, standard: true } }])
@@ -21,6 +26,7 @@ export class App {
       Menu.setApplicationMenu(null)
       this.initIpc()
       this.initMain()
+      this.initContent()
     })
   }
 
@@ -83,6 +89,12 @@ export class App {
         this.captureWin.close()
       }
     })
+
+    ipcMain.on(IPC.OPEN_CONTENT, () => {
+      if (this.captureWin != null) {
+        this.captureWin.close()
+      }
+    })
   }
 
   /**
@@ -104,6 +116,18 @@ export class App {
     }
     if (this.mainWin === null) {
       this.mainWin = new MainWin(this)
+    }
+  }
+
+  /**
+   * 文字窗口
+   */
+  private initContent() {
+    const rect: Rect | null = this.store.get(StoreKey.CAPTURE_RECT)
+    if (rect != null) {
+      if (this.contentWin == null) {
+        this.contentWin = new ContentWin(this)
+      }
     }
   }
 }

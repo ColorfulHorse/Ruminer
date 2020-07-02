@@ -5,6 +5,7 @@ import Main from '@/views/Main.vue'
 import KeyMap from '@/views/KeyMap.vue'
 import Config from '@/views/Config.vue'
 import Overlay from '@/views/Overlay.vue'
+import Content from '@/views/Content.vue'
 
 Vue.use(VueRouter)
 
@@ -47,6 +48,11 @@ const routes: Array<RouteConfig> = [
     path: '/overlay',
     name: 'Overlay',
     component: Overlay
+  },
+  {
+    path: '/content',
+    name: 'Content',
+    component: Content
   }
 ]
 
