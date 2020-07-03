@@ -3,6 +3,7 @@ import { Rect } from '../graphics/Graphics'
 import { StoreKey } from '../constant/Constants'
 import Store from 'electron-store'
 import { Scheduler, createScheduler, createWorker, RecognizeResult } from 'tesseract.js'
+import path from 'path'
 export class CaptureManager {
   videoStream: MediaStream | null = null
   scheduler: Scheduler | null = null
@@ -84,14 +85,24 @@ export class CaptureManager {
     this.videoStream = stream
     this.scheduler = createScheduler()
     const worker = createWorker({
-      workerBlobURL: false,
-      errorHandler: (err) => {
-        const s = err
-      }
+      logger: m => {
+        const progress = m.progress
+        const status = m.status
+        console.log('progress:' + progress + '---status:' + status)
+      },
+      errorHandler: err => {
+        console.log(err)
+      },
+      cachePath: path.resolve(__dirname, './src/assets/tess'),
+      workerPath: path.resolve(__dirname, './src/assets/tess/worker.min.js'),
+      corePath: path.resolve(__dirname, './src/assets/tess/tesseract-core.wasm.js')
+      // workerPath: path.resolve(__dirname, './node_modules/tesseract/dist/worker.min.js'),
+      // corePath: path.resolve(__dirname, './node_modules/tesseract.js-core/tesseract-core.wasm.js')
     })
     await worker.load()
     await worker.loadLanguage('eng+jpn')
     await worker.initialize('eng+jpn')
+    console.log('init ok')
     this.scheduler.addWorker(worker)
     const video = document.createElement('video')
     const canvas = document.createElement('canvas')
