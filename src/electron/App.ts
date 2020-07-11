@@ -94,6 +94,9 @@ export class App {
       if (this.captureWin != null) {
         this.captureWin.close()
       }
+      if (this.contentWin == null) {
+        this.contentWin = new ContentWin(this)
+      }
     })
   }
 

@@ -12,7 +12,8 @@ export class ContentWin extends BrowserWindow {
             height: 200,
             closable: true,
             webPreferences: {
-                nodeIntegration: Boolean(process.env.ELECTRON_NODE_INTEGRATION)
+                nodeIntegration: Boolean(process.env.ELECTRON_NODE_INTEGRATION),
+                nodeIntegrationInWorker: true
             }
         })
         this.app = app
