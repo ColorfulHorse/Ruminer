@@ -1,15 +1,19 @@
 <template>
     <el-main>
-      <el-row :gutter="20">
-        <el-col :span="12">
-          <p class="action">捕获屏幕</p>
-          <p class="tips">快捷键:XXX</p>
-        </el-col>
-        <el-col :span="12">
-          <p class="action">捕获窗口</p>
-          <p class="tips">快捷键:XXX</p>
-        </el-col>
-      </el-row>
+        <el-row :gutter="10">
+          <el-col :span="10">
+            <div class="action-wrapper">
+              <p class="action">捕获屏幕</p>
+              <p class="tips">快捷键:XXX</p>
+            </div>
+          </el-col>
+          <el-col :span="10">
+            <div class="action-wrapper">
+              <p class="action">捕获窗口</p>
+              <p class="tips">快捷键:XXX</p>
+            </div>
+          </el-col>
+        </el-row>
     </el-main>
 </template>
 
@@ -31,22 +35,22 @@ export default class Main extends Vue {
 <style scoped lang="scss">
   .el-row {
     .el-col {
-      background-color: beige;
-      border-radius: 0px 5px 0px 5px;
-      padding: 10px;
-      text-align: center;
-      vertical-align: middle;
-
-      .action {
-        font-size: 18px;
-        color: black;
+      .action-wrapper{
+        background-color: beige;
+        border-radius: 0 5px 0 5px;
+        padding: 10px;
+        text-align: center;
+        vertical-align: middle;
       }
-
-      .tips {
-        font-size: 16px;
-        color: gray;
-        margin-top: 10px;
-      }
+        .action {
+          font-size: 18px;
+          color: black;
+        }
+        .tips {
+          font-size: 16px;
+          color: gray;
+          margin-top: 10px;
+        }
     }
   }
 </style>
