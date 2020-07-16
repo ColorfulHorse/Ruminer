@@ -4,6 +4,13 @@ module.exports = {
     host: '0.0.0.0',
     port: 8080
   },
+  css: {
+    loaderOptions: {
+      // 给 sass-loader 传递选项
+      css: {
+      }
+    }
+  },
   configureWebpack: {
     // externals: {
     //   'tesseract.js': 'Tesseract'

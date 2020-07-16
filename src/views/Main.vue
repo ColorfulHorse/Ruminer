@@ -1,9 +1,16 @@
 <template>
-    <el-container>
-        <el-main>
-            <el-button @click="selectArea">选择区域</el-button>
-        </el-main>
-    </el-container>
+    <el-main>
+      <el-row :gutter="20">
+        <el-col :span="12">
+          <p class="action">捕获屏幕</p>
+          <p class="tips">快捷键:XXX</p>
+        </el-col>
+        <el-col :span="12">
+          <p class="action">捕获窗口</p>
+          <p class="tips">快捷键:XXX</p>
+        </el-col>
+      </el-row>
+    </el-main>
 </template>
 
 <script lang="ts">
@@ -22,5 +29,24 @@ export default class Main extends Vue {
 </script>
 
 <style scoped lang="scss">
+  .el-row {
+    .el-col {
+      background-color: beige;
+      border-radius: 0px 5px 0px 5px;
+      padding: 10px;
+      text-align: center;
+      vertical-align: middle;
 
+      .action {
+        font-size: 18px;
+        color: black;
+      }
+
+      .tips {
+        font-size: 16px;
+        color: gray;
+        margin-top: 10px;
+      }
+    }
+  }
 </style>

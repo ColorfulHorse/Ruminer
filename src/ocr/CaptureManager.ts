@@ -1,14 +1,14 @@
 import { desktopCapturer, remote } from 'electron'
 import { Rect } from '../graphics/Graphics'
-import { StoreKey } from '../constant/Constants'
+import { StoreKey, Mutations } from '../constant/Constants'
 import Store from 'electron-store'
-import { Scheduler, createScheduler, createWorker, RecognizeResult } from 'tesseract.js'
 import path from 'path'
+import { OcrClient } from './OcrClient'
+import store from '../store/index'
 
 declare const __static: string
-export class CaptureManager {
+export default class CaptureManager {
   videoStream: MediaStream | null = null
-  scheduler: Scheduler | null = null
   capturing = false
   store = new Store()
   timer = -1
@@ -26,44 +26,15 @@ export class CaptureManager {
   }
 
   // 开始捕捉屏幕
-  start() {
-    // (async () => {
-    //   const worker = createWorker({
-    //     logger: m => {
-    //       const progress = m.progress
-    //       const status = m.status
-    //       console.log('progress:' + progress + '---status:' + status)
-    //     },
-    //     errorHandler: err => {
-    //       console.log(err)
-    //     },
-    //     cacheMethod: 'none',
-    //     gzip: false,
-    //     workerPath: 'https://unpkg.com/tesseract.js@v2.0.0/dist/worker.min.js',
-    //     langPath: window.location.origin + '/tess',
-    //     corePath: 'https://unpkg.com/tesseract.js-core@v2.0.0/tesseract-core.wasm.js'
-    //     // langPath: path.join(__static, '/tess'),
-    //     // corePath: path.join(__static, '/tess/tesseract-core.wasm.js'),
-    //     // workerPath: path.join(__static, '/tess/worker.min.js')
-    //     // langPath: '/tess',
-    //     // corePath: '/tess/tesseract-core.wasm.js',
-    //     // workerPath: '/tess/worker.min.js'
-    //     // // langPath: 'https://tessdata.projectnaptha.com/4.0.0',
-    //     // langPath: window.location.origin + '/tess',
-    //     // corePath: window.location.origin + '/tess/tesseract-core.wasm.js',
-    //     // workerPath: window.location.origin + '/tess/worker.min.js'
-    //     // gzip: false
-    //   })
-    //   console.log(path.join(__static, '/tess'))
-    //   await worker.load()
-    //   await worker.loadLanguage('eng')
-    //   await worker.initialize('eng')
-    //   console.log('init ok')
-    // })()
+  async start() {
+    if (this.capturing) {
+      return
+    }
     const rect: Rect | null = this.store.get(StoreKey.CAPTURE_RECT, null)
     if (rect != null) {
+      await OcrClient.getInstance().init()
       this.capturing = true
-      const { width, height } = remote.screen.getPrimaryDisplay().workArea
+      const { width, height } = remote.screen.getPrimaryDisplay().bounds
       desktopCapturer.getSources({ types: ['screen'] })
         .then(sources => {
           sources.forEach(source => {
@@ -92,42 +63,13 @@ export class CaptureManager {
     }
   }
 
+  /**
+   *
+   * @param stream 捕获屏幕截图
+   */
   async startCaptureImage(stream: MediaStream) {
     console.log(process.env.BASE_URL)
-
     this.videoStream = stream
-    this.scheduler = createScheduler()
-    const worker = createWorker({
-      logger: m => {
-        const progress = m.progress
-        const status = m.status
-        console.log('progress:' + progress + '---status:' + status)
-      },
-      errorHandler: err => {
-        console.log(err)
-      },
-      cacheMethod: 'none',
-      workerPath: 'https://unpkg.com/tesseract.js@v2.0.0/dist/worker.min.js',
-      langPath: window.location.origin + '/tess',
-      corePath: 'https://unpkg.com/tesseract.js-core@v2.2.0/tesseract-core.wasm.js'
-      // langPath: path.join(__static, '/tess'),
-      // corePath: path.join(__static, '/tess/tesseract-core.wasm.js'),
-      // workerPath: path.join(__static, '/tess/worker.min.js')
-      // langPath: '/tess',
-      // corePath: '/tess/tesseract-core.wasm.js',
-      // workerPath: '/tess/worker.min.js'
-      // // langPath: 'https://tessdata.projectnaptha.com/4.0.0',
-      // langPath: window.location.origin + '/tess',
-      // corePath: window.location.origin + '/tess/tesseract-core.wasm.js',
-      // workerPath: window.location.origin + '/tess/worker.min.js'
-      // gzip: false
-    })
-    console.log(path.join(__static, '/tess'))
-    await worker.load()
-    await worker.loadLanguage('eng')
-    await worker.initialize('eng')
-    console.log('init ok')
-    this.scheduler.addWorker(worker)
     const video = document.createElement('video')
     const canvas = document.createElement('canvas')
     let ctx: CanvasRenderingContext2D | null
@@ -141,18 +83,19 @@ export class CaptureManager {
         // 截取屏幕图片
         const rect: Rect | null = this.store.get(StoreKey.CAPTURE_RECT, null)
         if (rect != null) {
+          canvas.height = rect.bottom - rect.top
+          canvas.width = rect.right - rect.left
+          console.log(rect)
           const bm = await createImageBitmap(video, rect.left, rect.top, rect.right, rect.bottom)
           if (ctx != null) {
             ctx.drawImage(bm, 0, 0, rect.right, rect.bottom)
             const base64 = canvas.toDataURL('image/jpeg')
             bm.close()
-            if (this.scheduler != null) {
-              const res = await this.scheduler.addJob('recognize', base64) as RecognizeResult
-              const str = res.data.text
-            }
+            const res = await OcrClient.getInstance().recognize(base64)
+            store.commit(Mutations.UPDATE_RESULT_TEXT, res.data.text)
           }
         }
-      }, 100)
+      }, 200)
     }
   }
 

@@ -1,8 +1,9 @@
+import { StoreDefault } from './../constant/Constants'
 'use strict'
 import ElectronStore from 'electron-store'
 import { ContentWin } from './windows/ContentWin'
 
-import { app, protocol, Menu, Tray, BrowserWindow, ipcMain } from 'electron'
+import { app, protocol, Menu, Tray, BrowserWindow, ipcMain, globalShortcut } from 'electron'
 import {
   createProtocol,
   /* installVueDevtools */
@@ -11,9 +12,13 @@ import { IPC, StoreKey } from '../constant/Constants'
 import { MainWin } from './windows/MainWin'
 import { CaptureWin } from './windows/CaptureWin'
 import { Rect } from '../graphics/Graphics'
+import path from 'path'
+import log from 'electron-log'
+declare const __static: string
 export class App {
   isDevelopment = process.env.NODE_ENV !== 'production'
   indexUrl: string = ''
+  tray: Tray | null = null
   mainWin: MainWin | null = null
   captureWin: CaptureWin | null = null
   contentWin: ContentWin | null = null
@@ -24,6 +29,8 @@ export class App {
     protocol.registerSchemesAsPrivileged([{ scheme: 'app', privileges: { secure: true, standard: true } }])
     this.init().then(() => {
       Menu.setApplicationMenu(null)
+      this.initTray()
+      this.initHotKey()
       this.initIpc()
       this.initMain()
       this.initContent()
@@ -67,14 +74,62 @@ export class App {
   }
 
   /**
+   * 注册快捷键
+   */
+  private initHotKey() {
+    const capture: string = this.store.get(StoreKey.HOT_KEY_CAPTURE, StoreDefault.HOT_KEY_CAPTURE)
+    const state = globalShortcut.register(capture, () => {
+      if (this.captureWin == null) {
+        this.captureWin = new CaptureWin(this)
+      }
+    })
+    if (state) {
+      // 快捷键已经被注册
+      log.info('快捷键已经被注册')
+    }
+  }
+
+  /**
+   * 系统托盘
+   */
+  private initTray() {
+    const url = path.join(__static, './tray/logo.png')
+    this.tray = new Tray(url)
+    const menu = Menu.buildFromTemplate([
+      {
+        label: '主界面', click: () => {
+          if (this.mainWin == null) {
+
+          }
+        }
+      },
+      {
+        label: '退出', click: () => {
+          if (this.contentWin != null) {
+            this.contentWin.close()
+          }
+          app.quit()
+        }
+      }
+    ])
+    this.tray.setContextMenu(menu)
+    this.tray.on('double-click', () => {
+      if (this.mainWin != null) {
+        if (this.mainWin.isMinimized()) this.mainWin.restore()
+        this.mainWin.show()
+        this.mainWin.focus()
+      }
+    })
+  }
+
+  /**
    * 监听渲染进程
    */
   private initIpc() {
     // 打开调试
     ipcMain.on(IPC.OPEN_DEVTOOL, () => {
-      const focused = BrowserWindow.getFocusedWindow()
-      if (focused != null) {
-        focused.webContents.openDevTools()
+      if (this.mainWin != null) {
+        this.mainWin.webContents.openDevTools()
       }
     })
 
@@ -96,6 +151,11 @@ export class App {
       }
       if (this.contentWin == null) {
         this.contentWin = new ContentWin(this)
+      }
+    })
+    ipcMain.on(IPC.CLOSE_CONTENT, () => {
+      if (this.contentWin != null) {
+        this.contentWin.close()
       }
     })
   }
@@ -129,7 +189,7 @@ export class App {
     const rect: Rect | null = this.store.get(StoreKey.CAPTURE_RECT)
     if (rect != null) {
       if (this.contentWin == null) {
-        this.contentWin = new ContentWin(this)
+        // this.contentWin = new ContentWin(this)
       }
     }
   }

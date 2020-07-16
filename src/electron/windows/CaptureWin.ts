@@ -1,4 +1,4 @@
-import { BrowserWindow, ipcMain } from 'electron'
+import { BrowserWindow } from 'electron'
 import { App } from '../App'
 export class CaptureWin extends BrowserWindow {
   app: App
@@ -17,9 +17,11 @@ export class CaptureWin extends BrowserWindow {
   }
 
   init() {
-    this.on('close', (event) => {
+    this.on('closed', () => {
       this.app.captureWin = null
     })
-    this.loadURL(this.app.indexUrl + '/#/overlay')
+    this.loadURL(this.app.indexUrl + '/#/overlay').then(() => {
+      // this.webContents.openDevTools()
+    })
   }
 }

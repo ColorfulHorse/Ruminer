@@ -3,7 +3,6 @@
         <el-aside>
             <el-menu
                     :default-active="$route.path"
-                    @select="handleSelect"
                     :background-color="colors.menuBg"
                     :text-color="colors.menuText"
                     :active-text-color="colors.menuActiveText"
@@ -50,11 +49,6 @@ export default class Home extends Vue {
 
   created() {
     this.$router.push('main')
-  }
-
-  handleSelect(key: string, keyPath: string) {
-    console.log(key, keyPath)
-    console.log(this.$route.path)
   }
 }
 </script>

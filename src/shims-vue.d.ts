@@ -3,5 +3,7 @@ declare module '*.vue' {
   export default Vue
 }
 
+declare module '*.css' {
+}
 declare module '*.scss' {
 }

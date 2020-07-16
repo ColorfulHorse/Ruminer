@@ -43,6 +43,7 @@ export default class Overlay extends Vue {
     const canvas = this.$refs.canvas as HTMLCanvasElement
     canvas.width = root.offsetWidth
     canvas.height = root.offsetHeight
+    console.log(`offsetWidth:${root.offsetWidth}, offsetHeight: ${root.offsetHeight},clientWidth:${root.clientWidth}, clientHeight: ${root.clientHeight}`)
     this.canvas = canvas
     this.draw()
   }
