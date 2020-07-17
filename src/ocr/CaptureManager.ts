@@ -10,7 +10,7 @@ declare const __static: string
 export default class CaptureManager {
   videoStream: MediaStream | null = null
   capturing = false
-  store = new Store()
+  electronStore = new Store()
   timer = -1
 
   private static _instance: CaptureManager
@@ -30,7 +30,7 @@ export default class CaptureManager {
     if (this.capturing) {
       return
     }
-    const rect: Rect | null = this.store.get(StoreKey.CAPTURE_RECT, null)
+    const rect: Rect | null = this.electronStore.get(StoreKey.CAPTURE_RECT, null)
     if (rect != null) {
       await OcrClient.getInstance().init()
       this.capturing = true
@@ -81,7 +81,7 @@ export default class CaptureManager {
       video.play()
       this.timer = window.setInterval(async () => {
         // 截取屏幕图片
-        const rect: Rect | null = this.store.get(StoreKey.CAPTURE_RECT, null)
+        const rect: Rect | null = this.electronStore.get(StoreKey.CAPTURE_RECT, null)
         if (rect != null) {
           canvas.height = rect.bottom - rect.top
           canvas.width = rect.right - rect.left
@@ -92,7 +92,7 @@ export default class CaptureManager {
             const base64 = canvas.toDataURL('image/jpeg')
             bm.close()
             const res = await OcrClient.getInstance().recognize(base64)
-            store.commit(Mutations.UPDATE_RESULT_TEXT, res.data.text)
+            store.commit(Mutations.MUTATION_RESULT_TEXT, res.data.text)
           }
         }
       }, 200)

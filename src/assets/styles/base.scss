@@ -1,13 +1,10 @@
-@import './colors.scss';
-@import './transition.scss';
-
-*{
-  padding:0;
-  margin:0;
-}
+@import 'colors';
+@import 'transition';
 
 html, body {
   height: 100%;
+  margin: 0;
+  padding: 0;
 }
 
 .el-menu-item [class^="custom-icon-"] {

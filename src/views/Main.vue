@@ -4,21 +4,21 @@
       <el-col :span="24">
         <div class="sf-wrapper">
           <el-image class="sf-logo" fit="contain" lazy :src="require('../../public/tray/logo.png')"/>
-          <div class="sf-name">Auto-Translator</div>
+          <div class="sf-name">Auto-Translate</div>
         </div>
       </el-col>
     </el-row>
     <el-row :gutter="10">
       <el-col :span="8">
-        <div class="action-wrapper">
+        <div class="action-wrapper" @click="selectArea">
           <p class="action">捕获屏幕</p>
-          <p class="tips">XXX</p>
+          <p class="tips">{{ $store.state.hotkey.captureScreen }}</p>
         </div>
       </el-col>
       <el-col :span="8">
         <div class="action-wrapper">
           <p class="action">捕获窗口</p>
-          <p class="tips">XXX</p>
+          <p class="tips">{{ $store.state.hotkey.captureWindow }}</p>
         </div>
       </el-col>
       <el-col :span="8">
@@ -39,8 +39,6 @@ import { IPC } from '../constant/Constants'
 
   @Component
 export default class Main extends Vue {
-  // eslint-disable-next-line @typescript-eslint/no-empty-function
-
   selectArea() {
     ipcRenderer.send(IPC.SELECT_AREA)
   }
@@ -65,7 +63,7 @@ export default class Main extends Vue {
 
       .sf-name {
         font-family: Avenir, Helvetica, Arial, sans-serif;
-        color: #2C3E50;
+        color: $primary-text;
         font-size: 32px;
         font-weight: 400;
       }
@@ -73,29 +71,32 @@ export default class Main extends Vue {
 
     .el-col {
       .action-wrapper {
-        background-color: #F1F1F1;
-        border-radius: 0 5px 0 5px;
+        background-color: #f1f1f1;
+        border-radius: 0 10px 0 10px;
         padding: 10px;
         text-align: center;
         vertical-align: middle;
+      }
+      .action-wrapper:hover {
+        background-color: #dcdcdc;
       }
 
       .action {
         font-family: Avenir, Helvetica, Arial, sans-serif;
         -webkit-font-smoothing: antialiased;
         -moz-osx-font-smoothing: grayscale;
-        font-size: 17px;
+        font-size: 18px;
         font-weight: 700;
-        color: black;
+        color: $primary-text;
       }
 
       .tips {
         font-family: Avenir, Helvetica, Arial, sans-serif;
         -webkit-font-smoothing: antialiased;
         -moz-osx-font-smoothing: grayscale;
-        font-size: 13px;
+        font-size: 14px;
         font-weight: 100;
-        color: gray;
+        color: $secondary-text;
         margin-top: 10px;
       }
     }

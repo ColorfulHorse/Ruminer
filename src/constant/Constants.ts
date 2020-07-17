@@ -15,12 +15,17 @@ export class IPC {
 export class StoreKey {
   static readonly CAPTURE_RECT = 'CAPTURE_RECT'
   // 捕捉屏幕
-  static readonly HOT_KEY_CAPTURE = 'HOT_KEY_CAPTURE'
+  static readonly HOT_KEY_CAPTURE_SCREEN = 'HOT_KEY_CAPTURE_SCREEN'
+  // 捕捉窗口
+  static readonly HOT_KEY_CAPTURE_WINDOW = 'HOT_KEY_CAPTURE_WINDOW'
 }
 
 export class StoreDefault {
   // 捕捉屏幕
-  static readonly HOT_KEY_CAPTURE = 'Alt+Shift+C'
+  static readonly DEFAULT_KEY_CAPTURE_SCREEN = 'Alt+Shift+D'
+
+  // 捕捉窗口
+  static readonly DEFAULT_KEY_CAPTURE_WINDOW = 'Alt+Shift+W'
 }
 
 export class BaiduApi {
@@ -30,5 +35,7 @@ export class BaiduApi {
 }
 
 export class Mutations {
-  static readonly UPDATE_RESULT_TEXT = 'UPDATE_RESULT_TEXT'
+  static readonly MUTATION_RESULT_TEXT = 'MUTATION_RESULT_TEXT'
+  static readonly MUTATION_KEY_CAPTURE_SCREEN = 'MUTATION_KEY_CAPTURE_SCREEN'
+  static readonly MUTATION_KEY_CAPTURE_WINDOW = 'MUTATION_KEY_CAPTURE_WINDOW'
 }

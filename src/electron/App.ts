@@ -77,7 +77,7 @@ export class App {
    * 注册快捷键
    */
   private initHotKey() {
-    const capture: string = this.store.get(StoreKey.HOT_KEY_CAPTURE, StoreDefault.HOT_KEY_CAPTURE)
+    const capture: string = this.store.get(StoreKey.HOT_KEY_CAPTURE_SCREEN, StoreDefault.DEFAULT_KEY_CAPTURE_SCREEN)
     const state = globalShortcut.register(capture, () => {
       if (this.captureWin == null) {
         this.captureWin = new CaptureWin(this)
@@ -98,8 +98,10 @@ export class App {
     const menu = Menu.buildFromTemplate([
       {
         label: '主界面', click: () => {
-          if (this.mainWin == null) {
-
+          if (this.mainWin != null) {
+            if (this.mainWin.isMinimized()) this.mainWin.restore()
+            this.mainWin.show()
+            this.mainWin.focus()
           }
         }
       },
