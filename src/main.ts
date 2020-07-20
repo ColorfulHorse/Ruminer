@@ -1,6 +1,6 @@
+import './assets/styles/base.scss'
 import './plugins/element.js'
 import './assets/icons/iconfont.css'
-import './assets/styles/base.scss'
 import Vue from 'vue'
 import App from './App.vue'
 import router from './router'

@@ -191,7 +191,7 @@ export class App {
     const rect: Rect | null = this.store.get(StoreKey.CAPTURE_RECT)
     if (rect != null) {
       if (this.contentWin == null) {
-        // this.contentWin = new ContentWin(this)
+        this.contentWin = new ContentWin(this)
       }
     }
   }

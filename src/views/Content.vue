@@ -1,5 +1,5 @@
 <template>
-  <div id="root" ref="root" @mouseenter="showAction = true" @mouseleave="showAction = false" @resize="lockWindow">
+  <div id="root" ref="root" @mouseenter="showAction = true" @mouseleave="showAction = false">
     <div id="actions" v-if="showAction">
       <ul id="left">
         <li @click="minus"><i class="el-icon-minus"/></li>
@@ -33,8 +33,11 @@ export default class Content extends Vue {
 
   textSize = 18
 
+  created() {
+  }
+
   mounted() {
-    // CaptureManager.getInstance().start()
+    CaptureManager.getInstance().start()
     const root = this.$refs.root as HTMLDivElement
     ipcRenderer.send(IPC.LOCK_CONTENT, { width: root.offsetWidth, height: root.offsetHeight })
   }
@@ -68,12 +71,17 @@ export default class Content extends Vue {
     width: 800px;
   }
 
+  /** {*/
+  /*  margin: 0;*/
+  /*  padding: 0;*/
+  /*}*/
+
   // * {
   //   -webkit-app-region: no-drag;
   // }
 
   #root {
-    width: 800px;
+    width: 100%;
   }
 
   #actions {

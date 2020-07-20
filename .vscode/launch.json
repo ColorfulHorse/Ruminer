@@ -13,7 +13,7 @@
       },
       "preLaunchTask": "electron-debug",
       "args": [
-        "--remote-debugging-port=9223",
+        "--remote-debugging-port=9999",
         "./dist_electron"
       ],
       "outFiles": [
@@ -24,7 +24,7 @@
       "name": "Electron: Renderer",
       "type": "chrome",
       "request": "attach",
-      "port": 9223,
+      "port": 9999,
       "sourceMaps": true,
       "urlFilter": "http://localhost:*",
       "timeout": 30000,

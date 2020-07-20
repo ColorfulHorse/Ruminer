@@ -8,7 +8,7 @@ module.exports = {
     loaderOptions: {
       // 给 sass-loader 传递选项
       scss: {
-        prependData: '@import \'@/assets/styles/base.scss\';'
+        prependData: '@import \'@/assets/styles/colors.scss\';'
       }
     }
   },
