@@ -1,17 +1,16 @@
 <template>
-  <div id="root" ref="root" @mouseenter="showAction = true" @mouseleave="showAction = false">
-    <div id="actions" v-if="showAction">
-      <ul id="left">
-        <li @click="minus"><i class="el-icon-minus"/></li>
-        <li id="plus" @click="plus"><i class="el-icon-plus"/></li>
-      </ul>
-      <ul id="right">
-        <li @click="close"><i class="el-icon-close"/></li>
-      </ul>
-    </div>
-
-    <div id="main">
-      <p id="content" :style="{ font_size : textSize + 'px' }">{{ recognizeText }}</p>
+  <div id="root" ref="root">
+    <div id="container" ref="container" @mouseenter="enter" @mouseleave="leave">
+      <div id="inner">
+        <ul id="actions" :style="{ visibility : inside ? 'visible' : 'hidden' }">
+          <li @click="minus"><i class="el-icon-minus"/></li>
+          <li @click="plus"><i class="el-icon-plus"/></li>
+          <li @click="close"><i class="el-icon-close"/></li>
+        </ul>
+        <div id="content">
+          <p :style="{ fontSize : (textSize + 'px') }">{{ recognizeText }}</p>
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -26,12 +25,14 @@ import { IPC } from '../constant/Constants'
 
 @Component
 export default class Content extends Vue {
-  @State('recognizeText')
-  recognizeText: any
+  // @State('recognizeText')
+  recognizeText: any = 'erewrewrfewfwewerewrewfrwefwefwefwe'
 
   showAction = false
 
   textSize = 18
+
+  inside = false
 
   created() {
   }
@@ -54,7 +55,20 @@ export default class Content extends Vue {
     }
   }
 
+  enter() {
+    this.inside = true
+  }
+
+  leave(event: MouseEvent) {
+    const root = this.$refs.root as HTMLDivElement
+    console.log(`leave x:${event.x}, y:${event.y}, width:${root.offsetWidth}, height:${root.offsetHeight}`)
+    if (event.x < 20 || event.x > root.offsetWidth - 20 || event.y < 20 || event.y > root.offsetHeight - 20) {
+      this.inside = false
+    }
+  }
+
   close() {
+    console.log('close')
     CaptureManager.getInstance().stop()
     ipcRenderer.send(IPC.CLOSE_CONTENT)
   }
@@ -66,67 +80,79 @@ export default class Content extends Vue {
 </script>
 
 <style scoped lang="scss">
-  body {
-    height: auto;
-    width: 800px;
+
+  * {
+    box-sizing: border-box;
   }
-
-  /** {*/
-  /*  margin: 0;*/
-  /*  padding: 0;*/
-  /*}*/
-
-  // * {
-  //   -webkit-app-region: no-drag;
-  // }
 
   #root {
     width: 100%;
+    height: 100%;
+    padding: 10px;
+  }
+
+  #container {
+    width: 100%;
+    height: 100%;
+    padding: 10px;
+  }
+
+  #inner {
+    -webkit-app-region: drag;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 0 5px white;
+    -webkit-box-shadow: 0 0 5px white;
+    border: black 1px solid;
+    background-color: rgba($color: #000000, $alpha: 0.1);
   }
 
   #actions {
-    -webkit-app-region: drag;
-    width: 100%;
-    padding: 0px 5px;
-    margin-bottom: 10px;
-    box-sizing: border-box;
-    background-color: rgba($color: #000000, $alpha: 0.4);
-
-    ul {
-      display: inline-block;
-      width: 50%;
-    }
-    ul:last-child {
-      text-align: end;
-    }
+    -webkit-app-region: no-drag;
+    align-self: center;
+    margin-top: 8px;
     li {
         -webkit-app-region: no-drag;
         display: inline-block;
         padding: 4px;
+        margin-left: 10px;
         i {
+          -webkit-app-region: no-drag;
           font-size: 16px;
           color: white;
-      }
+          text-shadow: 0 0 2px black;
+        }
+        i:hover {
+          text-shadow: 0 0 5px black;
+        }
     }
 
-    #plus {
-      margin-left: 15%;
+    li:first-child {
+      margin-left: 0;
     }
   }
 
-  #main {
+  #content {
     width: 100%;
-    min-height: 100px;
-    background-color: rgba($color: #000000, $alpha: 0.4);
-
-    #content {
-      padding: 16px;
-      color: white;
-
-      p {
-        vertical-align: center;
-        text-align: center;
-      }
+    flex: 1;
+    padding: 8px;
+    display: flex;
+    p {
+      width: 100%;
+      color: transparent;
+      text-align: center;
+      align-self: center;
+      overflow: scroll;
+      /*-webkit-mask-image: -webkit-gradient(linear, left top, left bottom, from(blue), to(red));*/
+      /*-webkit-mask-clip: text;*/
+      background-image: linear-gradient(to bottom, blue, red);
+      /*background-image: -webkit-gradient(linear, left top, left bottom, from(blue), to(red));*/
+      -webkit-background-clip: text;
+    }
+    p::-webkit-scrollbar{
+      display: none;
     }
   }
 </style>

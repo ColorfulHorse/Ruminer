@@ -68,7 +68,6 @@ export default class CaptureManager {
    * @param stream 捕获屏幕截图
    */
   async startCaptureImage(stream: MediaStream) {
-    console.log(process.env.BASE_URL)
     this.videoStream = stream
     const video = document.createElement('video')
     const canvas = document.createElement('canvas')
@@ -85,7 +84,6 @@ export default class CaptureManager {
         if (rect != null) {
           canvas.height = rect.bottom - rect.top
           canvas.width = rect.right - rect.left
-          console.log(rect)
           const bm = await createImageBitmap(video, rect.left, rect.top, rect.right, rect.bottom)
           if (ctx != null) {
             ctx.drawImage(bm, 0, 0, rect.right, rect.bottom)

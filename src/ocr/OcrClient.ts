@@ -19,9 +19,9 @@ export class OcrClient {
       this.scheduler = createScheduler()
       const worker = createWorker({
         logger: m => {
-          const progress = m.progress
-          const status = m.status
-          console.log('progress:' + progress + '---status:' + status)
+          // const progress = m.progress
+          // const status = m.status
+          // console.log('progress:' + progress + '---status:' + status)
         },
         errorHandler: err => {
           console.log(err)
