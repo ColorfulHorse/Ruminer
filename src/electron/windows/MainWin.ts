@@ -25,7 +25,7 @@ export class MainWin extends BrowserWindow {
     this.on('closed', () => {
       this.app.mainWin = null
     })
-    this.loadURL(this.app.indexUrl)
-    this.webContents.openDevTools()
+    this.loadURL(`${this.app.indexUrl}/#/home`)
+    // this.webContents.openDevTools()
   }
 }

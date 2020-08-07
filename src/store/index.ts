@@ -1,30 +1,27 @@
-import { RootStore } from './RootStore'
+import RootStore from './RootStore'
 import Vue from 'vue'
 import Vuex, { StoreOptions } from 'vuex'
 import { Mutations, StoreKey, StoreDefault } from '../constant/Constants'
-import ElectronStore from 'electron-store'
+import conf from '../config/Conf'
 
 Vue.use(Vuex)
 
-const store = new ElectronStore()
-
 const rootStore: StoreOptions<RootStore> = {
   state: {
-    // 检测后的文本
-    recognizeText: '',
     // 快捷键
     hotkey: {
-      captureScreen: store.get<string>(StoreKey.HOT_KEY_CAPTURE_SCREEN, StoreDefault.DEFAULT_KEY_CAPTURE_SCREEN),
-      captureWindow: store.get<string>(StoreKey.HOT_KEY_CAPTURE_WINDOW, StoreDefault.DEFAULT_KEY_CAPTURE_WINDOW)
+      captureScreen: conf.hotkey.get('captureScreen'),
+      captureWindow: conf.hotkey.get('captureWindow')
+    },
+    translate: {
+      source: conf.translate.get('source'),
+      target: conf.translate.get('target'),
+      resultText: ''
     }
   },
-  // getters: {
-  //   test: () => () => store.get<string>(StoreKey.HOT_KEY_CAPTURE_SCREEN, StoreDefault.HOT_KEY_CAPTURE_SCREEN),
-  //   test2: () => () => store.get<string>(StoreKey.HOT_KEY_CAPTURE_WINDOW, StoreDefault.HOT_KEY_CAPTURE_WINDOW)
-  // },
   mutations: {
     [Mutations.MUTATION_RESULT_TEXT](state, payload: string) {
-      state.recognizeText = payload
+      state.translate.resultText = payload
     },
     [Mutations.MUTATION_KEY_CAPTURE_SCREEN](state, payload: string) {
       state.hotkey.captureScreen = payload

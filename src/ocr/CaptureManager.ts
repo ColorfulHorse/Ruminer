@@ -1,16 +1,12 @@
 import { desktopCapturer, remote } from 'electron'
 import { Rect } from '../graphics/Graphics'
-import { StoreKey, Mutations } from '../constant/Constants'
-import Store from 'electron-store'
-import path from 'path'
 import { OcrClient } from './OcrClient'
-import store from '../store/index'
+import conf from '../config/Conf'
 
 declare const __static: string
 export default class CaptureManager {
   videoStream: MediaStream | null = null
   capturing = false
-  electronStore = new Store()
   timer = -1
 
   private static _instance: CaptureManager
@@ -30,7 +26,7 @@ export default class CaptureManager {
     if (this.capturing) {
       return
     }
-    const rect: Rect | null = this.electronStore.get(StoreKey.CAPTURE_RECT, null)
+    const rect: Rect | null = conf.common.get('captureRect')
     if (rect != null) {
       await OcrClient.getInstance().init()
       this.capturing = true
@@ -76,11 +72,12 @@ export default class CaptureManager {
       ctx = canvas.getContext('2d')
     }
     video.srcObject = stream
-    video.onloadedmetadata = () => {
-      video.play()
+    video.onloadedmetadata = async () => {
+      await video.play()
       this.timer = window.setInterval(async () => {
         // 截取屏幕图片
-        const rect: Rect | null = this.electronStore.get(StoreKey.CAPTURE_RECT, null)
+        // console.log(`capture start time: ${new Date().getTime()}`)
+        const rect: Rect | null = conf.common.get('captureRect')
         if (rect != null) {
           canvas.height = rect.bottom - rect.top
           canvas.width = rect.right - rect.left
@@ -88,12 +85,12 @@ export default class CaptureManager {
           if (ctx != null) {
             ctx.drawImage(bm, 0, 0, rect.right, rect.bottom)
             const base64 = canvas.toDataURL('image/jpeg')
+            // console.log(`capture finish time: ${new Date().getTime()}`)
             bm.close()
-            const res = await OcrClient.getInstance().recognize(base64)
-            store.commit(Mutations.MUTATION_RESULT_TEXT, res.data.text)
+            await OcrClient.getInstance().recognize(base64)
           }
         }
-      }, 200)
+      }, 505)
     }
   }
 

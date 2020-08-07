@@ -2,13 +2,17 @@
   <div id="root" ref="root">
     <div id="container" ref="container" @mouseenter="enter" @mouseleave="leave">
       <div id="inner">
-        <ul id="actions" :style="{ visibility : inside ? 'visible' : 'hidden' }">
-          <li @click="minus"><i class="el-icon-minus"/></li>
-          <li @click="plus"><i class="el-icon-plus"/></li>
-          <li @click="close"><i class="el-icon-close"/></li>
-        </ul>
+        <div id="action_wrapper">
+          <transition name="fade">
+            <ul id="actions" v-if="inside">
+              <li @click="minus"><i class="el-icon-minus"/></li>
+              <li @click="plus"><i class="el-icon-plus"/></li>
+              <li @click="close"><i class="el-icon-close"/></li>
+            </ul>
+          </transition>
+        </div>
         <div id="content">
-          <p :style="{ fontSize : (textSize + 'px') }">{{ recognizeText }}</p>
+          <p :style="{ fontSize : (textSize + 'px') }">{{ $store.state.translate.resultText }}</p>
         </div>
       </div>
     </div>
@@ -25,11 +29,6 @@ import { IPC } from '../constant/Constants'
 
 @Component
 export default class Content extends Vue {
-  // @State('recognizeText')
-  recognizeText: any = 'erewrewrfewfwewerewrewfrwefwefwefwe'
-
-  showAction = false
-
   textSize = 18
 
   inside = false
@@ -39,8 +38,8 @@ export default class Content extends Vue {
 
   mounted() {
     CaptureManager.getInstance().start()
-    const root = this.$refs.root as HTMLDivElement
-    ipcRenderer.send(IPC.LOCK_CONTENT, { width: root.offsetWidth, height: root.offsetHeight })
+    // const root = this.$refs.root as HTMLDivElement
+    // ipcRenderer.send(IPC.LOCK_CONTENT, { width: root.offsetWidth, height: root.offsetHeight })
   }
 
   minus() {
@@ -61,7 +60,6 @@ export default class Content extends Vue {
 
   leave(event: MouseEvent) {
     const root = this.$refs.root as HTMLDivElement
-    console.log(`leave x:${event.x}, y:${event.y}, width:${root.offsetWidth}, height:${root.offsetHeight}`)
     if (event.x < 20 || event.x > root.offsetWidth - 20 || event.y < 20 || event.y > root.offsetHeight - 20) {
       this.inside = false
     }
@@ -110,10 +108,15 @@ export default class Content extends Vue {
     background-color: rgba($color: #000000, $alpha: 0.1);
   }
 
-  #actions {
-    -webkit-app-region: no-drag;
-    align-self: center;
+  #action_wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    height: 20px;
     margin-top: 8px;
+  }
+
+  #actions {
     li {
         -webkit-app-region: no-drag;
         display: inline-block;

@@ -12,9 +12,9 @@ export class ContentWin extends BrowserWindow {
             transparent: true,
             width: 800,
             height: 200,
-            maxWidth: 800,
-            maxHeight: 200,
-            resizable: false,
+            // maxWidth: 800,
+            // maxHeight: 200,
+            // resizable: false,
             movable: true,
             closable: true,
             alwaysOnTop: true,
@@ -45,7 +45,7 @@ export class ContentWin extends BrowserWindow {
             // this.setMaximumSize(size.width, size.height)
         })
         this.loadURL(this.app.indexUrl + '/#/content').then(() => {
-            // this.webContents.openDevTools()
+            this.webContents.openDevTools()
         })
     }
 }

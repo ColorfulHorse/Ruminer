@@ -1,6 +1,7 @@
-import { HotKeyStore } from './HotKeyStore';
+import HotKeyStore from './HotKeyStore';
+import TranslateStore from './TranslateStore'
 
-export interface RootStore {
-    recognizeText: string
+export default interface RootStore {
     hotkey: HotKeyStore
+    translate: TranslateStore
 }
