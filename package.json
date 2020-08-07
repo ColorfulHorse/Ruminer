@@ -15,7 +15,6 @@
   },
   "dependencies": {
     "axios": "^0.19.2",
-    "baidu-aip-sdk-ts": "^2.3.3",
     "core-js": "^3.6.5",
     "electron-log": "^4.2.2",
     "electron-store": "^5.2.0",

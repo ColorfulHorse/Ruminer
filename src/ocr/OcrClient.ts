@@ -5,7 +5,6 @@ import { BaiduTranslateReq } from '../network/request/TranslateReq'
 import { BaiduTranslateResp } from '../network/response/TranslateResp'
 import { Mutations } from '../constant/Constants'
 
-
 /**
  * 文字识别
  */
