@@ -37,7 +37,7 @@ export default class Content extends Vue {
   }
 
   mounted() {
-    CaptureManager.getInstance().start()
+    // CaptureManager.getInstance().start()
     // const root = this.$refs.root as HTMLDivElement
     // ipcRenderer.send(IPC.LOCK_CONTENT, { width: root.offsetWidth, height: root.offsetHeight })
   }

@@ -7,6 +7,6 @@ export class BaiduTokenReq {
 
   constructor() {
     this.client_id = conf.translate.get('baiduOcrApiKey')
-    this.client_secret = conf.translate.get('baiduTransSecret')
+    this.client_secret = conf.translate.get('baiduOcrSecret')
   }
 }

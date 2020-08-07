@@ -1,13 +1,17 @@
 export class IPC {
   static readonly OPEN_DEVTOOL = 'OPEN_DEVTOOL'
-  // 选择区域
+  // 选择屏幕区域
   static readonly SELECT_AREA = 'SELECT_AREA'
+  // 选择窗口
+  static readonly SELECT_WINDOW = 'SELECT_WINDOW'
   static readonly CLOSE_OVERLAY = 'CLOSE_OVERLAY'
   // 打开检测结果窗口
   static readonly OPEN_CONTENT = 'OPEN_CONTENT'
   static readonly CLOSE_CONTENT = 'CLOSE_CONTENT'
   static readonly LOCK_CONTENT = 'LOCK_CONTENT'
   static readonly FINISH_RECOGNIZE = 'FINISH_RECOGNIZE'
+
+  static readonly MAIN_LOG = 'MAIN_LOG'
 }
 
 export class StoreKey {

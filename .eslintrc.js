@@ -29,6 +29,7 @@ module.exports = {
     '@typescript-eslint/no-useless-constructor': 'off',
     '@typescript-eslint/explicit-module-boundary-types': 'off',
     '@typescript-eslint/no-unused-vars': 'warn',
-    'object-curly-spacing': ["off", "never"]
+    'object-curly-spacing': ["off", "never"],
+    'camelcase': 'off'
   }
 }

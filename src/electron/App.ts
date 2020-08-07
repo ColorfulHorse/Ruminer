@@ -1,14 +1,14 @@
 import { ContentWin } from './windows/ContentWin'
 
-import { app, globalShortcut, ipcMain, Menu, protocol, Tray } from 'electron'
+import { app, globalShortcut, ipcMain, Menu, protocol, Tray, screen, BrowserWindow } from 'electron'
 import { createProtocol, } from 'vue-cli-plugin-electron-builder/lib'
-import { IPC } from '../constant/Constants'
+import { IPC } from '@/constant/Constants'
 import { MainWin } from './windows/MainWin'
 import { CaptureWin } from './windows/CaptureWin'
-import { Rect } from '../graphics/Graphics'
+import { Rect } from '@/graphics/Graphics'
 import path from 'path'
 import log from 'electron-log'
-import conf from '../config/Conf'
+import conf from '@/config/Conf'
 
 'use strict'
 declare const __static: string
@@ -29,7 +29,7 @@ export class App {
       this.initHotKey()
       this.initIpc()
       this.initMain()
-      this.initContent()
+      // this.initContent()
     })
   }
 
@@ -131,11 +131,28 @@ export class App {
       }
     })
 
+    ipcMain.on(IPC.MAIN_LOG, (event, ...args: any[]) => {
+      log.info(args)
+    })
+
     ipcMain.on(IPC.SELECT_AREA, () => {
       if (this.captureWin == null) {
         this.captureWin = new CaptureWin(this)
       }
     })
+
+    ipcMain.on(IPC.SELECT_WINDOW, () => {
+      // app.on('browser-window-focus', (event: Event, window: BrowserWindow) => {
+      //   log.info(`窗口名${window.getTitle()}`)
+      // })
+      const current = screen.getDisplayNearestPoint(screen.getCursorScreenPoint())
+      // const win = screen.getDisplayNearestPoint({x: 0, y: 0})
+      // log.info(`窗口名${win.id}`)
+      log.info(`当前窗口名${current.id}`)
+    })
+    // app.on('browser-window-focus', (event: Event, window: BrowserWindow) => {
+    //   log.info(`当前窗口名${window.getTitle()}`)
+    // })
 
     ipcMain.on(IPC.CLOSE_OVERLAY, () => {
       if (this.captureWin != null) {

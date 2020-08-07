@@ -16,7 +16,7 @@
         </div>
       </el-col>
       <el-col :span="8">
-        <div class="action-wrapper">
+        <div class="action-wrapper" @click="selectWindow">
           <p class="action">捕获窗口</p>
           <p class="tips">{{ $store.state.hotkey.captureWindow }}</p>
         </div>
@@ -34,13 +34,18 @@
 <script lang="ts">
 
 import { Component, Vue } from 'vue-property-decorator'
-import { ipcRenderer } from 'electron'
-import { IPC } from '../constant/Constants'
+import { ipcRenderer, desktopCapturer } from 'electron'
+import { IPC } from '@/constant/Constants'
+import { MainLog } from '@/utils/MainLog'
 
-  @Component
+@Component
 export default class Main extends Vue {
   selectArea() {
     ipcRenderer.send(IPC.SELECT_AREA)
+  }
+
+  selectWindow() {
+    ipcRenderer.send(IPC.SELECT_WINDOW)
   }
 }
 </script>

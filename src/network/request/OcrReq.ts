@@ -1,12 +1,12 @@
 export class BaiduOcrReq {
   private image: string
   private language_type?: string
-  private detect_language: string = 'false'
+  private detect_language = 'false'
 
-  constructor(image: string, language_type?: string) {
+  constructor(image: string, languageType?: string) {
     this.image = image
-    this.language_type = language_type
-    if (!language_type) {
+    this.language_type = languageType
+    if (!languageType) {
       this.detect_language = 'true'
     }
   }

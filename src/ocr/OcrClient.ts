@@ -62,7 +62,7 @@ export class OcrClient {
       let token = conf.translate.get('baiduToken')
       if (token == null || !DateUtil.tokenValid(token.expires_in, token.create_time)) {
         const req = qs.stringify(new BaiduTokenReq())
-        const tokenResp: AxiosResponse<BaiduToken> = await axios.get(
+        const tokenResp: AxiosResponse<BaiduToken> = await axios.post(
           `/baiduocr/oauth/2.0/token?${req}`
         )
         if (tokenResp.data.error) {
@@ -75,12 +75,13 @@ export class OcrClient {
       }
       // ocr识别图片中文字
       const lang = LangMapper.toBaiduOcr(store.state.translate.source)
-      let req = new BaiduOcrReq(base64)
+      const img = base64.split(',')[1]
+      let req = new BaiduOcrReq(img)
       if (lang !== LangMapper.AUTO) {
-        req = new BaiduOcrReq(base64, lang)
+        req = new BaiduOcrReq(img, lang)
       }
       const res: AxiosResponse<BaiduOcrResult> = await axios.post(
-        '/baiduocr/rest/2.0/ocr/v1/general_basic',
+        `/baiduocr/rest/2.0/ocr/v1/general_basic?access_token=${token.access_token}`,
         qs.stringify(req),
         {
           headers: {'content-type': 'application/x-www-form-urlencoded'}

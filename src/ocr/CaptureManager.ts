@@ -28,7 +28,7 @@ export default class CaptureManager {
     }
     const rect: Rect | null = conf.common.get('captureRect')
     if (rect != null) {
-      await OcrClient.getInstance().init()
+      // await OcrClient.getInstance().init()
       this.capturing = true
       const { width, height } = remote.screen.getPrimaryDisplay().bounds
       desktopCapturer.getSources({ types: ['screen'] })
