@@ -1,4 +1,4 @@
-export interface HotKeyStore {
+export default interface HotKeyStore {
     captureScreen: string
     captureWindow: string
 }

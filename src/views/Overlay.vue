@@ -13,7 +13,6 @@ import { Component, Vue } from 'vue-property-decorator'
 import { ipcRenderer } from 'electron'
 import { IPC, StoreKey } from '../constant/Constants'
 import { Point, Rect } from '../graphics/Graphics'
-import ElectronStore from 'electron-store'
 
 @Component
 export default class Overlay extends Vue {
@@ -108,8 +107,7 @@ export default class Overlay extends Vue {
 
   confirm() {
     this.showAction = false
-    const store = new ElectronStore()
-    store.set(StoreKey.CAPTURE_RECT, this.rect)
+    this.$conf.common.set('captureRect', this.rect)
     this.clear()
     // 打开显示翻译结果窗口
     ipcRenderer.send(IPC.OPEN_CONTENT)

@@ -1,19 +1,16 @@
-import { StoreDefault } from './../constant/Constants'
-'use strict'
-import ElectronStore from 'electron-store'
 import { ContentWin } from './windows/ContentWin'
 
-import { app, protocol, Menu, Tray, BrowserWindow, ipcMain, globalShortcut } from 'electron'
-import {
-  createProtocol,
-  /* installVueDevtools */
-} from 'vue-cli-plugin-electron-builder/lib'
-import { IPC, StoreKey } from '../constant/Constants'
+import { app, globalShortcut, ipcMain, Menu, protocol, Tray } from 'electron'
+import { createProtocol, } from 'vue-cli-plugin-electron-builder/lib'
+import { IPC } from '../constant/Constants'
 import { MainWin } from './windows/MainWin'
 import { CaptureWin } from './windows/CaptureWin'
 import { Rect } from '../graphics/Graphics'
 import path from 'path'
 import log from 'electron-log'
+import conf from '../config/Conf'
+
+'use strict'
 declare const __static: string
 export class App {
   isDevelopment = process.env.NODE_ENV !== 'production'
@@ -23,7 +20,6 @@ export class App {
   captureWin: CaptureWin | null = null
   contentWin: ContentWin | null = null
 
-  store = new ElectronStore()
 
   constructor() {
     protocol.registerSchemesAsPrivileged([{ scheme: 'app', privileges: { secure: true, standard: true } }])
@@ -77,15 +73,15 @@ export class App {
    * 注册快捷键
    */
   private initHotKey() {
-    const capture: string = this.store.get(StoreKey.HOT_KEY_CAPTURE_SCREEN, StoreDefault.DEFAULT_KEY_CAPTURE_SCREEN)
+    const capture: string = conf.hotkey.get('captureScreen')
     const state = globalShortcut.register(capture, () => {
       if (this.captureWin == null) {
         this.captureWin = new CaptureWin(this)
       }
     })
-    if (state) {
+    if (!state) {
       // 快捷键已经被注册
-      log.info('快捷键已经被注册')
+      log.info('快捷键冲突')
     }
   }
 
@@ -188,7 +184,8 @@ export class App {
    * 文字窗口
    */
   private initContent() {
-    const rect: Rect | null = this.store.get(StoreKey.CAPTURE_RECT)
+    log.info(conf.common.path)
+    const rect: Rect | null = conf.common.get('captureRect')
     if (rect != null) {
       if (this.contentWin == null) {
         this.contentWin = new ContentWin(this)

@@ -18,6 +18,8 @@ export class StoreKey {
   static readonly HOT_KEY_CAPTURE_SCREEN = 'HOT_KEY_CAPTURE_SCREEN'
   // 捕捉窗口
   static readonly HOT_KEY_CAPTURE_WINDOW = 'HOT_KEY_CAPTURE_WINDOW'
+  // 翻译相关配置
+  static readonly TRANSLATE_OPTION = 'TRANSLATE_OPTION'
 }
 
 export class StoreDefault {
@@ -29,9 +31,8 @@ export class StoreDefault {
 }
 
 export class BaiduApi {
-  static readonly APP_ID = '20624645'
-  static readonly API_KEY = 'C0TsZkb1hYEg1s7LpoQ2FsxQ'
-  static readonly SECRET_KEY = 'xa6ibr45YAdfNOXyv8SVy181NcLN959z'
+  static readonly APP_ID = '20200721000523268'
+  static readonly SECRET_KEY = 'skvTgvhTbhBUIQQRA6Kv'
 }
 
 export class Mutations {

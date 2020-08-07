@@ -2,10 +2,11 @@
     <el-container id="home">
         <el-aside>
             <el-menu
-                    :default-active="$route.path"
+                    :default-active="$route.meta.subPath"
                     :background-color="colors.menuBg"
                     :text-color="colors.menuText"
                     :active-text-color="colors.menuActiveText"
+                    @select="handleSelect"
                     router>
                 <el-menu-item
                         v-for="item in $router.options.routes.find((value) => value.name==='Home').children"
@@ -48,7 +49,13 @@ export default class Home extends Vue {
   colors = colors
 
   created() {
-    this.$router.push('main')
+    this.$router.push('home/main')
+  }
+
+  handleSelect(key: any, keyPath: any) {
+    console.log(key)
+    console.log(keyPath)
+    console.log(this.$route)
   }
 }
 </script>

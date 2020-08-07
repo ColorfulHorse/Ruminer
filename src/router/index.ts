@@ -11,35 +11,38 @@ Vue.use(VueRouter)
 
 const routes: Array<RouteConfig> = [
   {
-    path: '/',
+    path: '/home',
     name: 'Home',
     component: Home,
     children: [
       {
-        path: '/main',
+        path: 'main',
         name: 'Main',
         component: Main,
         meta: {
           name: '主页',
-          icon: 'el-icon-house'
+          icon: 'el-icon-house',
+          subPath: 'main'
         }
       },
       {
-        path: '/config',
+        path: 'config',
         name: 'Config',
         component: Config,
         meta: {
           name: '配置',
-          icon: 'el-icon-setting'
+          icon: 'el-icon-setting',
+          subPath: 'config'
         }
       },
       {
-        path: '/keymap',
+        path: 'keymap',
         name: 'KeyMap',
         component: KeyMap,
         meta: {
           name: '快捷键',
-          icon: 'el-icon-jianpan'
+          icon: 'el-icon-jianpan',
+          subPath: 'keymap'
         }
       }
     ]

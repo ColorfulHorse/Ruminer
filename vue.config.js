@@ -2,7 +2,16 @@ module.exports = {
   devServer: {
     // can be overwritten by process.env.HOST
     host: '0.0.0.0',
-    port: 8080
+    port: 8080,
+    proxy: {
+      '/baidu': {
+        target: 'http://api.fanyi.baidu.com',
+        changeOrigin: true,
+        pathRewrite: {
+          '^/baidu': ''
+        }
+      }
+    }
   },
   css: {
     loaderOptions: {
