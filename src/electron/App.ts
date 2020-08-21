@@ -1,18 +1,20 @@
 import { ContentWin } from './windows/ContentWin'
 
-import { app, globalShortcut, ipcMain, Menu, protocol, Tray, screen, BrowserWindow } from 'electron'
+import { app, BrowserWindow, globalShortcut, ipcMain, Menu, protocol, dialog, Notification, Tray } from 'electron'
 import { createProtocol, } from 'vue-cli-plugin-electron-builder/lib'
-import { IPC } from '@/constant/Constants'
+import { HotKeys, IPC } from '@/constant/Constants'
 import { MainWin } from './windows/MainWin'
 import { CaptureWin } from './windows/CaptureWin'
 import { Rect } from '@/graphics/Graphics'
 import path from 'path'
 import log from 'electron-log'
-import conf from '@/config/Conf'
+import conf, { HotKey, HotKeyConf } from '@/config/Conf'
+import store from '@/store/index'
+import HotKeyUtil from '@/utils/HotKeyUtil'
 
 'use strict'
 declare const __static: string
-export class App {
+export default class App {
   isDevelopment = process.env.NODE_ENV !== 'production'
   indexUrl: string = ''
   tray: Tray | null = null
@@ -61,6 +63,11 @@ export class App {
       }
     })
 
+    app.on('will-quit', () => {
+      // 注销所有快捷键
+      globalShortcut.unregisterAll()
+    })
+
     app.on('activate', () => {
       if (this.mainWin === null) {
         this.mainWin = new MainWin(this)
@@ -73,15 +80,29 @@ export class App {
    * 注册快捷键
    */
   private initHotKey() {
-    const capture: string = conf.hotkey.get('captureScreen')
-    const state = globalShortcut.register(capture, () => {
-      if (this.captureWin == null) {
-        this.captureWin = new CaptureWin(this)
+    const keys = Object.keys(store.state.hotkey) as Array<keyof HotKeyConf>
+    const ok = keys.map(value => {
+      let hotkey = conf.hotkey.get(value)
+      const oldValid = hotkey.valid
+      hotkey = HotKeyUtil.register(hotkey, this)
+      if (oldValid !== hotkey.valid) {
+        if (this.mainWin != null) {
+          // 更新快捷键状态
+          this.mainWin.webContents.send(IPC.HOTKEY_INVALID, hotkey)
+        }
       }
+      return hotkey.valid
+    }).reduce((prev, curr) => {
+      return prev && curr
     })
-    if (!state) {
-      // 快捷键已经被注册
-      log.info('快捷键冲突')
+    if (!ok) {
+      const notification = new Notification({
+        title: '快捷键冲突',
+        body: '部分快捷键冲突，请重新设置',
+        silent: false,
+        timeoutType: 'default'
+      })
+      notification.show()
     }
   }
 
@@ -126,8 +147,11 @@ export class App {
   private initIpc() {
     // 打开调试
     ipcMain.on(IPC.OPEN_DEVTOOL, () => {
-      if (this.mainWin != null) {
-        this.mainWin.webContents.openDevTools()
+      log.info(IPC.OPEN_DEVTOOL)
+      const focus = BrowserWindow.getFocusedWindow()
+      if (focus != null) {
+        log.info(focus.id)
+        focus.webContents.openDevTools()
       }
     })
 
@@ -136,22 +160,26 @@ export class App {
     })
 
     ipcMain.on(IPC.SELECT_AREA, () => {
-      if (this.captureWin == null) {
-        this.captureWin = new CaptureWin(this)
-      }
+      this.showOverlay()
     })
 
     ipcMain.on(IPC.SELECT_WINDOW, () => {
+      // if (this.mainWin != null) {
+      //   dialog.showMessageBox(this.mainWin, {
+      //     type: 'warning',
+      //     message: '快捷键冲突'
+      //   })
+      // }
       // app.on('browser-window-focus', (event: Event, window: BrowserWindow) => {
       //   log.info(`窗口名${window.getTitle()}`)
       // })
-      const current = screen.getDisplayNearestPoint(screen.getCursorScreenPoint())
+      // const current = screen.getDisplayNearestPoint(screen.getCursorScreenPoint())
       // const win = screen.getDisplayNearestPoint({x: 0, y: 0})
       // log.info(`窗口名${win.id}`)
-      log.info(`当前窗口名${current.id}`)
+      // log.info(`当前窗口名${current.id}`)
     })
     // app.on('browser-window-focus', (event: Event, window: BrowserWindow) => {
-    //   log.info(`当前窗口名${window.getTitle()}`)
+    //   log.info(`当前窗口名${window.getTitle()}`)g
     // })
 
     ipcMain.on(IPC.CLOSE_OVERLAY, () => {
@@ -161,19 +189,20 @@ export class App {
     })
 
     ipcMain.on(IPC.OPEN_CONTENT, () => {
-      if (this.captureWin != null) {
-        this.captureWin.close()
-      }
-      if (this.contentWin == null) {
-        this.contentWin = new ContentWin(this)
-      }
+      this.showContent()
     })
     ipcMain.on(IPC.CLOSE_CONTENT, () => {
       if (this.contentWin != null) {
         this.contentWin.close()
       }
     })
+
+    ipcMain.handle(IPC.CHANGE_HOTKEY, async (event, hotkey: HotKey) => {
+      // 更改快捷键
+      return HotKeyUtil.register(hotkey, this)
+    })
   }
+
 
   /**
    * 主窗口
@@ -207,6 +236,23 @@ export class App {
       if (this.contentWin == null) {
         this.contentWin = new ContentWin(this)
       }
+    }
+  }
+
+  showContent() {
+    if (this.captureWin != null) {
+      this.captureWin.close()
+    }
+    if (this.contentWin != null) {
+      this.contentWin.show()
+    }else {
+      this.contentWin = new ContentWin(this)
+    }
+  }
+
+  showOverlay() {
+    if (this.captureWin == null) {
+      this.captureWin = new CaptureWin(this)
     }
   }
 }

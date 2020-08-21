@@ -1,5 +1,5 @@
 import { BrowserWindow, ipcMain } from 'electron'
-import { App } from '../App'
+import App from '../App'
 
 export class MainWin extends BrowserWindow {
   app: App
@@ -26,6 +26,6 @@ export class MainWin extends BrowserWindow {
       this.app.mainWin = null
     })
     this.loadURL(`${this.app.indexUrl}/#/home`)
-    // this.webContents.openDevTools()
+    this.webContents.openDevTools()
   }
 }

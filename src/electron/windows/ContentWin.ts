@@ -1,6 +1,6 @@
 import  log  from 'electron-log'
 import { BrowserWindow, ipcMain, Size } from 'electron'
-import { App } from '../App'
+import App from '../App'
 import { IPC } from '../../constant/Constants'
 export class ContentWin extends BrowserWindow {
     app: App

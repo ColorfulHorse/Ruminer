@@ -1,4 +1,12 @@
 {
+  "build": {
+    "productName":"autotranslate",
+    "appId": "com.greensun.autotranslate",
+    "copyright":"green sun",
+    "win": {
+      "icon": "public/favicon.ico"
+    }
+  },
   "name": "auto-translate",
   "version": "0.1.0",
   "private": true,

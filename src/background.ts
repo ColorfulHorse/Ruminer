@@ -1,3 +1,3 @@
-import { App } from './electron/App'
+import App from './electron/App'
 
 new App()

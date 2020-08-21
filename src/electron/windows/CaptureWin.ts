@@ -1,5 +1,5 @@
 import { BrowserWindow } from 'electron'
-import { App } from '../App'
+import App from '../App'
 export class CaptureWin extends BrowserWindow {
   app: App
   constructor(app: App) {

@@ -30,6 +30,7 @@ module.exports = {
     '@typescript-eslint/explicit-module-boundary-types': 'off',
     '@typescript-eslint/no-unused-vars': 'warn',
     'object-curly-spacing': ["off", "never"],
-    'camelcase': 'off'
+    'camelcase': 'off',
+    'dot-notation': 'warn'
   }
 }

@@ -10,6 +10,8 @@ export class IPC {
   static readonly CLOSE_CONTENT = 'CLOSE_CONTENT'
   static readonly LOCK_CONTENT = 'LOCK_CONTENT'
   static readonly FINISH_RECOGNIZE = 'FINISH_RECOGNIZE'
+  static readonly HOTKEY_INVALID = 'CHANGE_HOTKEY'
+  static readonly CHANGE_HOTKEY = 'CHANGE_HOTKEY'
 
   static readonly MAIN_LOG = 'MAIN_LOG'
 }
@@ -43,8 +45,20 @@ export class BaiduOcr {
   static readonly SECRET_KEY = 'xa6ibr45YAdfNOXyv8SVy181NcLN959z'
 }
 
+export class HotKeys {
+  static readonly CAPTURE_SCREEN = 'captureScreen'
+  static readonly CAPTURE_WINDOW = 'captureWindow'
+  static readonly START_RECOGNIZE = 'startRecognize'
+}
+
 export class Mutations {
   static readonly MUTATION_RESULT_TEXT = 'MUTATION_RESULT_TEXT'
-  static readonly MUTATION_KEY_CAPTURE_SCREEN = 'MUTATION_KEY_CAPTURE_SCREEN'
-  static readonly MUTATION_KEY_CAPTURE_WINDOW = 'MUTATION_KEY_CAPTURE_WINDOW'
+  static readonly MUTATION_SOURCE_LANG = 'MUTATION_SOURCE_LANG'
+  static readonly MUTATION_TARGET_LANG = 'MUTATION_TARGET_LANG'
+  static readonly MUTATION_BAIDU_OCRAPPID = 'MUTATION_BAIDU_OCRAPPID'
+  static readonly MUTATION_BAIDU_OCRAPIKEY = 'MUTATION_BAIDU_OCRAPIKEY'
+  static readonly MUTATION_BAIDU_OCRAPISECRET = 'MUTATION_BAIDU_OCRAPISECRET'
+  static readonly MUTATION_BAIDU_TRANSLATE_APPID = 'MUTATION_BAIDU_TRANSLATE_APPID'
+  static readonly MUTATION_BAIDU_TRANSLATE_SECRET = 'MUTATION_BAIDU_TRANSLATE_SECRET'
+  static readonly MUTATION_CHANGE_HOTKEY = 'MUTATION_CHANGE_HOTKEY'
 }

@@ -5,6 +5,7 @@
         <div id="action_wrapper">
           <transition name="fade">
             <ul id="actions" v-if="inside">
+              <li @click="capture"><i class="el-icon-scissors"/></li>
               <li @click="minus"><i class="el-icon-minus"/></li>
               <li @click="plus"><i class="el-icon-plus"/></li>
               <li @click="close"><i class="el-icon-close"/></li>
@@ -40,6 +41,10 @@ export default class Content extends Vue {
     // CaptureManager.getInstance().start()
     // const root = this.$refs.root as HTMLDivElement
     // ipcRenderer.send(IPC.LOCK_CONTENT, { width: root.offsetWidth, height: root.offsetHeight })
+  }
+
+  capture() {
+    ipcRenderer.send(IPC.SELECT_AREA)
   }
 
   minus() {
