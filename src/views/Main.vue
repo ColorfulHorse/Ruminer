@@ -15,12 +15,12 @@
           <p class="tips">{{ $store.state.hotkey.captureScreen.value }}</p>
         </div>
       </el-col>
-      <el-col :span="8">
-        <div class="action-wrapper" @click="selectWindow">
-          <p class="action">捕获窗口</p>
-          <p class="tips">{{ $store.state.hotkey.captureWindow.value }}</p>
-        </div>
-      </el-col>
+<!--      <el-col :span="8">-->
+<!--        <div class="action-wrapper" @click="selectWindow">-->
+<!--          <p class="action">捕获窗口</p>-->
+<!--          <p class="tips">{{ $store.state.hotkey.captureWindow.value }}</p>-->
+<!--        </div>-->
+<!--      </el-col>-->
       <el-col :span="8">
         <div class="action-wrapper" @click="startRecognize">
           <p class="action">开始翻译</p>
@@ -44,9 +44,9 @@ export default class Main extends Vue {
     ipcRenderer.send(IPC.SELECT_AREA)
   }
 
-  selectWindow() {
-    ipcRenderer.send(IPC.SELECT_WINDOW)
-  }
+  // selectWindow() {
+  //   ipcRenderer.send(IPC.SELECT_WINDOW)
+  // }
 
   startRecognize() {
     ipcRenderer.send(IPC.OPEN_CONTENT)

@@ -6,7 +6,6 @@
                     :background-color="colors.menuBg"
                     :text-color="colors.menuText"
                     :active-text-color="colors.menuActiveText"
-                    @select="handleSelect"
                     router>
                 <el-menu-item
                         v-for="item in $router.options.routes.find((value) => value.name==='Home').children"
@@ -43,6 +42,8 @@
 // @ is an alias to /src
 import { Component, Vue } from 'vue-property-decorator'
 import colors from '@/assets/styles/colors.scss'
+import { ipcRenderer } from 'electron'
+import { IPC } from '@/constant/Constants'
 
 @Component
 export default class Home extends Vue {
@@ -50,12 +51,10 @@ export default class Home extends Vue {
 
   created() {
     this.$router.push('home/main')
-  }
-
-  handleSelect(key: any, keyPath: any) {
-    console.log(key)
-    console.log(keyPath)
-    console.log(this.$route)
+    ipcRenderer.on(IPC.ROUTE_API_CONFIG, () => {
+      console.log(IPC.ROUTE_API_CONFIG)
+      this.$router.push('config')
+    })
   }
 }
 </script>

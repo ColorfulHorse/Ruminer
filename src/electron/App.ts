@@ -11,6 +11,7 @@ import log from 'electron-log'
 import conf, { HotKey, HotKeyConf } from '@/config/Conf'
 import store from '@/store/index'
 import HotKeyUtil from '@/utils/HotKeyUtil'
+import CommonUtil from '@/utils/CommonUtil'
 
 'use strict'
 declare const __static: string
@@ -115,11 +116,7 @@ export default class App {
     const menu = Menu.buildFromTemplate([
       {
         label: '主界面', click: () => {
-          if (this.mainWin != null) {
-            if (this.mainWin.isMinimized()) this.mainWin.restore()
-            this.mainWin.show()
-            this.mainWin.focus()
-          }
+          this.showMain()
         }
       },
       {
@@ -186,6 +183,11 @@ export default class App {
       if (this.captureWin != null) {
         this.captureWin.close()
       }
+      // this.showContent()
+      if (this.contentWin != null) {
+        this.contentWin.setAlwaysOnTop(true)
+        this.contentWin.show()
+      }
     })
 
     ipcMain.on(IPC.OPEN_CONTENT, () => {
@@ -203,6 +205,13 @@ export default class App {
     })
   }
 
+  showMain() {
+    if (this.mainWin != null) {
+      if (this.mainWin.isMinimized()) this.mainWin.restore()
+      this.mainWin.show()
+      this.mainWin.focus()
+    }
+  }
 
   /**
    * 主窗口
@@ -222,35 +231,35 @@ export default class App {
       // }
     }
     if (this.mainWin === null) {
-      this.mainWin = new MainWin(this)
+      this.mainWin = new MainWin(this, () => {
+        this.showContent()
+      })
     }
   }
 
   /**
-   * 文字窗口
+   * 显示文字窗口
    */
-  private initContent() {
-    log.info(conf.common.path)
-    const rect: Rect | null = conf.common.get('captureRect')
-    if (rect != null) {
-      if (this.contentWin == null) {
+  showContent() {
+    if (this.captureWin != null) {
+      this.captureWin.close()
+    }
+    if (CommonUtil.checkConfig(this)) {
+      if (this.contentWin != null) {
+        this.contentWin.show()
+      } else {
         this.contentWin = new ContentWin(this)
       }
     }
   }
 
-  showContent() {
-    if (this.captureWin != null) {
-      this.captureWin.close()
-    }
-    if (this.contentWin != null) {
-      this.contentWin.show()
-    }else {
-      this.contentWin = new ContentWin(this)
-    }
-  }
-
   showOverlay() {
+    if (this.contentWin != null) {
+      this.contentWin.setAlwaysOnTop(false)
+    }
+    // if (this.contentWin != null) {
+    //   this.contentWin.close()
+    // }
     if (this.captureWin == null) {
       this.captureWin = new CaptureWin(this)
     }

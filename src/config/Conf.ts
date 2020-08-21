@@ -36,7 +36,6 @@ export interface TranslateConf {
   // 目标语言
   target: string
   baiduToken: BaiduToken | null
-  baiduOcrAppId: string
   baiduOcrSecret: string
   baiduOcrApiKey: string
   baiduTransAppId: string
@@ -64,11 +63,10 @@ export default {
       source: 'en',
       target: 'zh',
       baiduToken: null,
-      baiduOcrAppId: '20624645',
-      baiduOcrApiKey: 'C0TsZkb1hYEg1s7LpoQ2FsxQ',
-      baiduOcrSecret: 'xa6ibr45YAdfNOXyv8SVy181NcLN959z',
-      baiduTransAppId: '20200721000523268',
-      baiduTransSecret: 'skvTgvhTbhBUIQQRA6Kv'
+      baiduOcrApiKey: '',
+      baiduOcrSecret: '',
+      baiduTransAppId: '',
+      baiduTransSecret: ''
     }
   })
 }

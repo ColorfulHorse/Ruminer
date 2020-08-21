@@ -10,6 +10,7 @@ export class ContentWin extends BrowserWindow {
             fullscreen: false,
             frame: false,
             transparent: true,
+            focusable: true,
             width: 800,
             height: 200,
             // maxWidth: 800,
@@ -20,7 +21,7 @@ export class ContentWin extends BrowserWindow {
             alwaysOnTop: true,
             y: 0,
             // 隐藏任务栏图标
-            skipTaskbar: true,
+            // skipTaskbar: true,
             webPreferences: {
                 nodeIntegration: Boolean(process.env.ELECTRON_NODE_INTEGRATION),
                 nodeIntegrationInWorker: true
@@ -32,9 +33,11 @@ export class ContentWin extends BrowserWindow {
 
     init() {
         this.on('close', () => {
+            log.info('close content win')
             this.webContents.send(IPC.FINISH_RECOGNIZE)
         })
         this.on('closed', () => {
+            log.info('closed content win')
             this.app.contentWin = null
         })
         // 锁定窗口大小
@@ -45,7 +48,7 @@ export class ContentWin extends BrowserWindow {
             // this.setMaximumSize(size.width, size.height)
         })
         this.loadURL(this.app.indexUrl + '/#/content').then(() => {
-            this.webContents.openDevTools()
+            // this.webContents.openDevTools()
         })
     }
 }

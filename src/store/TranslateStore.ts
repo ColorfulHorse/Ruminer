@@ -5,7 +5,6 @@ export default interface TranslateStore {
     target: string
     // 翻译后的文本
     resultText: string
-    baiduOcrAppId: string
     baiduOcrSecret: string
     baiduOcrApiKey: string
     baiduTransAppId: string

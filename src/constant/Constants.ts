@@ -13,6 +13,9 @@ export class IPC {
   static readonly HOTKEY_INVALID = 'CHANGE_HOTKEY'
   static readonly CHANGE_HOTKEY = 'CHANGE_HOTKEY'
 
+  // 主界面切换到配置页
+  static readonly ROUTE_API_CONFIG = 'ROUTE_API_CONFIG'
+
   static readonly MAIN_LOG = 'MAIN_LOG'
 }
 

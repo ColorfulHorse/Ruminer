@@ -1,7 +1,7 @@
 <template>
   <div id="root" ref="root">
     <div id="container" ref="container" @mouseenter="enter" @mouseleave="leave">
-      <div id="inner">
+      <div id="inner" :style="boxStyle">
         <div id="action_wrapper">
           <transition name="fade">
             <ul id="actions" v-if="inside">
@@ -13,7 +13,7 @@
           </transition>
         </div>
         <div id="content">
-          <p :style="{ fontSize : (textSize + 'px') }">{{ $store.state.translate.resultText }}</p>
+          <p :style="{ fontSize : (textSize + 'px') }">{{$store.state.translate.resultText}}</p>
         </div>
       </div>
     </div>
@@ -23,24 +23,35 @@
 <script lang="ts">
 
 import { Component, Vue } from 'vue-property-decorator'
-import { State } from 'vuex-class'
 import { ipcRenderer } from 'electron'
 import CaptureManager from '../ocr/CaptureManager'
-import { IPC } from '../constant/Constants'
+import { IPC } from '@/constant/Constants'
 
 @Component
 export default class Content extends Vue {
-  textSize = 18
+  textSize = 24
 
   inside = false
 
-  created() {
-  }
-
   mounted() {
-    // CaptureManager.getInstance().start()
+    CaptureManager.getInstance().start()
+    this.inside = true
+    setTimeout(() => {
+      this.inside = false
+    }, 2000)
     // const root = this.$refs.root as HTMLDivElement
     // ipcRenderer.send(IPC.LOCK_CONTENT, { width: root.offsetWidth, height: root.offsetHeight })
+  }
+
+  get boxStyle() {
+    if (this.inside) {
+      return {
+        boxShadow: '0 0 5px white',
+        border: 'black 1px solid'
+      }
+    } else {
+      return {}
+    }
   }
 
   capture() {
@@ -71,7 +82,6 @@ export default class Content extends Vue {
   }
 
   close() {
-    console.log('close')
     CaptureManager.getInstance().stop()
     ipcRenderer.send(IPC.CLOSE_CONTENT)
   }
@@ -107,10 +117,9 @@ export default class Content extends Vue {
     height: 100%;
     display: flex;
     flex-direction: column;
-    box-shadow: 0 0 5px white;
-    -webkit-box-shadow: 0 0 5px white;
-    border: black 1px solid;
-    background-color: rgba($color: #000000, $alpha: 0.1);
+    /*box-shadow: 0 0 5px white;*/
+    /*border: black 1px solid;*/
+    background-color: transparent;
   }
 
   #action_wrapper {
@@ -154,11 +163,11 @@ export default class Content extends Vue {
       text-align: center;
       align-self: center;
       overflow: scroll;
-      /*-webkit-mask-image: -webkit-gradient(linear, left top, left bottom, from(blue), to(red));*/
-      /*-webkit-mask-clip: text;*/
-      background-image: linear-gradient(to bottom, blue, red);
-      /*background-image: -webkit-gradient(linear, left top, left bottom, from(blue), to(red));*/
-      -webkit-background-clip: text;
+      /*background-image: linear-gradient(to bottom, blue, red);*/
+      /*-webkit-background-clip: text;*/
+      color: #42b983;
+      letter-spacing: 1px;
+      text-shadow: 1px 1px 5px rgba($color: #000000, $alpha: 0.5);
     }
     p::-webkit-scrollbar{
       display: none;

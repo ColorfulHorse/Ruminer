@@ -18,7 +18,6 @@ const rootStore: StoreOptions<RootStore> = {
     translate: {
       source: conf.translate.get('source'),
       target: conf.translate.get('target'),
-      baiduOcrAppId: conf.translate.get('baiduOcrAppId'),
       baiduOcrSecret: conf.translate.get('baiduOcrSecret'),
       baiduOcrApiKey: conf.translate.get('baiduOcrApiKey'),
       baiduTransAppId: conf.translate.get('baiduTransAppId'),
@@ -37,10 +36,6 @@ const rootStore: StoreOptions<RootStore> = {
     [Mutations.MUTATION_TARGET_LANG](state, payload: string) {
       state.translate.target = payload
       conf.translate.set('target', payload)
-    },
-    [Mutations.MUTATION_BAIDU_OCRAPPID](state, payload: string) {
-      state.translate.baiduOcrAppId = payload
-      conf.translate.set('baiduOcrAppId', payload)
     },
     [Mutations.MUTATION_BAIDU_OCRAPIKEY](state, payload: string) {
       state.translate.baiduOcrApiKey = payload

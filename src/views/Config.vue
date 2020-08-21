@@ -1,67 +1,45 @@
 <template>
   <el-main>
-    <el-row type="flex" align="middle">
-      <el-col :span="8">
-        <p>源语言</p>
-      </el-col>
-      <el-col :span="16">
-        <el-select v-model="source">
-          <el-option
-              v-for="item in langs"
-              :key="item.alias"
-              :label="item.name"
-              :value="item.alias">
-          </el-option>
-        </el-select>
-      </el-col>
-    </el-row>
-    <el-row type="flex" align="middle">
-      <el-col :span="8">
-        <p>目标语言</p>
-      </el-col>
-      <el-col :span="16">
-        <el-select v-model="target">
-          <el-option
-              v-for="item in langs"
-              :key="item.alias"
-              :label="item.name"
-              :value="item.alias">
-          </el-option>
-        </el-select>
-      </el-col>
-    </el-row>
-    <el-row type="flex" align="middle">
-      <el-col :span="8">
-        <p>百度 OcrApiKey:</p>
-      </el-col>
-      <el-col :span="16">
-        <el-input clearable v-model="ocrKey"/>
-      </el-col>
-    </el-row>
-    <el-row type="flex" align="middle">
-      <el-col :span="8">
-        <p>百度 OcrSecret:</p>
-      </el-col>
-      <el-col :span="16">
-        <el-input clearable v-model="ocrSecret"/>
-      </el-col>
-    </el-row>
-    <el-row type="flex" align="middle">
-      <el-col :span="8">
-        <p>百度翻译 AppId:</p>
-      </el-col>
-      <el-col :span="16">
-        <el-input clearable v-model="transAppId"/>
-      </el-col>
-    </el-row>
-    <el-row type="flex" align="middle">
-      <el-col :span="8">
-        <p>百度翻译 AppSecret:</p>
-      </el-col>
-      <el-col :span="16">
-        <el-input clearable v-model="transSecret"/>
-      </el-col>
-    </el-row>
+    <el-form :model="formData" :rules="rules" ref="form" label-width="30%" label-position="left">
+      <el-row>
+        <el-col :span="11">
+          <el-form-item label="源语言" label-width="80px">
+            <el-select v-model="source">
+              <el-option
+                  v-for="item in langs"
+                  :key="item.alias"
+                  :label="item.name"
+                  :value="item.alias">
+              </el-option>
+            </el-select>
+          </el-form-item>
+        </el-col>
+        <el-col :span="11" :offset="2">
+          <el-form-item label="目标语言" label-width="80px">
+            <el-select v-model="target">
+              <el-option
+                  v-for="item in langs"
+                  :key="item.alias"
+                  :label="item.name"
+                  :value="item.alias">
+              </el-option>
+            </el-select>
+          </el-form-item>
+        </el-col>
+      </el-row>
+      <el-form-item label="百度 OcrApiKey" prop="ocrKey">
+        <el-input v-model="formData.ocrKey" @input="ocrKey"/>
+      </el-form-item>
+      <el-form-item label="百度 OcrSecret" prop="ocrSecret">
+        <el-input v-model="formData.ocrSecret" @input="ocrSecret"/>
+      </el-form-item>
+      <el-form-item label="百度翻译 AppId" prop="transId">
+        <el-input v-model="formData.transAppId" @input="transAppId"/>
+      </el-form-item>
+      <el-form-item label="百度翻译 AppSecret" prop="transSecret">
+        <el-input v-model="formData.transSecret" @input="transSecret"/>
+      </el-form-item>
+    </el-form>
   </el-main>
 </template>
 
@@ -70,12 +48,40 @@
 import { Component, Vue } from 'vue-property-decorator'
 import LangMapper from '@/utils/LangMapper'
 import { Mutations } from '@/constant/Constants'
+import { Form } from 'element-ui'
 import { PayloadWrapper } from '@/store/PayloadWrapper'
-import { HotKeyConf } from '@/config/Conf'
+import { HotKeyConf, TranslateConf } from '@/config/Conf'
+import { ElementUIComponent } from 'element-ui/types/component'
 
 @Component
 export default class Config extends Vue {
+  formData = {
+    ocrKey: this.$store.state.translate.baiduOcrApiKey,
+    ocrSecret: this.$store.state.translate.baiduOcrSecret,
+    transAppId: this.$store.state.translate.baiduTransAppId,
+    transSecret: this.$store.state.translate.baiduTransSecret
+  }
+
+  rules = {
+    ocrKey: [
+      {required: true, message: '请输入百度ocr api key', trigger: 'blur'}
+    ],
+    ocrSecret: [
+      {required: true, message: '请输入百度ocr api secret', trigger: 'blur'}
+    ],
+    transId: [
+      {required: true, message: '请输入百度翻译 appId', trigger: 'blur'}
+    ],
+    transSecret: [
+      {required: true, message: '请输入百度翻译 secret', trigger: 'blur'}
+    ]
+  }
+
   langs = [...LangMapper.map.values()]
+
+  mounted() {
+    (this.$refs.form as Form).validate()
+  }
 
   get source() {
     return this.$store.state.translate.source
@@ -93,46 +99,30 @@ export default class Config extends Vue {
     this.$store.commit(Mutations.MUTATION_TARGET_LANG, value)
   }
 
-  get ocrKey() {
-    return this.$store.state.translate.baiduOcrApiKey
-  }
-
-  set ocrKey(value: string) {
+  ocrKey(value: string) {
     this.$store.commit(Mutations.MUTATION_BAIDU_OCRAPIKEY, value)
   }
 
-  get ocrSecret() {
-    return this.$store.state.translate.baiduOcrSecret
-  }
-
-  set ocrSecret(value: string) {
+  ocrSecret(value: string) {
     this.$store.commit(Mutations.MUTATION_BAIDU_OCRAPISECRET, value)
   }
 
-  get transAppId() {
-    return this.$store.state.translate.baiduTransAppId
-  }
-
-  set transAppId(value: string) {
+  transAppId(value: string) {
     this.$store.commit(Mutations.MUTATION_BAIDU_TRANSLATE_APPID, value)
   }
 
-  get transSecret() {
-    return this.$store.state.translate.baiduTransSecret
-  }
-
-  set transSecret(value: string) {
+  transSecret(value: string) {
     this.$store.commit(Mutations.MUTATION_BAIDU_TRANSLATE_SECRET, value)
   }
 }
 </script>
 
 <style lang="scss" scoped>
-  .el-row:not(:first-of-type) {
-    margin-top: 15px;
-  }
+  .el-form-item {
+    margin-bottom: 30px;
 
-  p {
-    color: $primary-text;
+    label {
+      color: $primary-text;
+    }
   }
 </style>

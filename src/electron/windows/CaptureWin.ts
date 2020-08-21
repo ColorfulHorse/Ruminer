@@ -8,6 +8,8 @@ export class CaptureWin extends BrowserWindow {
       fullscreen: true,
       frame: false,
       transparent: true,
+      skipTaskbar: true,
+      focusable: true,
       webPreferences: {
         nodeIntegration: Boolean(process.env.ELECTRON_NODE_INTEGRATION)
       }
