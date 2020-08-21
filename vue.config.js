@@ -1,14 +1,20 @@
 module.exports = {
   devServer: {
-    // can be overwritten by process.env.HOST
     host: '0.0.0.0',
     port: 8080,
     proxy: {
-      '/baidu': {
+      '/baidufanyi': {
         target: 'http://api.fanyi.baidu.com',
         changeOrigin: true,
         pathRewrite: {
-          '^/baidu': ''
+          '^/baidufanyi': ''
+        }
+      },
+      '/baiduocr': {
+        target: 'https://aip.baidubce.com',
+        changeOrigin: true,
+        pathRewrite: {
+          '^/baiduocr': ''
         }
       }
     }
@@ -27,13 +33,6 @@ module.exports = {
     // },
     devtool: 'source-map'
   },
-  // css: {
-  //   loaderOptions: {
-  //     sass: {
-  //       colors: '@import "@/styles/_colors.scss";'
-  //     }
-  //   }
-  // },
   pluginOptions: {
     electronBuilder: {
       nodeIntegration: true,

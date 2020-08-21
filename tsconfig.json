@@ -13,7 +13,8 @@
     "allowSyntheticDefaultImports": true,
     "sourceMap": true,
     "watch": true,
-    "baseUrl": "types",
+    "baseUrl": ".",
+//    "keyofStringsOnly": true,
     "typeRoots": [
       "types"
     ],

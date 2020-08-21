@@ -1,8 +1,9 @@
 /**
- * 配置
+ * 本地配置
  */
-import { Rect } from '../graphics/Graphics'
+import { Rect } from '@/graphics/Graphics'
 import ElectronStore from 'electron-store'
+import { BaiduToken } from '@/network/response/BaiduToken'
 
 export interface RootConf {
   common: ElectronStore<CommonConf>
@@ -15,8 +16,18 @@ export interface CommonConf {
 }
 
 export interface HotKeyConf {
-  captureScreen: string
-  captureWindow: string
+  captureScreen: HotKey
+  captureWindow: HotKey
+  startRecognize: HotKey
+}
+
+export interface HotKey {
+  name: string
+  key: keyof HotKeyConf
+  // 上一次设置的快捷键
+  old?: string
+  value: string
+  valid: boolean
 }
 
 export interface TranslateConf {
@@ -24,6 +35,11 @@ export interface TranslateConf {
   source: string
   // 目标语言
   target: string
+  baiduToken: BaiduToken | null
+  baiduOcrSecret: string
+  baiduOcrApiKey: string
+  baiduTransAppId: string
+  baiduTransSecret: string
 }
 
 export default {
@@ -36,15 +52,21 @@ export default {
   hotkey: new ElectronStore<HotKeyConf>({
     name: 'hotkeyConf',
     defaults: {
-      captureScreen: 'Alt+Shift+D',
-      captureWindow: 'Alt+Shift+W'
+      captureScreen: { name: '捕获屏幕', key: 'captureScreen', value: 'Shift+Alt+D', valid: true },
+      captureWindow: { name: '捕获窗口', key: 'captureWindow', value: 'Shift+Alt+W', valid: true },
+      startRecognize: { name: '开始翻译', key: 'startRecognize', value: 'Shift+Alt+Q', valid: true }
     }
   }),
   translate: new ElectronStore<TranslateConf>({
     name: 'translateConf',
     defaults: {
-      source: 'eng',
-      target: 'chi_sim'
+      source: 'en',
+      target: 'zh',
+      baiduToken: null,
+      baiduOcrApiKey: '',
+      baiduOcrSecret: '',
+      baiduTransAppId: '',
+      baiduTransSecret: ''
     }
   })
 }

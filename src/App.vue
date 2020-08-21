@@ -7,8 +7,10 @@
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
 import { ipcRenderer } from 'electron'
-import { IPC } from './constant/Constants'
+import { IPC, Mutations } from './constant/Constants'
 import CaptureManager from './ocr/CaptureManager'
+import { HotKey, HotKeyConf } from '@/config/Conf'
+import { IPayloadWrapper } from '@/store/PayloadWrapper'
 
 @Component
 export default class App extends Vue {
@@ -20,6 +22,9 @@ export default class App extends Vue {
     })
     ipcRenderer.on(IPC.FINISH_RECOGNIZE, () => {
       CaptureManager.getInstance().stop()
+    })
+    ipcRenderer.on(IPC.HOTKEY_INVALID, (event, hotkey: HotKey) => {
+      this.$store.commit(Mutations.MUTATION_CHANGE_HOTKEY, hotkey)
     })
   }
 }

@@ -1,4 +1,5 @@
-export default interface HotKeyStore {
-    captureScreen: string
-    captureWindow: string
+import { HotKeyConf } from '@/config/Conf'
+
+export default interface HotKeyStore extends HotKeyConf {
+
 }

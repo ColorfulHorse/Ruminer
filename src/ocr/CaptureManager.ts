@@ -28,7 +28,7 @@ export default class CaptureManager {
     }
     const rect: Rect | null = conf.common.get('captureRect')
     if (rect != null) {
-      await OcrClient.getInstance().init()
+      // await OcrClient.getInstance().init()
       this.capturing = true
       const { width, height } = remote.screen.getPrimaryDisplay().bounds
       desktopCapturer.getSources({ types: ['screen'] })
@@ -74,39 +74,23 @@ export default class CaptureManager {
     video.srcObject = stream
     video.onloadedmetadata = async () => {
       await video.play()
-      // 截取屏幕图片
-      // console.log(`capture start time: ${new Date().getTime()}`)
-      const rect: Rect | null = conf.common.get('captureRect')
-      if (rect != null) {
-        canvas.height = rect.bottom - rect.top
-        canvas.width = rect.right - rect.left
-        const bm = await createImageBitmap(video, rect.left, rect.top, rect.right, rect.bottom)
-        if (ctx != null) {
-          ctx.drawImage(bm, 0, 0, rect.right, rect.bottom)
-          const base64 = canvas.toDataURL('image/jpeg')
-          // console.log(`capture finish time: ${new Date().getTime()}`)
-          bm.close()
-          await OcrClient.getInstance().recognize(base64)
+      this.timer = window.setInterval(async () => {
+        // 截取屏幕图片
+        // console.log(`capture start time: ${new Date().getTime()}`)
+        const rect: Rect | null = conf.common.get('captureRect')
+        if (rect != null) {
+          canvas.height = rect.bottom - rect.top
+          canvas.width = rect.right - rect.left
+          const bm = await createImageBitmap(video, rect.left, rect.top, rect.right, rect.bottom)
+          if (ctx != null) {
+            ctx.drawImage(bm, 0, 0, rect.right, rect.bottom)
+            const base64 = canvas.toDataURL('image/jpeg')
+            // console.log(`capture finish time: ${new Date().getTime()}`)
+            bm.close()
+            await OcrClient.getInstance().recognize(base64)
+          }
         }
-      }
-
-      // this.timer = window.setInterval(async () => {
-      //   // 截取屏幕图片
-      //   // console.log(`capture start time: ${new Date().getTime()}`)
-      //   const rect: Rect | null = conf.common.get('captureRect')
-      //   if (rect != null) {
-      //     canvas.height = rect.bottom - rect.top
-      //     canvas.width = rect.right - rect.left
-      //     const bm = await createImageBitmap(video, rect.left, rect.top, rect.right, rect.bottom)
-      //     if (ctx != null) {
-      //       ctx.drawImage(bm, 0, 0, rect.right, rect.bottom)
-      //       const base64 = canvas.toDataURL('image/jpeg')
-      //       // console.log(`capture finish time: ${new Date().getTime()}`)
-      //       bm.close()
-      //       await OcrClient.getInstance().recognize(base64)
-      //     }
-      //   }
-      // }, 800)
+      }, 505)
     }
   }
 

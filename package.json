@@ -1,4 +1,12 @@
 {
+  "build": {
+    "productName":"autotranslate",
+    "appId": "com.greensun.autotranslate",
+    "copyright":"green sun",
+    "win": {
+      "icon": "public/favicon.ico"
+    }
+  },
   "name": "auto-translate",
   "version": "0.1.0",
   "private": true,
@@ -14,12 +22,14 @@
     "postuninstall": "electron-builder install-app-deps"
   },
   "dependencies": {
+    "@types/qs": "^6.9.4",
     "axios": "^0.19.2",
     "core-js": "^3.6.5",
     "electron-log": "^4.2.2",
     "electron-store": "^5.2.0",
     "element-ui": "^2.4.5",
     "md5": "^2.3.0",
+    "qs": "^6.9.4",
     "tesseract.js": "2.0.0",
     "vue": "^2.6.11",
     "vue-class-component": "^7.2.3",

@@ -1,6 +1,6 @@
 <template>
   <el-main>
-    <el-row>
+    <el-row type="flex">
       <el-col :span="24">
         <div class="sf-wrapper">
           <el-image class="sf-logo" fit="contain" lazy :src="require('../../public/tray/logo.png')"/>
@@ -8,23 +8,23 @@
         </div>
       </el-col>
     </el-row>
-    <el-row :gutter="10">
+    <el-row :gutter="20">
       <el-col :span="8">
         <div class="action-wrapper" @click="selectArea">
           <p class="action">捕获屏幕</p>
-          <p class="tips">{{ $store.state.hotkey.captureScreen }}</p>
+          <p class="tips">{{ $store.state.hotkey.captureScreen.value }}</p>
         </div>
       </el-col>
+<!--      <el-col :span="8">-->
+<!--        <div class="action-wrapper" @click="selectWindow">-->
+<!--          <p class="action">捕获窗口</p>-->
+<!--          <p class="tips">{{ $store.state.hotkey.captureWindow.value }}</p>-->
+<!--        </div>-->
+<!--      </el-col>-->
       <el-col :span="8">
-        <div class="action-wrapper">
-          <p class="action">捕获窗口</p>
-          <p class="tips">{{ $store.state.hotkey.captureWindow }}</p>
-        </div>
-      </el-col>
-      <el-col :span="8">
-        <div class="action-wrapper">
-          <p class="action">试试按键</p>
-          <p class="tips">XXX</p>
+        <div class="action-wrapper" @click="startRecognize">
+          <p class="action">开始翻译</p>
+          <p class="tips">{{ $store.state.hotkey.startRecognize.value }}</p>
         </div>
       </el-col>
     </el-row>
@@ -34,13 +34,22 @@
 <script lang="ts">
 
 import { Component, Vue } from 'vue-property-decorator'
-import { ipcRenderer } from 'electron'
-import { IPC } from '../constant/Constants'
+import { ipcRenderer, desktopCapturer } from 'electron'
+import { IPC } from '@/constant/Constants'
+import { MainLog } from '@/utils/MainLog'
 
-  @Component
+@Component
 export default class Main extends Vue {
   selectArea() {
     ipcRenderer.send(IPC.SELECT_AREA)
+  }
+
+  // selectWindow() {
+  //   ipcRenderer.send(IPC.SELECT_WINDOW)
+  // }
+
+  startRecognize() {
+    ipcRenderer.send(IPC.OPEN_CONTENT)
   }
 }
 </script>
@@ -73,7 +82,7 @@ export default class Main extends Vue {
       .action-wrapper {
         background-color: #f1f1f1;
         border-radius: 0 10px 0 10px;
-        padding: 10px;
+        padding: 20px 10px;
         text-align: center;
         vertical-align: middle;
       }
@@ -86,7 +95,7 @@ export default class Main extends Vue {
         -webkit-font-smoothing: antialiased;
         -moz-osx-font-smoothing: grayscale;
         font-size: 18px;
-        font-weight: 700;
+        font-weight: 600;
         color: $primary-text;
       }
 
@@ -94,10 +103,10 @@ export default class Main extends Vue {
         font-family: Avenir, Helvetica, Arial, sans-serif;
         -webkit-font-smoothing: antialiased;
         -moz-osx-font-smoothing: grayscale;
-        font-size: 14px;
+        font-size: 16px;
         font-weight: 100;
         color: $secondary-text;
-        margin-top: 10px;
+        margin-top: 20px;
       }
     }
   }

@@ -1,15 +1,22 @@
-import { Rect } from '../graphics/Graphics'
-
 export class IPC {
   static readonly OPEN_DEVTOOL = 'OPEN_DEVTOOL'
-  // 选择区域
+  // 选择屏幕区域
   static readonly SELECT_AREA = 'SELECT_AREA'
+  // 选择窗口
+  static readonly SELECT_WINDOW = 'SELECT_WINDOW'
   static readonly CLOSE_OVERLAY = 'CLOSE_OVERLAY'
   // 打开检测结果窗口
   static readonly OPEN_CONTENT = 'OPEN_CONTENT'
   static readonly CLOSE_CONTENT = 'CLOSE_CONTENT'
   static readonly LOCK_CONTENT = 'LOCK_CONTENT'
   static readonly FINISH_RECOGNIZE = 'FINISH_RECOGNIZE'
+  static readonly HOTKEY_INVALID = 'CHANGE_HOTKEY'
+  static readonly CHANGE_HOTKEY = 'CHANGE_HOTKEY'
+
+  // 主界面切换到配置页
+  static readonly ROUTE_API_CONFIG = 'ROUTE_API_CONFIG'
+
+  static readonly MAIN_LOG = 'MAIN_LOG'
 }
 
 export class StoreKey {
@@ -30,13 +37,31 @@ export class StoreDefault {
   static readonly DEFAULT_KEY_CAPTURE_WINDOW = 'Alt+Shift+W'
 }
 
-export class BaiduApi {
+export class BaiduTranslate {
   static readonly APP_ID = '20200721000523268'
   static readonly SECRET_KEY = 'skvTgvhTbhBUIQQRA6Kv'
 }
 
+export class BaiduOcr {
+  static readonly APP_ID = '20624645'
+  static readonly API_KEY = 'C0TsZkb1hYEg1s7LpoQ2FsxQ'
+  static readonly SECRET_KEY = 'xa6ibr45YAdfNOXyv8SVy181NcLN959z'
+}
+
+export class HotKeys {
+  static readonly CAPTURE_SCREEN = 'captureScreen'
+  static readonly CAPTURE_WINDOW = 'captureWindow'
+  static readonly START_RECOGNIZE = 'startRecognize'
+}
+
 export class Mutations {
   static readonly MUTATION_RESULT_TEXT = 'MUTATION_RESULT_TEXT'
-  static readonly MUTATION_KEY_CAPTURE_SCREEN = 'MUTATION_KEY_CAPTURE_SCREEN'
-  static readonly MUTATION_KEY_CAPTURE_WINDOW = 'MUTATION_KEY_CAPTURE_WINDOW'
+  static readonly MUTATION_SOURCE_LANG = 'MUTATION_SOURCE_LANG'
+  static readonly MUTATION_TARGET_LANG = 'MUTATION_TARGET_LANG'
+  static readonly MUTATION_BAIDU_OCRAPPID = 'MUTATION_BAIDU_OCRAPPID'
+  static readonly MUTATION_BAIDU_OCRAPIKEY = 'MUTATION_BAIDU_OCRAPIKEY'
+  static readonly MUTATION_BAIDU_OCRAPISECRET = 'MUTATION_BAIDU_OCRAPISECRET'
+  static readonly MUTATION_BAIDU_TRANSLATE_APPID = 'MUTATION_BAIDU_TRANSLATE_APPID'
+  static readonly MUTATION_BAIDU_TRANSLATE_SECRET = 'MUTATION_BAIDU_TRANSLATE_SECRET'
+  static readonly MUTATION_CHANGE_HOTKEY = 'MUTATION_CHANGE_HOTKEY'
 }
