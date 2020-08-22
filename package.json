@@ -22,7 +22,6 @@
     "postuninstall": "electron-builder install-app-deps"
   },
   "dependencies": {
-    "@types/qs": "^6.9.4",
     "axios": "^0.19.2",
     "core-js": "^3.6.5",
     "electron-log": "^4.2.2",
@@ -30,6 +29,7 @@
     "element-ui": "^2.4.5",
     "md5": "^2.3.0",
     "qs": "^6.9.4",
+    "string-similarity": "^4.0.2",
     "tesseract.js": "2.0.0",
     "vue": "^2.6.11",
     "vue-class-component": "^7.2.3",
@@ -54,6 +54,8 @@
     "@vue/cli-service": "~4.4.0",
     "@vue/eslint-config-standard": "^5.1.2",
     "@vue/eslint-config-typescript": "^5.0.2",
+    "@types/qs": "^6.9.4",
+    "@types/string-similarity": "^3.0.0",
     "concurrently": "^5.2.0",
     "electron": "^9.0.2",
     "electron-is-dev": "^1.2.0",

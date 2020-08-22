@@ -12,6 +12,7 @@ import conf from '@/config/Conf'
 import DateUtil from '@/utils/DateUtil'
 import { BaiduTokenReq } from '@/network/request/BaiduTokenReq'
 import { BaiduToken } from '@/network/response/BaiduToken'
+import { compareTwoStrings } from 'string-similarity'
 
 /**
  * 文字识别
@@ -20,6 +21,7 @@ export class OcrClient {
   private static client: OcrClient
   scheduler: Scheduler | null = null
   private recognizeText = ''
+  private resultText = ''
 
   static getInstance() {
     if (this.client == null) {
@@ -95,10 +97,12 @@ export class OcrClient {
         return
       }
       console.log(`lines: ${JSON.stringify(res.data.words_result)}`)
-      const text = res.data.words_result.map(v => v.words).reduce((prev, current) => `${prev}\n${current}`)
-      console.log(`text: ${text}`)
+      const text = res.data.words_result.map(v => v.words).reduce((prev, current) => `${prev} ${current}`)
       if (text.trim().length > 2) {
-        if (text !== this.recognizeText) {
+        const similarity = compareTwoStrings(text, this.recognizeText)
+        console.log(`similarity:${similarity}, last: ${this.recognizeText}, current${text}`)
+        // 相似度太高的语句不翻译
+        if (similarity < 0.65) {
           this.recognizeText = text
           const cancel = axios.CancelToken.source()
           const resp: AxiosResponse<BaiduTranslateResp> = await axios.get(
@@ -112,7 +116,7 @@ export class OcrClient {
             if (data.trans_result && data.trans_result.length > 0) {
               const src = data.trans_result[0].src
               const dst = data.trans_result[0].dst
-              console.log(`result: ${dst}`)
+              this.resultText = dst
               store.commit(Mutations.MUTATION_RESULT_TEXT, dst)
             }
           } else {

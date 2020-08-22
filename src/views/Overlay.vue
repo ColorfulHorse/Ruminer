@@ -1,7 +1,7 @@
 <template>
     <div id="overlay" ref="root">
         <canvas id="canvas" ref="canvas" @mousedown="startCapture" @mousemove="move" @mouseup="finishCapture"/>
-        <ul id="actions" ref="actions" autofocus v-if="showAction" :style="{ left: actionRight + 'px', top: actionTop + 'px' }">
+        <ul id="actions" ref="actions" autofocus v-if="showAction" :style="{ left: actionLeft + 'px', top: actionTop + 'px' }">
           <li @click="cancel"><i class="el-icon-close" style="color: red;"/></li>
           <li @click="confirm"><i class="el-icon-check" style="color: limegreen;"/></li>
         </ul>
@@ -13,6 +13,7 @@ import { Component, Vue } from 'vue-property-decorator'
 import { ipcRenderer } from 'electron'
 import { IPC, StoreKey } from '../constant/Constants'
 import { Point, Rect } from '../graphics/Graphics'
+import { MainLog } from '@/utils/MainLog'
 
 @Component
 export default class Overlay extends Vue {
@@ -25,7 +26,7 @@ export default class Overlay extends Vue {
 
   canvas: HTMLCanvasElement | null = null
 
-  actionRight = 0
+  actionLeft = 0
 
   actionTop = 0
 
@@ -42,7 +43,7 @@ export default class Overlay extends Vue {
     const canvas = this.$refs.canvas as HTMLCanvasElement
     canvas.width = root.offsetWidth
     canvas.height = root.offsetHeight
-    console.log(`offsetWidth:${root.offsetWidth}, offsetHeight: ${root.offsetHeight},clientWidth:${root.clientWidth}, clientHeight: ${root.clientHeight}`)
+    MainLog.info(`offsetWidth:${root.offsetWidth}, offsetHeight: ${root.offsetHeight},clientWidth:${root.clientWidth}, clientHeight: ${root.clientHeight}`)
     this.canvas = canvas
     this.draw()
   }
@@ -88,15 +89,20 @@ export default class Overlay extends Vue {
     this.showAction = true
     this.rect.fromPoints(this.startPoint, this.endPoint)
     this.draw(this.rect)
-    const bottom = this.rect.bottom + 10
     const root = this.$refs.root as HTMLDivElement
-    if (bottom >= root.offsetHeight) {
-      this.actionTop = this.rect.bottom - 22 - 8 - 10
-      this.actionRight = this.rect.right - 70 - 10
-    } else {
-      this.actionTop = this.rect.bottom + 10
-      this.actionRight = this.rect.right - 70
+    // 30 actions 高度， 70 actions 宽度
+    const maxBottom = root.offsetHeight - 30
+    const maxRight = root.offsetWidth - 70
+    let left = this.rect.right
+    if (this.rect.right > maxRight) {
+      left = this.rect.right - 70
     }
+    let top = this.rect.bottom
+    if (this.rect.bottom > maxBottom) {
+      top = this.rect.bottom - 30
+    }
+    this.actionTop = top
+    this.actionLeft = left
   }
 
   cancel() {
@@ -107,6 +113,7 @@ export default class Overlay extends Vue {
 
   confirm() {
     this.showAction = false
+    MainLog.info(this.rect)
     this.$conf.common.set('captureRect', this.rect)
     this.clear()
     // 打开显示翻译结果窗口

@@ -1,7 +1,8 @@
 import { desktopCapturer, remote } from 'electron'
-import { Rect } from '../graphics/Graphics'
+import { Rect } from '@/graphics/Graphics'
 import { OcrClient } from './OcrClient'
 import conf from '../config/Conf'
+import log from 'electron-log'
 
 declare const __static: string
 export default class CaptureManager {
@@ -31,6 +32,7 @@ export default class CaptureManager {
       // await OcrClient.getInstance().init()
       this.capturing = true
       const { width, height } = remote.screen.getPrimaryDisplay().bounds
+      remote.screen.getAllDisplays().forEach(value => log.info('workSize:', value.workAreaSize))
       desktopCapturer.getSources({ types: ['screen'] })
         .then(sources => {
           sources.forEach(source => {
@@ -76,21 +78,23 @@ export default class CaptureManager {
       await video.play()
       this.timer = window.setInterval(async () => {
         // 截取屏幕图片
-        // console.log(`capture start time: ${new Date().getTime()}`)
         const rect: Rect | null = conf.common.get('captureRect')
         if (rect != null) {
+          // canvas.height = rect.bottom - rect.top
+          // canvas.width = rect.right - rect.left
+          const width = rect.right - rect.left
+          const height = rect.bottom - rect.top
           canvas.height = rect.bottom - rect.top
           canvas.width = rect.right - rect.left
-          const bm = await createImageBitmap(video, rect.left, rect.top, rect.right, rect.bottom)
+          const bm = await createImageBitmap(video, rect.left, rect.top, width, height)
           if (ctx != null) {
-            ctx.drawImage(bm, 0, 0, rect.right, rect.bottom)
+            ctx.drawImage(bm, 0, 0, width, height)
             const base64 = canvas.toDataURL('image/jpeg')
-            // console.log(`capture finish time: ${new Date().getTime()}`)
             bm.close()
             await OcrClient.getInstance().recognize(base64)
           }
         }
-      }, 505)
+      }, 600)
     }
   }
 

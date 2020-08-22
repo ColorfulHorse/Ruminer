@@ -22,7 +22,7 @@ export default class App {
   mainWin: MainWin | null = null
   captureWin: CaptureWin | null = null
   contentWin: ContentWin | null = null
-  openDevTools = true
+  openDevTools = false
 
 
   constructor() {

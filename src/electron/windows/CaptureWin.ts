@@ -4,7 +4,8 @@ export class CaptureWin extends BrowserWindow {
   app: App
   constructor(app: App) {
     super({
-      maximizable: true,
+      maximizable: false,
+      resizable: false,
       fullscreen: true,
       frame: false,
       transparent: true,
