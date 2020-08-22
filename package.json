@@ -1,7 +1,7 @@
 {
   "build": {
-    "productName": "autotranslate",
-    "appId": "com.greensun.autotranslate",
+    "productName": "Ruminer",
+    "appId": "com.greensun.ruminer",
     "copyright": "green sun",
     "win": {
       "icon": "public/favicon.ico"
