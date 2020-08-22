@@ -74,7 +74,8 @@ export class OcrClient {
         conf.translate.set('baiduToken', token)
       }
       // ocr识别图片中文字
-      const lang = LangMapper.toBaiduOcr(store.state.translate.source)
+      const source = conf.translate.get('source')
+      const lang = LangMapper.toBaiduOcr(source)
       const img = base64.split(',')[1]
       let req = new BaiduOcrReq(img)
       if (lang !== LangMapper.AUTO) {
@@ -93,7 +94,9 @@ export class OcrClient {
       if (res.data.words_result.length === 0) {
         return
       }
+      console.log(`lines: ${JSON.stringify(res.data.words_result)}`)
       const text = res.data.words_result.map(v => v.words).reduce((prev, current) => `${prev}\n${current}`)
+      console.log(`text: ${text}`)
       if (text.trim().length > 2) {
         if (text !== this.recognizeText) {
           this.recognizeText = text
@@ -104,17 +107,15 @@ export class OcrClient {
               params: new BaiduTranslateReq(text),
               cancelToken: cancel.token
             })
-          // console.log(`translate time: ${new Date().getTime()}`)
           const data = resp.data
           if (!data.error_code) {
             if (data.trans_result && data.trans_result.length > 0) {
               const src = data.trans_result[0].src
               const dst = data.trans_result[0].dst
-              console.log(`recognizeText:${this.recognizeText}, src:${src}, dst:${dst}`)
+              console.log(`result: ${dst}`)
               store.commit(Mutations.MUTATION_RESULT_TEXT, dst)
             }
           } else {
-            console.log(`error code: ${data.error_code}`)
           }
         }
       }

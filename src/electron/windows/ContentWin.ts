@@ -48,7 +48,9 @@ export class ContentWin extends BrowserWindow {
             // this.setMaximumSize(size.width, size.height)
         })
         this.loadURL(this.app.indexUrl + '/#/content').then(() => {
+          if (this.app.openDevTools) {
             this.webContents.openDevTools()
+          }
         })
     }
 }

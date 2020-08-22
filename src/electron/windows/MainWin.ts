@@ -32,7 +32,9 @@ export class MainWin extends BrowserWindow {
       this.app.mainWin = null
     })
     this.loadURL(`${this.app.indexUrl}/#/home`).then(() => {
-      // this.webContents.openDevTools()
+      if (this.app.openDevTools) {
+        this.webContents.openDevTools()
+      }
       if (this.after) {
         this.after()
       }

@@ -22,6 +22,7 @@ export default class App {
   mainWin: MainWin | null = null
   captureWin: CaptureWin | null = null
   contentWin: ContentWin | null = null
+  openDevTools = true
 
 
   constructor() {
@@ -180,14 +181,7 @@ export default class App {
     // })
 
     ipcMain.on(IPC.CLOSE_OVERLAY, () => {
-      if (this.captureWin != null) {
-        this.captureWin.close()
-      }
-      // this.showContent()
-      if (this.contentWin != null) {
-        this.contentWin.setAlwaysOnTop(true)
-        this.contentWin.show()
-      }
+      this.showContent()
     })
 
     ipcMain.on(IPC.OPEN_CONTENT, () => {
@@ -246,6 +240,7 @@ export default class App {
     }
     if (CommonUtil.checkConfig(this)) {
       if (this.contentWin != null) {
+        this.contentWin.setAlwaysOnTop(true)
         this.contentWin.show()
       } else {
         this.contentWin = new ContentWin(this)

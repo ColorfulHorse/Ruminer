@@ -30,7 +30,7 @@ export default class CommonUtil {
     }
     const rect = conf.common.get('captureRect')
     if (rect == null) {
-      app.showOverlay()
+      // app.showOverlay()
       // const notification = new Notification({
       //   title: 'api 设置',
       //   body: 'api key 未设置，无法正常使用，点击设置',

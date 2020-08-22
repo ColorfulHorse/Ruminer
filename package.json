@@ -1,8 +1,8 @@
 {
   "build": {
-    "productName":"autotranslate",
+    "productName": "autotranslate",
     "appId": "com.greensun.autotranslate",
-    "copyright":"green sun",
+    "copyright": "green sun",
     "win": {
       "icon": "public/favicon.ico"
     }

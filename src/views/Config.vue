@@ -89,6 +89,7 @@ export default class Config extends Vue {
 
   set source(value: string) {
     this.$store.commit(Mutations.MUTATION_SOURCE_LANG, value)
+    console.log(this.$store.state)
   }
 
   get target() {

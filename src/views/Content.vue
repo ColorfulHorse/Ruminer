@@ -26,6 +26,7 @@ import { Component, Vue } from 'vue-property-decorator'
 import { ipcRenderer } from 'electron'
 import CaptureManager from '../ocr/CaptureManager'
 import { IPC } from '@/constant/Constants'
+import { threadId } from 'worker_threads'
 
 @Component
 export default class Content extends Vue {
@@ -34,6 +35,7 @@ export default class Content extends Vue {
   inside = false
 
   mounted() {
+    console.log(`Content: ${threadId}`)
     CaptureManager.getInstance().start()
     this.inside = true
     setTimeout(() => {
@@ -113,6 +115,7 @@ export default class Content extends Vue {
 
   #inner {
     -webkit-app-region: drag;
+    -webkit-user-select: none;
     width: 100%;
     height: 100%;
     display: flex;
