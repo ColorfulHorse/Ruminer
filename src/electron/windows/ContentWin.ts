@@ -10,7 +10,7 @@ export class ContentWin extends BrowserWindow {
             fullscreen: false,
             frame: false,
             transparent: true,
-            focusable: true,
+            focusable: false,
             width: 800,
             height: 200,
             // maxWidth: 800,
@@ -18,14 +18,15 @@ export class ContentWin extends BrowserWindow {
             // resizable: false,
             movable: true,
             closable: true,
-            alwaysOnTop: true,
+            // alwaysOnTop: true,
             y: 0,
             // 隐藏任务栏图标
-            // skipTaskbar: true,
+            skipTaskbar: true,
             webPreferences: {
                 nodeIntegration: Boolean(process.env.ELECTRON_NODE_INTEGRATION),
                 nodeIntegrationInWorker: true
-            }
+            },
+            show: false
         })
         this.app = app
         this.init()
@@ -39,13 +40,6 @@ export class ContentWin extends BrowserWindow {
         this.on('closed', () => {
             log.info('closed content win')
             this.app.contentWin = null
-        })
-        // 锁定窗口大小
-        ipcMain.on(IPC.LOCK_CONTENT, (ev, size: Size) => {
-            // log.info(size)
-            // this.setResizable(false)
-            // this.setSize(size.width, size.height)
-            // this.setMaximumSize(size.width, size.height)
         })
         this.loadURL(this.app.indexUrl + '/#/content').then(() => {
           if (this.app.openDevTools) {

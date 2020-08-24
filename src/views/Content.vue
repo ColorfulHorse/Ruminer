@@ -40,9 +40,9 @@ export default class Content extends Vue {
     this.inside = true
     setTimeout(() => {
       this.inside = false
+      // ipcRenderer.send(IPC.LOCK_CONTENT)
     }, 2000)
     // const root = this.$refs.root as HTMLDivElement
-    // ipcRenderer.send(IPC.LOCK_CONTENT, { width: root.offsetWidth, height: root.offsetHeight })
   }
 
   get boxStyle() {
@@ -86,10 +86,6 @@ export default class Content extends Vue {
   close() {
     CaptureManager.getInstance().stop()
     ipcRenderer.send(IPC.CLOSE_CONTENT)
-  }
-
-  lockWindow() {
-    ipcRenderer.send(IPC.LOCK_CONTENT)
   }
 }
 </script>

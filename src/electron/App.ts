@@ -197,6 +197,14 @@ export default class App {
       // 更改快捷键
       return HotKeyUtil.register(hotkey, this)
     })
+
+    // 锁定窗口大小
+    ipcMain.on(IPC.LOCK_CONTENT, () => {
+      if (this.contentWin != null) {
+        this.contentWin.setFocusable(false)
+        // this.contentWin.blur()
+      }
+    })
   }
 
   showMain() {
@@ -239,12 +247,11 @@ export default class App {
       this.captureWin.close()
     }
     if (CommonUtil.checkConfig(this)) {
-      if (this.contentWin != null) {
-        this.contentWin.setAlwaysOnTop(true)
-        this.contentWin.show()
-      } else {
+      if (this.contentWin == null) {
         this.contentWin = new ContentWin(this)
       }
+      this.contentWin.setAlwaysOnTop(true, 'screen-saver', 999)
+      this.contentWin.show()
     }
   }
 
@@ -252,9 +259,6 @@ export default class App {
     if (this.contentWin != null) {
       this.contentWin.setAlwaysOnTop(false)
     }
-    // if (this.contentWin != null) {
-    //   this.contentWin.close()
-    // }
     if (this.captureWin == null) {
       this.captureWin = new CaptureWin(this)
     }
