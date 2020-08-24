@@ -250,6 +250,9 @@ export default class App {
       if (this.contentWin == null) {
         this.contentWin = new ContentWin(this)
       }
+      // macOS
+      // app.dock.hide()
+      // this.contentWin.setVisibleOnAllWorkspaces(true)
       this.contentWin.setAlwaysOnTop(true, 'screen-saver', 999)
       this.contentWin.show()
     }
