@@ -1,9 +1,10 @@
 import { BrowserWindow } from 'electron'
 import App from '../App'
-export class CaptureWin extends BrowserWindow {
+export class CaptureWin {
   app: App
+  win: BrowserWindow
   constructor(app: App) {
-    super({
+    this.win = new BrowserWindow({
       maximizable: false,
       resizable: false,
       fullscreen: true,
@@ -20,10 +21,10 @@ export class CaptureWin extends BrowserWindow {
   }
 
   init() {
-    this.on('closed', () => {
+    this.win.on('closed', () => {
       this.app.captureWin = null
     })
-    this.loadURL(this.app.indexUrl + '/#/overlay').then(() => {
+    this.win.loadURL(this.app.indexUrl + '/#/overlay').then(() => {
       // this.webContents.openDevTools()
     })
   }

@@ -6,6 +6,7 @@
           <transition name="fade">
             <ul id="actions" v-if="inside">
               <li @click="capture"><i class="el-icon-scissors"/></li>
+              <li @click="selectWindow"><i class="el-icon-windows"/></li>
               <li @click="minus"><i class="el-icon-minus"/></li>
               <li @click="plus"><i class="el-icon-plus"/></li>
               <li @click="close"><i class="el-icon-close"/></li>
@@ -58,6 +59,10 @@ export default class Content extends Vue {
 
   capture() {
     ipcRenderer.send(IPC.SELECT_AREA)
+  }
+
+  selectWindow() {
+    // remote.dialog.showMessageBox()
   }
 
   minus() {
@@ -161,14 +166,14 @@ export default class Content extends Vue {
       color: transparent;
       text-align: center;
       align-self: center;
-      overflow: scroll;
+      overflow: hidden;
       /*background-image: linear-gradient(to bottom, blue, red);*/
       /*-webkit-background-clip: text;*/
       color: #42b983;
       letter-spacing: 1px;
       text-shadow: 1px 1px 5px rgba($color: #000000, $alpha: 0.5);
     }
-    p::-webkit-scrollbar{
+    p::-webkit-scrollbar {
       display: none;
     }
   }

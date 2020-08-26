@@ -21,7 +21,7 @@ export default class CommonUtil {
       })
       notification.on('click', () => {
         if (app.mainWin != null) {
-          app.mainWin.webContents.send(IPC.ROUTE_API_CONFIG)
+          app.mainWin.win.webContents.send(IPC.ROUTE_API_CONFIG)
           app.showMain()
         }
       })

@@ -1,17 +1,23 @@
 import { ContentWin } from './windows/ContentWin'
 
-import { app, BrowserWindow, globalShortcut, ipcMain, Menu, protocol, dialog, Notification, Tray } from 'electron'
+import { app, BrowserWindow, globalShortcut, ipcMain, Menu, Notification, protocol, Tray } from 'electron'
 import { createProtocol, } from 'vue-cli-plugin-electron-builder/lib'
-import { HotKeys, IPC } from '@/constant/Constants'
+import { IPC } from '@/constant/Constants'
 import { MainWin } from './windows/MainWin'
 import { CaptureWin } from './windows/CaptureWin'
-import { Rect } from '@/graphics/Graphics'
 import path from 'path'
 import log from 'electron-log'
 import conf, { HotKey, HotKeyConf } from '@/config/Conf'
 import store from '@/store/index'
 import HotKeyUtil from '@/utils/HotKeyUtil'
 import CommonUtil from '@/utils/CommonUtil'
+import * as ref from 'ref-napi'
+// import { DModel as M, DStruct, U } from 'win32-api'
+// import StructDi from 'ref-struct-di'
+// import { FModel } from 'win32-def'
+// import { Win32Fns } from 'win32-api/dist/lib/user32/api'
+
+// const Struct = StructDi(ref)
 
 'use strict'
 declare const __static: string
@@ -22,11 +28,13 @@ export default class App {
   mainWin: MainWin | null = null
   captureWin: CaptureWin | null = null
   contentWin: ContentWin | null = null
-  openDevTools = false
+  openDevTools = true
+  // user32: FModel.ExpandFnModel<Win32Fns>
 
 
   constructor() {
     protocol.registerSchemesAsPrivileged([{ scheme: 'app', privileges: { secure: true, standard: true } }])
+    // this.user32 = U.load()
     this.init().then(() => {
       Menu.setApplicationMenu(null)
       this.initTray()
@@ -90,7 +98,7 @@ export default class App {
       if (oldValid !== hotkey.valid) {
         if (this.mainWin != null) {
           // 更新快捷键状态
-          this.mainWin.webContents.send(IPC.HOTKEY_INVALID, hotkey)
+          this.mainWin.win.webContents.send(IPC.HOTKEY_INVALID, hotkey)
         }
       }
       return hotkey.valid
@@ -123,7 +131,7 @@ export default class App {
       {
         label: '退出', click: () => {
           if (this.contentWin != null) {
-            this.contentWin.close()
+            this.contentWin.win.close()
           }
           app.quit()
         }
@@ -132,9 +140,9 @@ export default class App {
     this.tray.setContextMenu(menu)
     this.tray.on('double-click', () => {
       if (this.mainWin != null) {
-        if (this.mainWin.isMinimized()) this.mainWin.restore()
-        this.mainWin.show()
-        this.mainWin.focus()
+        if (this.mainWin.win.isMinimized()) this.mainWin.win.restore()
+        this.mainWin.win.show()
+        this.mainWin.win.focus()
       }
     })
   }
@@ -145,7 +153,6 @@ export default class App {
   private initIpc() {
     // 打开调试
     ipcMain.on(IPC.OPEN_DEVTOOL, () => {
-      log.info(IPC.OPEN_DEVTOOL)
       const focus = BrowserWindow.getFocusedWindow()
       if (focus != null) {
         log.info(focus.id)
@@ -160,6 +167,15 @@ export default class App {
     ipcMain.on(IPC.SELECT_AREA, () => {
       this.showOverlay()
     })
+
+    ipcMain.handle(IPC.GET_SCREEN, (event, id: number) => {
+      // 根据类型创建构造体实例
+      // const rect: M.RECT_Struct = new Struct(DStruct.RECT)()
+      // this.user32.GetWindowRect(id, rect.ref())
+      // log.info(rect)
+      // return rect
+    })
+
 
     ipcMain.on(IPC.SELECT_WINDOW, () => {
       // if (this.mainWin != null) {
@@ -189,7 +205,7 @@ export default class App {
     })
     ipcMain.on(IPC.CLOSE_CONTENT, () => {
       if (this.contentWin != null) {
-        this.contentWin.close()
+        this.contentWin.win.close()
       }
     })
 
@@ -201,17 +217,18 @@ export default class App {
     // 锁定窗口大小
     ipcMain.on(IPC.LOCK_CONTENT, () => {
       if (this.contentWin != null) {
-        this.contentWin.setFocusable(false)
-        // this.contentWin.blur()
+        this.contentWin.win.setFocusable(false)
+        // this.contentWin.win.blur()
       }
     })
+
   }
 
   showMain() {
     if (this.mainWin != null) {
-      if (this.mainWin.isMinimized()) this.mainWin.restore()
-      this.mainWin.show()
-      this.mainWin.focus()
+      if (this.mainWin.win.isMinimized()) this.mainWin.win.restore()
+      this.mainWin.win.show()
+      this.mainWin.win.focus()
     }
   }
 
@@ -244,7 +261,7 @@ export default class App {
    */
   showContent() {
     if (this.captureWin != null) {
-      this.captureWin.close()
+      this.captureWin.win.close()
     }
     if (CommonUtil.checkConfig(this)) {
       if (this.contentWin == null) {
@@ -252,15 +269,15 @@ export default class App {
       }
       // macOS
       // app.dock.hide()
-      // this.contentWin.setVisibleOnAllWorkspaces(true)
-      this.contentWin.setAlwaysOnTop(true, 'screen-saver', 999)
-      this.contentWin.show()
+      // this.contentWin.win.setVisibleOnAllWorkspaces(true)
+      this.contentWin.win.setAlwaysOnTop(true, 'screen-saver', 999)
+      this.contentWin.win.show()
     }
   }
 
   showOverlay() {
     if (this.contentWin != null) {
-      this.contentWin.setAlwaysOnTop(false)
+      this.contentWin.win.setAlwaysOnTop(false)
     }
     if (this.captureWin == null) {
       this.captureWin = new CaptureWin(this)

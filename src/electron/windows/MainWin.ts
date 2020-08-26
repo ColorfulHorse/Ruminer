@@ -1,11 +1,12 @@
 import { BrowserWindow, ipcMain } from 'electron'
 import App from '../App'
 
-export class MainWin extends BrowserWindow {
+export class MainWin {
   app: App
+  win: BrowserWindow
   after: (() => void) | null = null
   constructor(app: App, after?: () => void) {
-    super({
+    this.win = new BrowserWindow({
       width: 800,
       height: 600,
       minWidth: 800,
@@ -23,17 +24,17 @@ export class MainWin extends BrowserWindow {
   }
 
   init() {
-    this.on('close', (event) => {
-      this.hide()
-      this.setSkipTaskbar(true)
+    this.win.on('close', (event) => {
+      this.win.hide()
+      this.win.setSkipTaskbar(true)
       event.preventDefault()
     })
-    this.on('closed', () => {
+    this.win.on('closed', () => {
       this.app.mainWin = null
     })
-    this.loadURL(`${this.app.indexUrl}/#/home`).then(() => {
+    this.win.loadURL(`${this.app.indexUrl}/#/home`).then(() => {
       if (this.app.openDevTools) {
-        this.webContents.openDevTools()
+        this.win.webContents.openDevTools()
       }
       if (this.after) {
         this.after()

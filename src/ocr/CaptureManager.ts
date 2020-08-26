@@ -1,8 +1,10 @@
-import { desktopCapturer, remote } from 'electron'
+import { desktopCapturer, ipcRenderer, Display, remote, BrowserWindow } from 'electron'
 import { Rect } from '@/graphics/Graphics'
 import { OcrClient } from './OcrClient'
 import conf from '../config/Conf'
-import log from 'electron-log'
+import { IPC } from '@/constant/Constants'
+import { MainLog } from '@/utils/MainLog'
+import { DModel } from 'win32-api'
 
 declare const __static: string
 export default class CaptureManager {
@@ -29,35 +31,47 @@ export default class CaptureManager {
     }
     const rect: Rect | null = conf.common.get('captureRect')
     if (rect != null) {
-      // await OcrClient.getInstance().init()
       this.capturing = true
-      const { width, height } = remote.screen.getPrimaryDisplay().bounds
-      remote.screen.getAllDisplays().forEach(value => log.info('workSize:', value.workAreaSize))
-      desktopCapturer.getSources({ types: ['screen'] })
-        .then(sources => {
-          sources.forEach(source => {
-            navigator.mediaDevices.getUserMedia({
-              audio: false,
-              video: ({
-                // width: 1280,
-                // height: 720,
-                // deviceId: source.id,
-                mandatory: {
-                  chromeMediaSource: 'desktop',
-                  chromeMediaSourceId: source.id,
-                  minWidth: width,
-                  maxWidth: width,
-                  minHeight: height,
-                  maxHeight: height
-                }
-              } as any)
-            })
-              .then(stream => {
-                this.startCaptureImage(stream)
-              })
-              .catch(err => console.log('capture', err))
-          })
+      const screen = remote.screen
+      const { width, height } = screen.getPrimaryDisplay().bounds
+      const sources = await desktopCapturer.getSources({ types: ['screen', 'window'] })
+      const displays = screen.getAllDisplays()
+      displays.forEach((value: Display) => MainLog.info(`display:id ${value.id}`))
+      sources.forEach(source => {
+        MainLog.info(`name: ${source.name}, id: ${source.id}, display_id: ${source.display_id}`)
+        const sourceId = source.id.split(':')[1]
+        const appId = parseInt(sourceId)
+        ipcRenderer.invoke(IPC.GET_SCREEN, appId).then((rect: DModel.RECT_Struct) => {
+
         })
+        // const rect = Eagle.getWindowRect(appId)
+        // MainLog.info(rect)
+      })
+      // desktopCapturer.getSources({ types: ['screen'] })
+      //   .then(sources => {
+      //     sources.forEach(source => {
+      //       navigator.mediaDevices.getUserMedia({
+      //         audio: false,
+      //         video: ({
+      //           // width: 1280,
+      //           // height: 720,
+      //           // deviceId: source.id,
+      //           mandatory: {
+      //             chromeMediaSource: 'desktop',
+      //             chromeMediaSourceId: source.id,
+      //             minWidth: width,
+      //             maxWidth: width,
+      //             minHeight: height,
+      //             maxHeight: height
+      //           }
+      //         } as any)
+      //       })
+      //         .then(stream => {
+      //           this.startCaptureImage(stream)
+      //         })
+      //         .catch(err => console.log('capture', err))
+      //     })
+      //   })
     }
   }
 

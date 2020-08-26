@@ -9,6 +9,10 @@ html, body {
   padding: 0;
 }
 
+*::-webkit-scrollbar {
+  display: none;
+}
+
 .el-dialog__body {
   padding: 15px !important;
 }

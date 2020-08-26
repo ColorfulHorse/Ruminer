@@ -1,11 +1,12 @@
 import  log  from 'electron-log'
 import { BrowserWindow, ipcMain, Size } from 'electron'
 import App from '../App'
-import { IPC } from '../../constant/Constants'
-export class ContentWin extends BrowserWindow {
+import { IPC } from '@/constant/Constants'
+export class ContentWin {
     app: App
+    win: BrowserWindow
     constructor(app: App) {
-        super({
+        this.win = new BrowserWindow({
             maximizable: false,
             fullscreen: false,
             frame: false,
@@ -24,7 +25,8 @@ export class ContentWin extends BrowserWindow {
             skipTaskbar: true,
             webPreferences: {
                 nodeIntegration: Boolean(process.env.ELECTRON_NODE_INTEGRATION),
-                nodeIntegrationInWorker: true
+                nodeIntegrationInWorker: true,
+                enableRemoteModule: true
             },
             show: false
         })
@@ -33,17 +35,17 @@ export class ContentWin extends BrowserWindow {
     }
 
     init() {
-        this.on('close', () => {
+        this.win.on('close', () => {
             log.info('close content win')
-            this.webContents.send(IPC.FINISH_RECOGNIZE)
+            this.win.webContents.send(IPC.FINISH_RECOGNIZE)
         })
-        this.on('closed', () => {
+        this.win.on('closed', () => {
             log.info('closed content win')
             this.app.contentWin = null
         })
-        this.loadURL(this.app.indexUrl + '/#/content').then(() => {
+        this.win.loadURL(this.app.indexUrl + '/#/content').then(() => {
           if (this.app.openDevTools) {
-            this.webContents.openDevTools()
+              this.win.webContents.openDevTools()
           }
         })
     }

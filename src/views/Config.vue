@@ -33,7 +33,7 @@
       <el-form-item label="百度 OcrSecret" prop="ocrSecret">
         <el-input v-model="formData.ocrSecret" @input="ocrSecret"/>
       </el-form-item>
-      <el-form-item label="百度翻译 AppId" prop="transId">
+      <el-form-item label="百度翻译 AppId" prop="transAppId">
         <el-input v-model="formData.transAppId" @input="transAppId"/>
       </el-form-item>
       <el-form-item label="百度翻译 AppSecret" prop="transSecret">
@@ -69,7 +69,7 @@ export default class Config extends Vue {
     ocrSecret: [
       {required: true, message: '请输入百度ocr api secret', trigger: 'blur'}
     ],
-    transId: [
+    transAppId: [
       {required: true, message: '请输入百度翻译 appId', trigger: 'blur'}
     ],
     transSecret: [

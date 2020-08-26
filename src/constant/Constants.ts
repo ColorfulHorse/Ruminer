@@ -12,6 +12,7 @@ export class IPC {
   static readonly FINISH_RECOGNIZE = 'FINISH_RECOGNIZE'
   static readonly HOTKEY_INVALID = 'CHANGE_HOTKEY'
   static readonly CHANGE_HOTKEY = 'CHANGE_HOTKEY'
+  static readonly GET_SCREEN = 'GET_SCREEN'
 
   // 主界面切换到配置页
   static readonly ROUTE_API_CONFIG = 'ROUTE_API_CONFIG'
