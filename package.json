@@ -27,15 +27,18 @@
     "electron-log": "^4.2.2",
     "electron-store": "^5.2.0",
     "element-ui": "^2.4.5",
+    "ffi-napi": "^3.0.1",
     "md5": "^2.3.0",
     "qs": "^6.9.4",
+    "ref-napi": "^3.0.0",
     "string-similarity": "^4.0.2",
     "tesseract.js": "2.0.0",
     "vue": "^2.6.11",
     "vue-class-component": "^7.2.3",
     "vue-property-decorator": "^8.4.2",
     "vuex": "^3.4.0",
-    "vuex-class": "^0.3.2"
+    "vuex-class": "^0.3.2",
+    "win32-api": "^9.5.0"
   },
   "devDependencies": {
     "@types/ref-napi": "^1.4.0",

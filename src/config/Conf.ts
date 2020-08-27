@@ -9,6 +9,20 @@ export interface RootConf {
   common: ElectronStore<CommonConf>
   hotkey: ElectronStore<HotKeyConf>
   translate: ElectronStore<TranslateConf>
+  temp: ElectronStore<TempConf>
+}
+
+export interface TempConf {
+  // 截取区域
+  captureRect: Rect | null
+  // 捕获视频源
+  source: MediaSource | null
+}
+
+export interface MediaSource {
+  width: number,
+  height: number,
+  sourceId: string
 }
 
 export interface CommonConf {
@@ -47,6 +61,13 @@ export default {
     name: 'commonConf',
     defaults: {
       captureRect: null
+    }
+  }),
+  temp: new ElectronStore<TempConf>({
+    name: 'tempConf',
+    defaults: {
+      captureRect: null,
+      source: null
     }
   }),
   hotkey: new ElectronStore<HotKeyConf>({

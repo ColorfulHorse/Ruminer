@@ -28,23 +28,6 @@ export default class CommonUtil {
       notification.show()
       return false
     }
-    const rect = conf.common.get('captureRect')
-    if (rect == null) {
-      // app.showOverlay()
-      // const notification = new Notification({
-      //   title: 'api 设置',
-      //   body: 'api key 未设置，无法正常使用，点击设置',
-      //   silent: false,
-      //   timeoutType: 'default'
-      // })
-      // notification.on('click', () => {
-      //   if (app.mainWin != null) {
-      //     app.mainWin.webContents.send(IPC.ROUTE_API_CONFIG)
-      //     app.showMain()
-      //   }
-      // })
-      // notification.show()
-    }
-    return rect != null
+    return true
   }
 }

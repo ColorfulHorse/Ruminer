@@ -24,13 +24,14 @@
 <script lang="ts">
 
 import { Component, Vue } from 'vue-property-decorator'
-import { ipcRenderer } from 'electron'
+import { DesktopCapturerSource, ipcRenderer } from 'electron'
 import CaptureManager from '../ocr/CaptureManager'
 import { IPC } from '@/constant/Constants'
 import { threadId } from 'worker_threads'
 
 @Component
 export default class Content extends Vue {
+
   textSize = 24
 
   inside = false
@@ -58,7 +59,7 @@ export default class Content extends Vue {
   }
 
   capture() {
-    ipcRenderer.send(IPC.SELECT_AREA)
+    ipcRenderer.send(IPC.OPEN_CAPTURE_WINDOW)
   }
 
   selectWindow() {

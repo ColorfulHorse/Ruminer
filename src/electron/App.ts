@@ -1,6 +1,6 @@
 import { ContentWin } from './windows/ContentWin'
 
-import { app, BrowserWindow, globalShortcut, ipcMain, Menu, Notification, protocol, Tray } from 'electron'
+import { app, BrowserWindow, globalShortcut, ipcMain, Menu, Notification, protocol, Tray, screen, Rectangle, DesktopCapturerSource } from 'electron'
 import { createProtocol, } from 'vue-cli-plugin-electron-builder/lib'
 import { IPC } from '@/constant/Constants'
 import { MainWin } from './windows/MainWin'
@@ -12,12 +12,14 @@ import store from '@/store/index'
 import HotKeyUtil from '@/utils/HotKeyUtil'
 import CommonUtil from '@/utils/CommonUtil'
 import * as ref from 'ref-napi'
-// import { DModel as M, DStruct, U } from 'win32-api'
-// import StructDi from 'ref-struct-di'
-// import { FModel } from 'win32-def'
-// import { Win32Fns } from 'win32-api/dist/lib/user32/api'
+import { DModel as M, DStruct, U, DTypes } from 'win32-api'
+import StructDi from 'ref-struct-di'
+import { FModel } from 'win32-def'
+import { Win32Fns } from 'win32-api/dist/lib/user32/api'
+import ffi from 'ffi-napi'
+import SelectWin from '@/electron/windows/SelectWin'
 
-// const Struct = StructDi(ref)
+const Struct = StructDi(ref)
 
 'use strict'
 declare const __static: string
@@ -28,13 +30,14 @@ export default class App {
   mainWin: MainWin | null = null
   captureWin: CaptureWin | null = null
   contentWin: ContentWin | null = null
+  selectWin: SelectWin | null = null
   openDevTools = true
-  // user32: FModel.ExpandFnModel<Win32Fns>
+  user32: FModel.ExpandFnModel<Win32Fns>
 
 
   constructor() {
     protocol.registerSchemesAsPrivileged([{ scheme: 'app', privileges: { secure: true, standard: true } }])
-    // this.user32 = U.load()
+    this.user32 = U.load()
     this.init().then(() => {
       Menu.setApplicationMenu(null)
       this.initTray()
@@ -164,50 +167,71 @@ export default class App {
       log.info(args)
     })
 
-    ipcMain.on(IPC.SELECT_AREA, () => {
+    ipcMain.on(IPC.OPEN_CAPTURE_WINDOW, (event, sourceId: string) => {
+      const {width, height} = screen.getPrimaryDisplay().bounds
+      conf.temp.set('source', {
+        width: width,
+        height: height,
+        sourceId: sourceId
+      })
       this.showOverlay()
     })
 
-    ipcMain.handle(IPC.GET_SCREEN, (event, id: number) => {
-      // 根据类型创建构造体实例
-      // const rect: M.RECT_Struct = new Struct(DStruct.RECT)()
-      // this.user32.GetWindowRect(id, rect.ref())
-      // log.info(rect)
-      // return rect
+    ipcMain.on(IPC.OPEN_SELECT_WINDOW, (event, sources: string) => {
+      if (this.selectWin == null) {
+        this.selectWin = new SelectWin(this, sources)
+      }
+      this.selectWin.win.show()
     })
 
-
-    ipcMain.on(IPC.SELECT_WINDOW, () => {
-      // if (this.mainWin != null) {
-      //   dialog.showMessageBox(this.mainWin, {
-      //     type: 'warning',
-      //     message: '快捷键冲突'
-      //   })
-      // }
-      // app.on('browser-window-focus', (event: Event, window: BrowserWindow) => {
-      //   log.info(`窗口名${window.getTitle()}`)
-      // })
-      // const current = screen.getDisplayNearestPoint(screen.getCursorScreenPoint())
-      // const win = screen.getDisplayNearestPoint({x: 0, y: 0})
-      // log.info(`窗口名${win.id}`)
-      // log.info(`当前窗口名${current.id}`)
+    // 选择窗口完成
+    ipcMain.on(IPC.SELECT_WINDOW_FINISH, (event, sourceId) => {
+      if (this.selectWin != null) {
+        this.selectWin.win.close()
+      }
+      const hWnd = parseInt(sourceId.split(':')[1])
+      // win32 api获取窗口位置
+      const rect: M.RECT_Struct = new Struct(DStruct.RECT)()
+      const buf = Buffer.alloc(254)
+      const len = this.user32.GetWindowTextW(hWnd, buf, buf.byteLength)
+      const title = buf.toString('ucs2').replace('/\0+$/', '')
+      const ok = this.user32.GetWindowRect(hWnd, rect.ref())
+      let rectangle: Rectangle = {
+        x: rect.left,
+        y: rect.top,
+        width: rect.right - rect.left,
+        height: rect.bottom - rect.top
+      }
+      // 屏幕缩放比例转换
+      rectangle = screen.screenToDipRect(null, rectangle)
+      if (ok && len > 0) {
+        log.info(`title:${title}, left:${rect.left}, top:${rect.top}, right:${rect.right}, bottom:${rect.bottom}`)
+        log.info(`title:${title}, left:${rectangle.x}, top:${rectangle.y}, width:${rectangle.width}, height:${rectangle.height}`)
+        conf.temp.set('source', {
+          width: rectangle.width,
+          height: rectangle.height,
+          sourceId: sourceId
+        })
+        this.showOverlay(rectangle)
+      }
     })
-    // app.on('browser-window-focus', (event: Event, window: BrowserWindow) => {
-    //   log.info(`当前窗口名${window.getTitle()}`)g
-    // })
 
     ipcMain.on(IPC.CLOSE_OVERLAY, () => {
-      this.showContent()
+      if (this.captureWin != null) {
+        this.captureWin.win.close()
+      }
     })
 
     ipcMain.on(IPC.OPEN_CONTENT, () => {
       this.showContent()
     })
+
     ipcMain.on(IPC.CLOSE_CONTENT, () => {
       if (this.contentWin != null) {
         this.contentWin.win.close()
       }
     })
+
 
     ipcMain.handle(IPC.CHANGE_HOTKEY, async (event, hotkey: HotKey) => {
       // 更改快捷键
@@ -222,6 +246,34 @@ export default class App {
       }
     })
 
+  }
+
+  /**
+   * 遍历屏幕窗口回调
+   */
+  createEnumWinProc(): M.WNDENUMPROC {
+    const enumWindowsProc = ffi.Callback(
+      DTypes.BOOL,
+      [DTypes.HWND, DTypes.LPARAM],
+      (hWnd: M.HWND, lParam: M.LPARAM): M.BOOLEAN => {
+        if (this.user32.IsWindowVisible(hWnd)) {
+          const rect: M.RECT_Struct = new Struct(DStruct.RECT)()
+          const buf = Buffer.alloc(254)
+          const len = this.user32.GetWindowTextW(hWnd, buf, buf.byteLength)
+          const title = buf.toString('ucs2').replace('/\0+$/', '')
+          const ok = this.user32.GetWindowRect(hWnd, rect.ref())
+          if (ok && len > 0) {
+            log.info(`title:${title}, left:${rect.left}, top:${rect.top}, right:${rect.right}, bottom:${rect.bottom}`)
+          }
+        }
+        return true
+      }
+    )
+    process.on('exit', () => {
+      // tslint:disable-next-line:no-unused-expression
+      typeof enumWindowsProc // avoid gc
+    })
+    return enumWindowsProc
   }
 
   showMain() {
@@ -250,9 +302,7 @@ export default class App {
       // }
     }
     if (this.mainWin === null) {
-      this.mainWin = new MainWin(this, () => {
-        this.showContent()
-      })
+      this.mainWin = new MainWin(this)
     }
   }
 
@@ -275,12 +325,12 @@ export default class App {
     }
   }
 
-  showOverlay() {
+  showOverlay(rect?: Rectangle) {
     if (this.contentWin != null) {
       this.contentWin.win.setAlwaysOnTop(false)
     }
     if (this.captureWin == null) {
-      this.captureWin = new CaptureWin(this)
+      this.captureWin = new CaptureWin(this, rect)
     }
   }
 }

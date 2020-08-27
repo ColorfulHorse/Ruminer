@@ -26,52 +26,28 @@ export default class CaptureManager {
 
   // 开始捕捉屏幕
   async start() {
-    if (this.capturing) {
-      return
-    }
-    const rect: Rect | null = conf.common.get('captureRect')
-    if (rect != null) {
-      this.capturing = true
-      const screen = remote.screen
-      const { width, height } = screen.getPrimaryDisplay().bounds
-      const sources = await desktopCapturer.getSources({ types: ['screen', 'window'] })
-      const displays = screen.getAllDisplays()
-      displays.forEach((value: Display) => MainLog.info(`display:id ${value.id}`))
-      sources.forEach(source => {
-        MainLog.info(`name: ${source.name}, id: ${source.id}, display_id: ${source.display_id}`)
-        const sourceId = source.id.split(':')[1]
-        const appId = parseInt(sourceId)
-        ipcRenderer.invoke(IPC.GET_SCREEN, appId).then((rect: DModel.RECT_Struct) => {
-
-        })
-        // const rect = Eagle.getWindowRect(appId)
-        // MainLog.info(rect)
+    const source = conf.temp.get('source')
+    if (source) {
+      navigator.mediaDevices.getUserMedia({
+        audio: false,
+        video: ({
+          // width: 1280,
+          // height: 720,
+          // deviceId: source.id,
+          mandatory: {
+            chromeMediaSource: 'desktop',
+            chromeMediaSourceId: source.sourceId,
+            minWidth: source.width,
+            maxWidth: source.width,
+            minHeight: source.height,
+            maxHeight: source.height
+          }
+        } as any)
       })
-      // desktopCapturer.getSources({ types: ['screen'] })
-      //   .then(sources => {
-      //     sources.forEach(source => {
-      //       navigator.mediaDevices.getUserMedia({
-      //         audio: false,
-      //         video: ({
-      //           // width: 1280,
-      //           // height: 720,
-      //           // deviceId: source.id,
-      //           mandatory: {
-      //             chromeMediaSource: 'desktop',
-      //             chromeMediaSourceId: source.id,
-      //             minWidth: width,
-      //             maxWidth: width,
-      //             minHeight: height,
-      //             maxHeight: height
-      //           }
-      //         } as any)
-      //       })
-      //         .then(stream => {
-      //           this.startCaptureImage(stream)
-      //         })
-      //         .catch(err => console.log('capture', err))
-      //     })
-      //   })
+        .then(stream => {
+          this.startCaptureImage(stream)
+        })
+        .catch(err => console.log('capture', err))
     }
   }
 
@@ -92,7 +68,7 @@ export default class CaptureManager {
       await video.play()
       this.timer = window.setInterval(async () => {
         // 截取屏幕图片
-        const rect: Rect | null = conf.common.get('captureRect')
+        const rect: Rect | null = conf.temp.get('captureRect')
         if (rect != null) {
           // canvas.height = rect.bottom - rect.top
           // canvas.width = rect.right - rect.left

@@ -1,5 +1,5 @@
 import { HotKey, HotKeyConf } from '@/config/Conf'
-import { HotKeys } from '@/constant/Constants'
+import { HotKeys, IPC } from '@/constant/Constants'
 import App from '@/electron/App'
 import { globalShortcut } from 'electron'
 import log from 'electron-log'
@@ -14,12 +14,16 @@ export default class HotKeyUtil {
     switch (hotkey.key) {
       case HotKeys.CAPTURE_SCREEN:
         callback = () => {
-          app.showOverlay()
+          if (app.mainWin) {
+            app.mainWin.win.webContents.send(IPC.CAPTURE_SCREEN)
+          }
         }
         break
       case HotKeys.CAPTURE_WINDOW:
         callback = () => {
-          log.info('todo: capture window')
+          if (app.mainWin) {
+            app.mainWin.win.webContents.send(IPC.CAPTURE_WINDOW)
+          }
         }
         break
       case HotKeys.START_RECOGNIZE:

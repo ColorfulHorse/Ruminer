@@ -114,7 +114,7 @@ export default class Overlay extends Vue {
   confirm() {
     this.showAction = false
     MainLog.info(this.rect)
-    this.$conf.common.set('captureRect', this.rect)
+    this.$conf.temp.set('captureRect', this.rect)
     this.clear()
     // 打开显示翻译结果窗口
     ipcRenderer.send(IPC.OPEN_CONTENT)

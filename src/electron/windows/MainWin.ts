@@ -11,6 +11,8 @@ export class MainWin {
       height: 600,
       minWidth: 800,
       minHeight: 600,
+      maxWidth: 800,
+      maxHeight: 600,
       maximizable: false,
       webPreferences: {
         nodeIntegration: Boolean(process.env.ELECTRON_NODE_INTEGRATION)

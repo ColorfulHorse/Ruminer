@@ -6,6 +6,7 @@ import KeyMap from '@/views/KeyMap.vue'
 import Config from '@/views/Config.vue'
 import Overlay from '@/views/Overlay.vue'
 import Content from '@/views/Content.vue'
+import Select from '@/views/Select.vue'
 
 Vue.use(VueRouter)
 
@@ -56,6 +57,11 @@ const routes: Array<RouteConfig> = [
     path: '/content',
     name: 'Content',
     component: Content
+  },
+  {
+    path: '/select',
+    name: 'Select',
+    component: Select
   }
 ]
 

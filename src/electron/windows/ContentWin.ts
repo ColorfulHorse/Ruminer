@@ -1,10 +1,16 @@
 import  log  from 'electron-log'
-import { BrowserWindow, ipcMain, Size } from 'electron'
+import { BrowserWindow, ipcMain, Size, dialog } from 'electron'
 import App from '../App'
 import { IPC } from '@/constant/Constants'
 export class ContentWin {
     app: App
     win: BrowserWindow
+
+    /**
+     *
+     * @param app
+     * @param sourceId 捕获源的id
+     */
     constructor(app: App) {
         this.win = new BrowserWindow({
             maximizable: false,
@@ -40,7 +46,6 @@ export class ContentWin {
             this.win.webContents.send(IPC.FINISH_RECOGNIZE)
         })
         this.win.on('closed', () => {
-            log.info('closed content win')
             this.app.contentWin = null
         })
         this.win.loadURL(this.app.indexUrl + '/#/content').then(() => {

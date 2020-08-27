@@ -1,9 +1,12 @@
 export class IPC {
   static readonly OPEN_DEVTOOL = 'OPEN_DEVTOOL'
-  // 选择屏幕区域
-  static readonly SELECT_AREA = 'SELECT_AREA'
-  // 选择窗口
-  static readonly SELECT_WINDOW = 'SELECT_WINDOW'
+  // 打开裁剪区域窗口
+  static readonly OPEN_CAPTURE_WINDOW = 'OPEN_CAPTURE_WINDOW'
+  // 打开窗口选择窗口
+  static readonly OPEN_SELECT_WINDOW = 'OPEN_SELECT_WINDOW'
+  static readonly CAPTURE_WINDOW = 'CAPTURE_WINDOW'
+  static readonly CAPTURE_SCREEN = 'CAPTURE_SCREEN'
+  static readonly SELECT_WINDOW_FINISH = 'SELECT_WINDOW_FINISH'
   static readonly CLOSE_OVERLAY = 'CLOSE_OVERLAY'
   // 打开检测结果窗口
   static readonly OPEN_CONTENT = 'OPEN_CONTENT'

@@ -10,17 +10,17 @@
     </el-row>
     <el-row :gutter="20">
       <el-col :span="8">
-        <div class="action-wrapper" @click="selectArea">
+        <div class="action-wrapper" @click="captureScreen">
           <p class="action">捕获屏幕</p>
           <p class="tips">{{ $store.state.hotkey.captureScreen.value }}</p>
         </div>
       </el-col>
-<!--      <el-col :span="8">-->
-<!--        <div class="action-wrapper" @click="selectWindow">-->
-<!--          <p class="action">捕获窗口</p>-->
-<!--          <p class="tips">{{ $store.state.hotkey.captureWindow.value }}</p>-->
-<!--        </div>-->
-<!--      </el-col>-->
+      <el-col :span="8">
+        <div class="action-wrapper" @click="captureWindow">
+          <p class="action">捕获窗口</p>
+          <p class="tips">{{ $store.state.hotkey.captureWindow.value }}</p>
+        </div>
+      </el-col>
       <el-col :span="8">
         <div class="action-wrapper" @click="startRecognize">
           <p class="action">开始翻译</p>
@@ -34,22 +34,47 @@
 <script lang="ts">
 
 import { Component, Vue } from 'vue-property-decorator'
-import { ipcRenderer, desktopCapturer } from 'electron'
+import { ipcRenderer, desktopCapturer, remote } from 'electron'
 import { IPC } from '@/constant/Constants'
 import { MainLog } from '@/utils/MainLog'
 
 @Component
 export default class Main extends Vue {
-  selectArea() {
-    ipcRenderer.send(IPC.SELECT_AREA)
+  mounted() {
+    ipcRenderer.on(IPC.CAPTURE_WINDOW, () => {
+      this.captureWindow()
+    })
+
+    ipcRenderer.on(IPC.CAPTURE_SCREEN, () => {
+      this.captureScreen()
+    })
   }
 
-  // selectWindow() {
-  //   ipcRenderer.send(IPC.SELECT_WINDOW)
-  // }
+  captureScreen() {
+    this.capture('screen')
+  }
+
+  captureWindow() {
+    this.capture('window')
+  }
 
   startRecognize() {
-    ipcRenderer.send(IPC.OPEN_CONTENT)
+    // ipcRenderer.send(IPC.OPEN_CONTENT)
+  }
+
+  async capture(mode: 'screen' | 'window') {
+    if (mode === 'screen') {
+      const screen = remote.screen
+      const {width, height} = screen.getPrimaryDisplay().bounds
+      const sources = await desktopCapturer.getSources({types: ['screen']})
+      const source = sources[0]
+      ipcRenderer.send(IPC.OPEN_CAPTURE_WINDOW, source.id)
+    } else {
+      const sources = await desktopCapturer.getSources({types: ['window']})
+      ipcRenderer.send(IPC.OPEN_SELECT_WINDOW, JSON.stringify({
+        data: sources
+      }))
+    }
   }
 }
 </script>
