@@ -11,6 +11,7 @@
 
 ## bug list:
 - win32 api获取窗口位置rect略有偏移
+- externals vue-router 问题
 
 
 ## 流程整理
