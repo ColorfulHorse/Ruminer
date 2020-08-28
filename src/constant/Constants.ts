@@ -4,6 +4,7 @@ export class IPC {
   static readonly OPEN_CAPTURE_WINDOW = 'OPEN_CAPTURE_WINDOW'
   // 打开窗口选择窗口
   static readonly OPEN_SELECT_WINDOW = 'OPEN_SELECT_WINDOW'
+  static readonly CLOSE_SELECT_WINDOW = 'CLOSE_SELECT_WINDOW'
   static readonly CAPTURE_WINDOW = 'CAPTURE_WINDOW'
   static readonly CAPTURE_SCREEN = 'CAPTURE_SCREEN'
   static readonly SELECT_WINDOW_FINISH = 'SELECT_WINDOW_FINISH'

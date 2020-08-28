@@ -45,7 +45,7 @@ export default class App {
       this.initIpc()
       this.initMain()
       // this.initContent()
-    })
+    }).catch(err => {})
   }
 
   init() {
@@ -158,7 +158,6 @@ export default class App {
     ipcMain.on(IPC.OPEN_DEVTOOL, () => {
       const focus = BrowserWindow.getFocusedWindow()
       if (focus != null) {
-        log.info(focus.id)
         focus.webContents.openDevTools()
       }
     })
@@ -182,6 +181,12 @@ export default class App {
         this.selectWin = new SelectWin(this, sources)
       }
       this.selectWin.win.show()
+    })
+
+    ipcMain.on(IPC.CLOSE_SELECT_WINDOW, () => {
+      if (this.selectWin != null) {
+        this.selectWin.win.close()
+      }
     })
 
     // 选择窗口完成

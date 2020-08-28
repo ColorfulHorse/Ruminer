@@ -5,9 +5,16 @@
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width,initial-scale=1.0">
-  <meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline'; worker-src blob:" />
+<!--  <meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline'; worker-src blob:" />-->
   <!-- <script src="<%= BASE_URL %>tess/tesseract.min.js"></script> -->
   <link rel="icon" href="<%= BASE_URL %>favicon.ico">
+  <!-- 引入样式 -->
+  <link rel="stylesheet" href="<%= BASE_URL %>element/theme.css">
+  <!-- 引入组件库 -->
+  <script src="<%= BASE_URL %>vue/vue.min.js"></script>
+  <script src="<%= BASE_URL %>vue/vue-router.min.js"></script>
+  <script src="<%= BASE_URL %>element/index.js"></script>
+  <script src="<%= BASE_URL %>axios.min.js"></script>
   <title><%= htmlWebpackPlugin.options.title %></title>
 </head>
 

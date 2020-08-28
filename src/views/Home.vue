@@ -50,7 +50,7 @@ export default class Home extends Vue {
   colors = colors
 
   created() {
-    this.$router.push('home/main')
+    this.$router.push('main')
     ipcRenderer.on(IPC.ROUTE_API_CONFIG, () => {
       console.log(IPC.ROUTE_API_CONFIG)
       this.$router.push('config')

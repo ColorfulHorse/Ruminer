@@ -13,13 +13,14 @@ export default class SelectWin implements IWin{
     this.win = new BrowserWindow({
       maximizable: false,
       frame: false,
-      width: 250,
+      width: 300,
       height: 250,
-      // resizable: false,
+      resizable: false,
       movable: true,
       center: true,
       // 隐藏任务栏图标
       skipTaskbar: true,
+      alwaysOnTop: true,
       webPreferences: {
         nodeIntegration: Boolean(process.env.ELECTRON_NODE_INTEGRATION),
         nodeIntegrationInWorker: true,

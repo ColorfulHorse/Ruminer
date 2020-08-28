@@ -1,4 +1,3 @@
-import Vue from 'vue'
 import VueRouter, { RouteConfig } from 'vue-router'
 import Home from '@/views/Home.vue'
 import Main from '@/views/Main.vue'
@@ -8,11 +7,9 @@ import Overlay from '@/views/Overlay.vue'
 import Content from '@/views/Content.vue'
 import Select from '@/views/Select.vue'
 
-Vue.use(VueRouter)
-
 const routes: Array<RouteConfig> = [
   {
-    path: '/home',
+    path: '/',
     name: 'Home',
     component: Home,
     children: [

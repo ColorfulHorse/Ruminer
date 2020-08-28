@@ -31,7 +31,6 @@ import { threadId } from 'worker_threads'
 
 @Component
 export default class Content extends Vue {
-
   textSize = 24
 
   inside = false

@@ -34,7 +34,7 @@ export class MainWin {
     this.win.on('closed', () => {
       this.app.mainWin = null
     })
-    this.win.loadURL(`${this.app.indexUrl}/#/home`).then(() => {
+    this.win.loadURL(`${this.app.indexUrl}`).then(() => {
       if (this.app.openDevTools) {
         this.win.webContents.openDevTools()
       }
