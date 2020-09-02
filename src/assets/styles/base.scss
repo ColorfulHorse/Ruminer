@@ -17,6 +17,12 @@ html, body {
   padding: 15px !important;
 }
 
+.el-input.align-center {
+  input {
+    text-align: center;
+  }
+}
+
 .el-menu-item [class^="custom-icon-"] {
   margin-right: 5px;
   width: 24px;

@@ -1,7 +1,7 @@
 import conf from '@/config/Conf'
 import { Notification } from "electron"
 import App from '@/electron/App'
-import { IPC } from '@/constant/Constants'
+import { KEYS } from '@/electron/event/IPC'
 
 export default class CommonUtil {
   /**
@@ -21,7 +21,7 @@ export default class CommonUtil {
       })
       notification.on('click', () => {
         if (app.mainWin != null) {
-          app.mainWin.win.webContents.send(IPC.ROUTE_API_CONFIG)
+          app.mainWin.win.webContents.send(KEYS.ROUTE_API_CONFIG)
           app.showMain()
         }
       })

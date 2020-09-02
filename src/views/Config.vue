@@ -53,7 +53,9 @@ import { PayloadWrapper } from '@/store/PayloadWrapper'
 import { HotKeyConf, TranslateConf } from '@/config/Conf'
 import { ElementUIComponent } from 'element-ui/types/component'
 
-@Component
+@Component({
+  name: 'Config'
+})
 export default class Config extends Vue {
   formData = {
     ocrKey: this.$store.state.translate.baiduOcrApiKey,
@@ -81,6 +83,10 @@ export default class Config extends Vue {
 
   mounted() {
     (this.$refs.form as Form).validate()
+      .then(valid => {})
+      .catch(error => {
+        console.log(error)
+      })
   }
 
   get source() {

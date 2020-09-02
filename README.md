@@ -2,17 +2,13 @@
 
 
 ## todo list:
-- 选择窗口获取焦点
 - 由于不同窗口在不同渲染进程，考虑不使用vuex
 - 添加语句相似度过滤选项
-- 接入多个翻译api，拆分界面
-- 添加捕获单个窗口文本，防止遮挡
+- 接入多个翻译api，美化ui
 - 添加NLP
 
 ## bug list:
-- win32 api获取窗口位置rect略有偏移
-- externals vue-router 问题
-
+- win32 api获取窗口位置时，vs全屏状态top left值为 -9 -9
 
 ## 流程整理
 捕获单个窗口的画面检测文字

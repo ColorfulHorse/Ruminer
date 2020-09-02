@@ -1,10 +1,14 @@
 import App from '@/electron/App'
-import { BrowserWindow } from "electron"
+import { BrowserWindow, ipcMain, Rectangle, screen } from 'electron'
 import IWin from '@/electron/windows/IWin'
 import log from 'electron-log'
-import { IPC } from '@/constant/Constants'
+import IPC from '@/electron/event/IPC'
+import conf from '@/config/Conf'
+import * as ref from 'ref-napi'
+import { DModel as M, DStruct, U, DTypes as T } from 'win32-api'
+import { Struct, windowApi } from '@/electron/ffi/WindowApi'
 
-export default class SelectWin implements IWin{
+export default class SelectWin implements IWin {
   app: App
   win: BrowserWindow
 
@@ -32,6 +36,9 @@ export default class SelectWin implements IWin{
   }
 
   init() {
+    this.win.on('ready-to-show', () => {
+      this.win.show()
+    })
     this.win.on('closed', () => {
       this.app.selectWin = null
     })

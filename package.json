@@ -1,16 +1,8 @@
 {
-  "build": {
-    "productName": "Ruminer",
-    "appId": "com.greensun.ruminer",
-    "copyright": "green sun",
-    "win": {
-      "icon": "public/favicon.ico"
-    }
-  },
-  "name": "Ruminer",
+  "name": "ruminer",
   "version": "0.1.0",
   "private": true,
-  "main": "src/background.ts",
+  "main": "./background.js",
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
@@ -65,7 +57,6 @@
     "electron": "^9.0.2",
     "electron-is-dev": "^1.2.0",
     "electron-rebuild": "^1.11.0",
-    "element-theme-chalk": "^2.13.2",
     "eslint": "^6.7.2",
     "eslint-plugin-import": "^2.20.2",
     "eslint-plugin-node": "^11.1.0",
@@ -76,10 +67,9 @@
     "sass-loader": "^8.0.2",
     "ts-node": "^8.10.2",
     "typescript": "~3.9.3",
-    "vue-cli-plugin-electron-builder": "^2.0.0-rc.1",
+    "vue-cli-plugin-electron-builder": "^2.0.0-rc.4",
     "vue-cli-plugin-element": "^1.0.1",
     "vue-template-compiler": "^2.6.11",
-    "wait-on": "^5.0.0",
     "webpack-bundle-analyzer": "^3.8.0"
   }
 }

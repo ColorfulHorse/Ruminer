@@ -31,6 +31,9 @@ module.exports = {
     '@typescript-eslint/no-unused-vars': 'warn',
     'object-curly-spacing': ["off", "never"],
     'camelcase': 'off',
-    'dot-notation': 'warn'
+    'dot-notation': 'warn',
+    'handle-callback-err': 'warn',
+    'no-unused-expressions': 'warn',
+    'padded-blocks': 'off'
   }
 }

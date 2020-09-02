@@ -1,7 +1,7 @@
 import  log  from 'electron-log'
 import { BrowserWindow, ipcMain, Size, dialog } from 'electron'
 import App from '../App'
-import { IPC } from '@/constant/Constants'
+import { KEYS } from '@/electron/event/IPC'
 export class ContentWin {
     app: App
     win: BrowserWindow
@@ -43,7 +43,7 @@ export class ContentWin {
     init() {
         this.win.on('close', () => {
             log.info('close content win')
-            this.win.webContents.send(IPC.FINISH_RECOGNIZE)
+            this.win.webContents.send(KEYS.FINISH_RECOGNIZE)
         })
         this.win.on('closed', () => {
             this.app.contentWin = null

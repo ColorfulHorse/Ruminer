@@ -26,17 +26,17 @@
 import { Component, Vue } from 'vue-property-decorator'
 import { DesktopCapturerSource, ipcRenderer } from 'electron'
 import CaptureManager from '../ocr/CaptureManager'
-import { IPC } from '@/constant/Constants'
-import { threadId } from 'worker_threads'
+import { KEYS } from '@/electron/event/IPC'
 
-@Component
+@Component({
+  name: 'Content'
+})
 export default class Content extends Vue {
   textSize = 24
 
   inside = false
 
   mounted() {
-    console.log(`Content: ${threadId}`)
     CaptureManager.getInstance().start()
     this.inside = true
     setTimeout(() => {
@@ -58,7 +58,7 @@ export default class Content extends Vue {
   }
 
   capture() {
-    ipcRenderer.send(IPC.OPEN_CAPTURE_WINDOW)
+    ipcRenderer.send(KEYS.OPEN_CAPTURE_WINDOW)
   }
 
   selectWindow() {
@@ -90,7 +90,7 @@ export default class Content extends Vue {
 
   close() {
     CaptureManager.getInstance().stop()
-    ipcRenderer.send(IPC.CLOSE_CONTENT)
+    ipcRenderer.send(KEYS.CLOSE_CONTENT)
   }
 }
 </script>

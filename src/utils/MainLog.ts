@@ -1,7 +1,7 @@
 import { ipcRenderer } from 'electron'
-import { IPC } from '@/constant/Constants'
+import { KEYS } from '@/electron/event/IPC'
 export class MainLog {
   static info(...params: any[]) {
-    ipcRenderer.send(IPC.MAIN_LOG, params)
+    ipcRenderer.send(KEYS.MAIN_LOG, params)
   }
 }

@@ -1,27 +1,9 @@
-export class IPC {
-  static readonly OPEN_DEVTOOL = 'OPEN_DEVTOOL'
-  // 打开裁剪区域窗口
-  static readonly OPEN_CAPTURE_WINDOW = 'OPEN_CAPTURE_WINDOW'
-  // 打开窗口选择窗口
-  static readonly OPEN_SELECT_WINDOW = 'OPEN_SELECT_WINDOW'
-  static readonly CLOSE_SELECT_WINDOW = 'CLOSE_SELECT_WINDOW'
-  static readonly CAPTURE_WINDOW = 'CAPTURE_WINDOW'
-  static readonly CAPTURE_SCREEN = 'CAPTURE_SCREEN'
-  static readonly SELECT_WINDOW_FINISH = 'SELECT_WINDOW_FINISH'
-  static readonly CLOSE_OVERLAY = 'CLOSE_OVERLAY'
-  // 打开检测结果窗口
-  static readonly OPEN_CONTENT = 'OPEN_CONTENT'
-  static readonly CLOSE_CONTENT = 'CLOSE_CONTENT'
-  static readonly LOCK_CONTENT = 'LOCK_CONTENT'
-  static readonly FINISH_RECOGNIZE = 'FINISH_RECOGNIZE'
-  static readonly HOTKEY_INVALID = 'CHANGE_HOTKEY'
-  static readonly CHANGE_HOTKEY = 'CHANGE_HOTKEY'
-  static readonly GET_SCREEN = 'GET_SCREEN'
+export interface AppInfo {
+  name: string
+}
 
-  // 主界面切换到配置页
-  static readonly ROUTE_API_CONFIG = 'ROUTE_API_CONFIG'
-
-  static readonly MAIN_LOG = 'MAIN_LOG'
+export const appInfo: AppInfo = {
+  name: 'Ruminer'
 }
 
 export class StoreKey {

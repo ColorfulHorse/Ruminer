@@ -43,16 +43,17 @@
 import { Component, Vue } from 'vue-property-decorator'
 import colors from '@/assets/styles/colors.scss'
 import { ipcRenderer } from 'electron'
-import { IPC } from '@/constant/Constants'
+import { KEYS } from '@/electron/event/IPC'
 
-@Component
+@Component({
+  name: 'Home'
+})
 export default class Home extends Vue {
   colors = colors
 
   created() {
     this.$router.push('main')
-    ipcRenderer.on(IPC.ROUTE_API_CONFIG, () => {
-      console.log(IPC.ROUTE_API_CONFIG)
+    ipcRenderer.on(KEYS.ROUTE_API_CONFIG, () => {
       this.$router.push('config')
     })
   }

@@ -14,6 +14,7 @@ export class MainWin {
       maxWidth: 800,
       maxHeight: 600,
       maximizable: false,
+      show:false,
       webPreferences: {
         nodeIntegration: Boolean(process.env.ELECTRON_NODE_INTEGRATION)
       }
@@ -29,10 +30,15 @@ export class MainWin {
     this.win.on('close', (event) => {
       this.win.hide()
       this.win.setSkipTaskbar(true)
+      // 导致app无法退出
       event.preventDefault()
     })
     this.win.on('closed', () => {
       this.app.mainWin = null
+    })
+    this.win.on('ready-to-show', () => {
+      this.win.show()
+      this.win.focus()
     })
     this.win.loadURL(`${this.app.indexUrl}`).then(() => {
       if (this.app.openDevTools) {

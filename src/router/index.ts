@@ -1,11 +1,21 @@
 import VueRouter, { RouteConfig } from 'vue-router'
-import Home from '@/views/Home.vue'
-import Main from '@/views/Main.vue'
-import KeyMap from '@/views/KeyMap.vue'
-import Config from '@/views/Config.vue'
-import Overlay from '@/views/Overlay.vue'
-import Content from '@/views/Content.vue'
-import Select from '@/views/Select.vue'
+import Vue from 'vue'
+// import Home from '@/views/Home.vue'
+// import Main from '@/views/Main.vue'
+// import KeyMap from '@/views/KeyMap.vue'
+// import Config from '@/views/Config.vue'
+// import Overlay from '@/views/Overlay.vue'
+// import Content from '@/views/Content.vue'
+// import Select from '@/views/Select.vue'
+const Home = () => import('@/views/Home.vue')
+const Main = () => import('@/views/Main.vue')
+const KeyMap = () => import('@/views/KeyMap.vue')
+const Config = () => import('@/views/Config.vue')
+const Overlay = () => import('@/views/Overlay.vue')
+const Content = () => import('@/views/Content.vue')
+const Select = () => import('@/views/Select.vue')
+
+Vue.use(VueRouter)
 
 const routes: Array<RouteConfig> = [
   {
@@ -63,6 +73,7 @@ const routes: Array<RouteConfig> = [
 ]
 
 const router = new VueRouter({
+  mode: 'hash',
   routes
 })
 

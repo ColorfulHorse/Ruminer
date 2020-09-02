@@ -1,0 +1,9 @@
+{
+  "productName": "Ruminer",
+  "appId": "com.greensun.ruminer",
+  "copyright": "green sun",
+  "asar": true,
+  "win": {
+    "icon": "public/favicon.ico"
+  }
+}

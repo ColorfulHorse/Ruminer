@@ -14,18 +14,20 @@
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
 import { DesktopCapturerSource, ipcRenderer } from 'electron'
-import { IPC } from '@/constant/Constants'
+import { KEYS } from '@/electron/event/IPC'
 
-@Component
+@Component({
+  name: 'Select'
+})
 export default class Select extends Vue {
   sources = JSON.parse(process.argv[process.argv.length - 1]).data as Array<DesktopCapturerSource>
 
   confirm(sourceId: string) {
-    ipcRenderer.send(IPC.SELECT_WINDOW_FINISH, sourceId)
+    ipcRenderer.send(KEYS.SELECT_WINDOW_FINISH, sourceId)
   }
 
   close() {
-    ipcRenderer.send(IPC.CLOSE_SELECT_WINDOW)
+    ipcRenderer.send(KEYS.CLOSE_SELECT_WINDOW)
   }
 }
 </script>

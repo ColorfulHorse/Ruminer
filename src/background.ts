@@ -1,3 +1,4 @@
 import App from './electron/App'
 
-new App()
+const app = new App()
+export default app

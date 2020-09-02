@@ -2,7 +2,7 @@ import { desktopCapturer, ipcRenderer, Display, remote, BrowserWindow } from 'el
 import { Rect } from '@/graphics/Graphics'
 import { OcrClient } from './OcrClient'
 import conf from '../config/Conf'
-import { IPC } from '@/constant/Constants'
+import IPC from '@/electron/event/IPC'
 import { MainLog } from '@/utils/MainLog'
 import { DModel } from 'win32-api'
 

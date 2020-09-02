@@ -11,11 +11,13 @@
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
 import { ipcRenderer } from 'electron'
-import { IPC, StoreKey } from '../constant/Constants'
 import { Point, Rect } from '../graphics/Graphics'
 import { MainLog } from '@/utils/MainLog'
+import { KEYS } from '@/electron/event/IPC'
 
-@Component
+@Component({
+  name: 'Overlay'
+})
 export default class Overlay extends Vue {
   capturing = false
   // 显示操作按钮
@@ -33,7 +35,7 @@ export default class Overlay extends Vue {
   created() {
     window.addEventListener('keyup', (event) => {
       if (event.code === 'Escape') {
-        ipcRenderer.send(IPC.CLOSE_OVERLAY)
+        ipcRenderer.send(KEYS.CLOSE_OVERLAY)
       }
     })
   }
@@ -43,7 +45,6 @@ export default class Overlay extends Vue {
     const canvas = this.$refs.canvas as HTMLCanvasElement
     canvas.width = root.offsetWidth
     canvas.height = root.offsetHeight
-    MainLog.info(`offsetWidth:${root.offsetWidth}, offsetHeight: ${root.offsetHeight},clientWidth:${root.clientWidth}, clientHeight: ${root.clientHeight}`)
     this.canvas = canvas
     this.draw()
   }
@@ -108,7 +109,7 @@ export default class Overlay extends Vue {
   cancel() {
     this.showAction = false
     this.clear()
-    ipcRenderer.send(IPC.CLOSE_OVERLAY)
+    ipcRenderer.send(KEYS.CLOSE_OVERLAY)
   }
 
   confirm() {
@@ -117,7 +118,7 @@ export default class Overlay extends Vue {
     this.$conf.temp.set('captureRect', this.rect)
     this.clear()
     // 打开显示翻译结果窗口
-    ipcRenderer.send(IPC.OPEN_CONTENT)
+    ipcRenderer.send(KEYS.OPEN_CONTENT)
   }
 
   clear() {

@@ -4,7 +4,7 @@
       <el-col :span="24">
         <div class="sf-wrapper">
           <el-image class="sf-logo" fit="contain" lazy :src="require('../../public/tray/logo.png')"/>
-          <div class="sf-name">Auto-Translate</div>
+          <div class="sf-name">{{ $app.name }}</div>
         </div>
       </el-col>
     </el-row>
@@ -35,17 +35,18 @@
 
 import { Component, Vue } from 'vue-property-decorator'
 import { ipcRenderer, desktopCapturer, remote } from 'electron'
-import { IPC } from '@/constant/Constants'
-import { MainLog } from '@/utils/MainLog'
+import { KEYS } from '@/electron/event/IPC'
 
-@Component
+@Component({
+  name: 'Main'
+})
 export default class Main extends Vue {
   mounted() {
-    ipcRenderer.on(IPC.CAPTURE_WINDOW, () => {
+    ipcRenderer.on(KEYS.CAPTURE_WINDOW, () => {
       this.captureWindow()
     })
 
-    ipcRenderer.on(IPC.CAPTURE_SCREEN, () => {
+    ipcRenderer.on(KEYS.CAPTURE_SCREEN, () => {
       this.captureScreen()
     })
   }
@@ -68,10 +69,10 @@ export default class Main extends Vue {
       const {width, height} = screen.getPrimaryDisplay().bounds
       const sources = await desktopCapturer.getSources({types: ['screen']})
       const source = sources[0]
-      ipcRenderer.send(IPC.OPEN_CAPTURE_WINDOW, source.id)
+      ipcRenderer.send(KEYS.OPEN_CAPTURE_WINDOW, source.id)
     } else {
       const sources = await desktopCapturer.getSources({types: ['window']})
-      ipcRenderer.send(IPC.OPEN_SELECT_WINDOW, JSON.stringify({
+      ipcRenderer.send(KEYS.OPEN_SELECT_WINDOW, JSON.stringify({
         data: sources
       }))
     }

@@ -6,37 +6,43 @@
       </el-col>
       <el-col :span="10">
           <el-button @click="changeHotKey($store.state.hotkey[item])">{{$store.state.hotkey[item].value}}</el-button>
+      </el-col>
+      <el-col :span="4">
         <el-tooltip effect="dark" content="快捷键冲突，请重新设置" placement="top">
-          <i class="el-icon-warning invalid" v-if="!$store.state.hotkey.captureScreen.valid"/>
+          <i class="el-icon-warning invalid" v-if="!$store.state.hotkey[item].valid"/>
         </el-tooltip>
       </el-col>
     </el-row>
     <el-dialog
         title="设置快捷键"
         :visible.sync="dialogVisible"
-        width="40%">
-      <div class="body">
-        <p class="tips">直接在键盘输入新的快捷键</p>
-        <div class="content">
-          <span class="hotkey" v-if="newHotKey != null">{{newHotKey.value}}</span>
-          <el-tooltip effect="dark" content="快捷键已被占用，请重新设置" placement="top">
-            <i class="el-icon-warning invalid" v-if="!newHotKeyValid"/>
-          </el-tooltip>
-        </div>
-      </div>
+        @opened="dialogOpen"
+        :modal-append-to-body="false">
+      <el-form
+          label-position="top"
+          label-width="80px">
+        <el-form-item :label="newHotKey == null ? '' : newHotKey.name">
+          <el-input
+              ref="input"
+              class="align-center"
+              @keydown.native.prevent="keyDetect"
+              :value="newHotKey == null ? '' : newHotKey.value"
+              autofocus="true">
+          </el-input>
+        </el-form-item>
+      </el-form>
+      <el-alert
+          title="快捷键冲突，请重新设置"
+          type="error"
+          :closable="false"
+          show-icon
+          v-if="newHotKey == null ? false : !newHotKey.valid">
+      </el-alert>
       <span slot="footer" class="dialog-footer">
         <el-button size="small" @click="dialogVisible = false">取 消</el-button>
         <el-button size="small" type="primary" @click="updateHotkey">确 定</el-button>
       </span>
     </el-dialog>
-<!--    <el-row type="flex" align="middle">-->
-<!--      <el-col :span="8">-->
-<!--        <p>捕获窗口:</p>-->
-<!--      </el-col>-->
-<!--      <el-col :span="8">-->
-<!--        <p>{{$store.state.hotkey.captureWindow.value}}</p>-->
-<!--      </el-col>-->
-<!--    </el-row>-->
   </el-main>
 </template>
 
@@ -45,29 +51,31 @@
 import { Component, Vue } from 'vue-property-decorator'
 import { HotKey } from '@/config/Conf'
 import { ipcRenderer } from 'electron'
-import { IPC, Mutations } from '@/constant/Constants'
+import { Mutations } from '@/constant/Constants'
 import HotKeyUtil from '@/utils/HotKeyUtil'
+import { ElInput } from 'element-ui/types/input'
+import { KEYS } from '@/electron/event/IPC'
 
-@Component
+@Component({
+  name: 'KeyMap'
+})
 export default class KeyMap extends Vue {
   dialogVisible = false
   newHotKey: HotKey | null = null
-  newHotKeyValid = false
 
-  mounted() {
-    window.addEventListener('keydown', (event: KeyboardEvent) => {
-      if (this.dialogVisible) {
-        if (this.newHotKey != null) {
-          console.log(event)
-          const key = HotKeyUtil.getKeys(event)
-          if (key) {
-            this.newHotKey.value = key
-          }
-          event.preventDefault()
-          event.returnValue = false
-        }
+  keyDetect(event: KeyboardEvent) {
+    console.log(event.key)
+    if (this.newHotKey != null) {
+      const key = HotKeyUtil.getKeys(event)
+      if (key) {
+        this.newHotKey.value = key
       }
-    })
+    }
+  }
+
+  dialogOpen() {
+    const input = this.$refs.input as ElInput
+    input.focus()
   }
 
   changeHotKey(hotKey: HotKey) {
@@ -76,22 +84,19 @@ export default class KeyMap extends Vue {
   }
 
   async updateHotkey() {
-    const hotKey: HotKey = await ipcRenderer.invoke(IPC.CHANGE_HOTKEY, this.newHotKey)
+    const hotKey: HotKey = await ipcRenderer.invoke(KEYS.CHANGE_HOTKEY, this.newHotKey)
+    if (this.newHotKey) {
+      this.newHotKey.valid = hotKey.valid
+    }
     if (hotKey.valid) {
       this.$store.commit(Mutations.MUTATION_CHANGE_HOTKEY, hotKey)
       this.dialogVisible = false
-    } else {
-      this.newHotKeyValid = false
-      this.$message.error('快捷键已被占用，请重新设置')
     }
   }
 }
 </script>
 
 <style scoped lang="scss">
-  p {
-    color: $primary-text;
-  }
   .el-col {
     display: flex;
     flex-direction: row;
@@ -113,36 +118,13 @@ export default class KeyMap extends Vue {
     margin-top: 20px;
   }
 
-  .body {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-  }
-
-  .tips {
-    font-size: 14px;
-    color: $secondary-text;
-  }
-
-  .content {
-    width: 100%;
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: center;
-    margin-top: 20px;
-    overflow: hidden;
-
-    .hotkey {
-      display: inline-block;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      word-wrap: normal;
-      white-space: nowrap;
-      text-align: center;
-      font-size: 16px;
-      max-width: 70%;
-      color: $primary-text;
+  /deep/.el-dialog {
+    .el-form-item {
+      margin-bottom: 0;
     }
+  }
+
+  .el-alert {
+    margin-top: 10px;
   }
 </style>

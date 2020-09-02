@@ -1,0 +1,8 @@
+/*
+Write your variables here. All available variables can be
+found in element-ui/packages/theme-chalk/src/common/var.scss.
+For example, to overwrite the theme color:
+*/
+@import 'colors';
+
+$--color-primary: $primary;

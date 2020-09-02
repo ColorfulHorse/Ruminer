@@ -7,23 +7,26 @@
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
 import { ipcRenderer } from 'electron'
-import { IPC, Mutations } from './constant/Constants'
+import { Mutations } from './constant/Constants'
 import CaptureManager from './ocr/CaptureManager'
 import { HotKey, HotKeyConf } from '@/config/Conf'
 import { IPayloadWrapper } from '@/store/PayloadWrapper'
+import IPC, { KEYS } from '@/electron/event/IPC'
 
-@Component
+@Component({
+  name: 'App'
+})
 export default class App extends Vue {
   created() {
     window.addEventListener('keyup', (event) => {
       if (event.code === 'F12') {
-        ipcRenderer.send(IPC.OPEN_DEVTOOL)
+        ipcRenderer.send(KEYS.OPEN_DEVTOOL)
       }
     })
-    ipcRenderer.on(IPC.FINISH_RECOGNIZE, () => {
+    ipcRenderer.on(KEYS.FINISH_RECOGNIZE, () => {
       CaptureManager.getInstance().stop()
     })
-    ipcRenderer.on(IPC.HOTKEY_INVALID, (event, hotkey: HotKey) => {
+    ipcRenderer.on(KEYS.HOTKEY_INVALID, (event, hotkey: HotKey) => {
       this.$store.commit(Mutations.MUTATION_CHANGE_HOTKEY, hotkey)
     })
   }

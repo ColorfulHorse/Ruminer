@@ -1,5 +1,7 @@
+const isDev = process.env.NODE_ENV !== 'production'
 const CompressionWebpackPlugin = require('compression-webpack-plugin')
 module.exports = {
+  productionSourceMap: isDev,
   devServer: {
     host: '0.0.0.0',
     port: 8080,
@@ -24,7 +26,7 @@ module.exports = {
     loaderOptions: {
       // 给 sass-loader 传递选项
       scss: {
-        prependData: '@import \'@/assets/styles/colors.scss\';'
+        prependData: '@import \'@/assets/styles/common.scss\';'
       }
     }
   },
@@ -33,12 +35,12 @@ module.exports = {
     //   'tesseract.js': 'Tesseract'
     // },
     config.devtool = 'source-map'
-    config.externals = {
-      vue: 'Vue',
-      'vue-router': 'VueRouter',
-      'element-ui': 'ELEMENT',
-      axios: 'axios'
-    }
+    // config.externals = {
+    //   vue: 'Vue',
+    //   'vue-router': 'VueRouter',
+    //   'element-ui': 'ELEMENT',
+    //   axios: 'axios'
+    // }
     // 服务器开启gzip
     // config.plugins.push(
     //   new CompressionWebpackPlugin({
@@ -71,9 +73,11 @@ module.exports = {
     // }
   },
   chainWebpack: config => {
-    config
-      .plugin('webpack-bundle-analyzer')
-      .use(require('webpack-bundle-analyzer').BundleAnalyzerPlugin)
+    if (isDev) {
+      config
+        .plugin('webpack-bundle-analyzer')
+        .use(require('webpack-bundle-analyzer').BundleAnalyzerPlugin)
+    }
   },
   pluginOptions: {
     electronBuilder: {
@@ -81,8 +85,9 @@ module.exports = {
       disableMainProcessTypescript: false, // Manually disable typescript plugin for main process. Enable if you want to use regular js for the main process (src/background.js by default).
       mainProcessTypeChecking: false, // Manua
       mainProcessWatch: ['src/electron/**/*.ts'],
-      // externals: ['ref-napi', 'ffi-napi', 'vue', 'vue-router', 'element-ui', 'axios']
-      externals: ['ref-napi', 'ffi-napi']
+      externals: ['ruminer', 'ref-napi', 'ffi-napi', 'vue', 'vue-router', 'element-ui', 'element-theme-chalk', 'axios', 'vuex'],
+      customFileProtocol: 'ruminer://./',
+      // externals: ['ref-napi', 'ffi-napi']
       // externals: {
       //   'ref-napi': 'ref-napi',
       //   'ffi-napi': 'ffi-napi',
@@ -91,6 +96,15 @@ module.exports = {
       //   'element-ui': 'ELEMENT',
       //   axios: 'axios'
       // }
+      builderOptions: {
+        productName: 'Ruminer',
+        appId: 'com.greensun.ruminer',
+        copyright: 'green sun',
+        asar: true,
+        win: {
+          icon: 'public/favicon.ico'
+        }
+      }
     }
   }
 }

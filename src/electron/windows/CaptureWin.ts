@@ -13,6 +13,7 @@ export class CaptureWin {
         fullscreen: true,
         frame: false,
         transparent: true,
+        show: false,
         skipTaskbar: true,
         focusable: true,
         webPreferences: {
