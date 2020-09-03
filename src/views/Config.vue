@@ -49,9 +49,6 @@ import { Component, Vue } from 'vue-property-decorator'
 import LangMapper from '@/utils/LangMapper'
 import { Mutations } from '@/constant/Constants'
 import { Form } from 'element-ui'
-import { PayloadWrapper } from '@/store/PayloadWrapper'
-import { HotKeyConf, TranslateConf } from '@/config/Conf'
-import { ElementUIComponent } from 'element-ui/types/component'
 
 @Component({
   name: 'Config'
@@ -128,8 +125,18 @@ export default class Config extends Vue {
   .el-form-item {
     margin-bottom: 30px;
 
-    label {
-      color: $primary-text;
+    /deep/label {
+      color: $main-text;
+    }
+
+    /deep/.el-input__inner {
+      border-radius: 30px;
+    }
+
+    .el-input {
+      /deep/.el-input__inner {
+        line-height: 38px;
+      }
     }
   }
 </style>

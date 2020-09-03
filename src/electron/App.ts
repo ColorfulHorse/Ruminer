@@ -111,7 +111,7 @@ export default class App {
    * 系统托盘
    */
   private initTray() {
-    const url = path.join(__static, './tray/logo.png')
+    const url = path.join(__static, './logo.png')
     this.tray = new Tray(url)
     const menu = Menu.buildFromTemplate([
       {

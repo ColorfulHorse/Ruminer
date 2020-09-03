@@ -34,6 +34,7 @@ module.exports = {
     'dot-notation': 'warn',
     'handle-callback-err': 'warn',
     'no-unused-expressions': 'warn',
-    'padded-blocks': 'off'
+    'padded-blocks': 'off',
+    'no-unused-expressions': 'warn'
   }
 }

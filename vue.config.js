@@ -1,5 +1,9 @@
 const isDev = process.env.NODE_ENV !== 'production'
 const CompressionWebpackPlugin = require('compression-webpack-plugin')
+const path = require('path')
+function resolve (dir) {
+  return path.join(__dirname, dir)
+}
 module.exports = {
   productionSourceMap: isDev,
   devServer: {
@@ -74,6 +78,8 @@ module.exports = {
   },
   chainWebpack: config => {
     if (isDev) {
+      config.resolve.alias
+        .set('root', resolve('./'))
       config
         .plugin('webpack-bundle-analyzer')
         .use(require('webpack-bundle-analyzer').BundleAnalyzerPlugin)

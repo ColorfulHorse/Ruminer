@@ -2,7 +2,7 @@
   <el-main ref="container">
     <el-row v-for="item in Object.keys($store.state.hotkey)" :key="item.id" type="flex" align="middle">
       <el-col :span="6">
-        <p>{{$store.state.hotkey[item].name + '：'}}</p>
+        <p class="label">{{$store.state.hotkey[item].name + '：'}}</p>
       </el-col>
       <el-col :span="10">
           <el-button @click="changeHotKey($store.state.hotkey[item])">{{$store.state.hotkey[item].value}}</el-button>
@@ -101,6 +101,9 @@ export default class KeyMap extends Vue {
     display: flex;
     flex-direction: row;
     align-items: center;
+    .label {
+      color: $main-text;
+    }
     .el-button {
       border: $divider solid 2px;
       padding: 8px 10px;

@@ -8,13 +8,14 @@ export class MainWin {
   constructor(app: App, after?: () => void) {
     this.win = new BrowserWindow({
       width: 800,
-      height: 600,
-      minWidth: 800,
-      minHeight: 600,
-      maxWidth: 800,
-      maxHeight: 600,
-      maximizable: false,
-      show:false,
+      height: 500,
+      vibrancy: 'ultra-dark',
+      backgroundColor: '#3f3c37',
+      frame: false,
+      show: false,
+      resizable: false,
+      minimizable: true,
+      icon: `${__static}/logo.png`,
       webPreferences: {
         nodeIntegration: Boolean(process.env.ELECTRON_NODE_INTEGRATION)
       }
@@ -27,12 +28,6 @@ export class MainWin {
   }
 
   init() {
-    this.win.on('close', (event) => {
-      this.win.hide()
-      this.win.setSkipTaskbar(true)
-      // 导致app无法退出
-      event.preventDefault()
-    })
     this.win.on('closed', () => {
       this.app.mainWin = null
     })

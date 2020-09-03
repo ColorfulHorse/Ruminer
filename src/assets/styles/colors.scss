@@ -1,19 +1,21 @@
-$primary : #409eff;
-$primary-light : #C5CAE9;
-$primary-dark : #409eff;
-$accent : #409eff;
-$text : #FFFFFF;
-$primary-text : #212121;
-$secondary-text : #757575;
-$divider : #BDBDBD;
+$primary: #409eff;
+$primary-light: #C5CAE9;
+$primary-dark: #409eff;
+$accent: #409eff;
+$text: #FFFFFF;
+$primary-text: #212121;
+$secondary-text: #757575;
+$divider: #BDBDBD;
+$main-bg: #3f3c37;
+$main-text: #EEE;
 
-$menuText:#bfcbd9;
+$menuText: $main-text;
 $menuActiveText: #409eff;
 
-$menuBg:#304156;
-$menuHover:#263445;
+$menuBg: $main-bg;
+$menuHover: #263445;
 
-:export{
+:export {
   menuText: $menuText;
   menuActiveText: $menuActiveText;
   menuBg: $menuBg;

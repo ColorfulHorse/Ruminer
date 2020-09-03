@@ -29,7 +29,10 @@ export const KEYS = {
   // 主界面切换到配置页
   ROUTE_API_CONFIG: 'ROUTE_API_CONFIG',
 
-  MAIN_LOG: 'MAIN_LOG'
+  MAIN_LOG: 'MAIN_LOG',
+  MINIMIZE_MAIN_WINDOW() {
+
+  }
 }
 
 export default class IPC {

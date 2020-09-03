@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "target": "ESNext",
+    "target": "ES6",
     "module": "ESNext",
     "allowJs": true,
     "strict": true,
@@ -12,14 +12,19 @@
     "allowSyntheticDefaultImports": true,
     "sourceMap": true,
     "watch": true,
+    "resolveJsonModule": true,
     "baseUrl": ".",
 //    "keyofStringsOnly": true,
     "typeRoots": [
-      "types"
+      "types",
+      "./src/types/*"
     ],
     "paths": {
       "@/*": [
         "src/*"
+      ],
+      "root/*": [
+        "./*"
       ]
     },
     "lib": [

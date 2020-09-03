@@ -3,7 +3,7 @@
     <el-row type="flex">
       <el-col :span="24">
         <div class="sf-wrapper">
-          <el-image class="sf-logo" fit="contain" lazy :src="require('../../public/tray/logo.png')"/>
+          <el-image class="sf-logo" fit="contain" lazy :src="require('../../public/logo.png')"/>
           <div class="sf-name">{{ $app.name }}</div>
         </div>
       </el-col>
@@ -84,21 +84,21 @@ export default class Main extends Vue {
   .el-row {
     .sf-wrapper {
       width: 100%;
-      height: 100px;
+      padding: 24px 0;
       display: flex;
       flex-direction: row;
       align-items: center;
       justify-content: center;
 
       .sf-logo {
-        width: 60px;
-        height: 60px;
+        width: 64px;
+        height: 64px;
         margin-right: 20px;
       }
 
       .sf-name {
         font-family: Avenir, Helvetica, Arial, sans-serif;
-        color: $primary-text;
+        color: $main-text;
         font-size: 32px;
         font-weight: 400;
       }
@@ -122,7 +122,6 @@ export default class Main extends Vue {
         -moz-osx-font-smoothing: grayscale;
         font-size: 18px;
         font-weight: 600;
-        color: $primary-text;
       }
 
       .tips {
