@@ -25,6 +25,7 @@ export default class App {
   openDevTools = true
 
   constructor() {
+    app.commandLine.appendSwitch('disable-features', 'OutOfBlinkCors')
     protocol.registerSchemesAsPrivileged([{ scheme: 'ruminer', privileges: { secure: true, standard: true } }])
     this.init().then(() => {
       if (process.env.WEBPACK_DEV_SERVER_URL) {
@@ -140,8 +141,10 @@ export default class App {
   showMain() {
     if (this.mainWin != null) {
       if (this.mainWin.win.isMinimized()) this.mainWin.win.restore()
-      this.mainWin.win.show()
-      this.mainWin.win.focus()
+      if (!this.mainWin.win.isFocused()) {
+        this.mainWin.win.show()
+        this.mainWin.win.focus()
+      }
     }
   }
 

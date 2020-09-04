@@ -1,7 +1,8 @@
 import { BrowserWindow, Rectangle } from 'electron'
 import App from '../App'
 import { DModel as M } from 'win32-def'
-export class CaptureWin {
+import IWin from '@/electron/windows/IWin'
+export class CaptureWin implements IWin{
   app: App
   win: BrowserWindow
 
@@ -17,7 +18,8 @@ export class CaptureWin {
         skipTaskbar: true,
         focusable: true,
         webPreferences: {
-          nodeIntegration: Boolean(process.env.ELECTRON_NODE_INTEGRATION)
+          nodeIntegration: Boolean(process.env.ELECTRON_NODE_INTEGRATION),
+          enableRemoteModule: true,
         }
       })
     } else {

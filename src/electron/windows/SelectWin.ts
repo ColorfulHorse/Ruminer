@@ -28,7 +28,8 @@ export default class SelectWin implements IWin {
       webPreferences: {
         nodeIntegration: Boolean(process.env.ELECTRON_NODE_INTEGRATION),
         nodeIntegrationInWorker: true,
-        additionalArguments: Array.of(sources)
+        additionalArguments: Array.of(sources),
+        enableRemoteModule: true
       },
       show: false
     })

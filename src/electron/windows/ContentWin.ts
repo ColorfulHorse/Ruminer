@@ -2,7 +2,8 @@ import  log  from 'electron-log'
 import { BrowserWindow, ipcMain, Size, dialog } from 'electron'
 import App from '../App'
 import { KEYS } from '@/electron/event/IPC'
-export class ContentWin {
+import IWin from '@/electron/windows/IWin'
+export class ContentWin implements IWin {
     app: App
     win: BrowserWindow
 
@@ -22,7 +23,7 @@ export class ContentWin {
             height: 200,
             // maxWidth: 800,
             // maxHeight: 200,
-            // resizable: false,
+            resizable: false,
             movable: true,
             closable: true,
             // alwaysOnTop: true,
@@ -32,7 +33,8 @@ export class ContentWin {
             webPreferences: {
                 nodeIntegration: Boolean(process.env.ELECTRON_NODE_INTEGRATION),
                 nodeIntegrationInWorker: true,
-                enableRemoteModule: true
+                enableRemoteModule: true,
+                webSecurity: false
             },
             show: false
         })

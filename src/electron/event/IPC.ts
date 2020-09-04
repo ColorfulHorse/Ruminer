@@ -29,6 +29,9 @@ export const KEYS = {
   // 主界面切换到配置页
   ROUTE_API_CONFIG: 'ROUTE_API_CONFIG',
 
+  // 用于渲染进程发送消息给主界面渲染进程
+  MAIN_PROXY: 'MAIN_PROXY',
+
   MAIN_LOG: 'MAIN_LOG',
   MINIMIZE_MAIN_WINDOW() {
 
@@ -58,6 +61,13 @@ export default class IPC {
         sourceId: sourceId
       })
       app.showOverlay()
+    })
+
+    ipcMain.on(KEYS.MAIN_PROXY, (event, key: string) => {
+      app.mainWin?.win.webContents.send(key)
+      if (key === KEYS.ROUTE_API_CONFIG) {
+        app.showMain()
+      }
     })
 
     ipcMain.on(KEYS.OPEN_SELECT_WINDOW, (event, sources: string) => {
