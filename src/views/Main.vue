@@ -60,7 +60,7 @@ export default class Main extends Vue {
   }
 
   startRecognize() {
-    // ipcRenderer.send(IPC.OPEN_CONTENT)
+    ipcRenderer.send(KEYS.OPEN_CONTENT)
   }
 
   async capture(mode: 'screen' | 'window') {
@@ -111,9 +111,10 @@ export default class Main extends Vue {
         padding: 20px 10px;
         text-align: center;
         vertical-align: middle;
-      }
-      .action-wrapper:hover {
-        background-color: #dcdcdc;
+        cursor: pointer;
+        &:hover {
+          background-color: #dcdcdc;
+        }
       }
 
       .action {

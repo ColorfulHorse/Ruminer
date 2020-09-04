@@ -62,7 +62,7 @@ export default class Content extends Vue {
   }
 
   selectWindow() {
-    // remote.dialog.showMessageBox()
+    ipcRenderer.send(KEYS.MAIN_PROXY, KEYS.CAPTURE_WINDOW)
   }
 
   minus() {

@@ -1,7 +1,8 @@
 import { BrowserWindow, ipcMain } from 'electron'
 import App from '../App'
+import IWin from '@/electron/windows/IWin'
 
-export class MainWin {
+export class MainWin implements IWin {
   app: App
   win: BrowserWindow
   after: (() => void) | null = null
@@ -17,7 +18,8 @@ export class MainWin {
       minimizable: true,
       icon: `${__static}/logo.png`,
       webPreferences: {
-        nodeIntegration: Boolean(process.env.ELECTRON_NODE_INTEGRATION)
+        nodeIntegration: Boolean(process.env.ELECTRON_NODE_INTEGRATION),
+        enableRemoteModule: true
       }
     })
     if (after) {

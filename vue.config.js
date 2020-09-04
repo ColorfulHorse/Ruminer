@@ -8,23 +8,23 @@ module.exports = {
   productionSourceMap: isDev,
   devServer: {
     host: '0.0.0.0',
-    port: 8080,
-    proxy: {
-      '/baidufanyi': {
-        target: 'http://api.fanyi.baidu.com',
-        changeOrigin: true,
-        pathRewrite: {
-          '^/baidufanyi': ''
-        }
-      },
-      '/baiduocr': {
-        target: 'https://aip.baidubce.com',
-        changeOrigin: true,
-        pathRewrite: {
-          '^/baiduocr': ''
-        }
-      }
-    }
+    port: 8080
+    // proxy: {
+    //   '/baidufanyi': {
+    //     target: 'http://api.fanyi.baidu.com',
+    //     changeOrigin: true,
+    //     pathRewrite: {
+    //       '^/baidufanyi': ''
+    //     }
+    //   },
+    //   '/baiduocr': {
+    //     target: 'https://aip.baidubce.com',
+    //     changeOrigin: true,
+    //     pathRewrite: {
+    //       '^/baiduocr': ''
+    //     }
+    //   }
+    // }
   },
   css: {
     loaderOptions: {

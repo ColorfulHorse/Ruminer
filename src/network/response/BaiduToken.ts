@@ -6,6 +6,14 @@ export interface BaiduToken {
   access_token: string
   session_secret: string
   create_time: number
+}
+
+export const BaiduTokenErrorCode = {
+  invalid_client: 'invalid_client'
+}
+
+export interface BaiduTokenError {
   error: string
   error_description: string
 }
+
