@@ -6,6 +6,7 @@
 - 添加语句相似度过滤选项
 - 接入多个翻译api，美化ui
 - 添加NLP
+- 使用开源库替换计费api
 
 ## bug list:
 - win32 api获取窗口位置时，vs全屏状态top left值为 -9 -9
