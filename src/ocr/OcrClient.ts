@@ -1,21 +1,22 @@
 import axios, { AxiosResponse } from 'axios'
 import store from '@/store/index'
 import { BaiduTranslateReq } from '@/network/request/TranslateReq'
-import { BaiduTranslateResp } from '@/network/response/TranslateResp'
+import { BaiduTranslateErrorCode, BaiduTranslateResp } from '@/network/response/TranslateResp'
 import { Mutations } from '@/constant/Constants'
 import qs from 'qs'
 import { BaiduOcrReq } from '@/network/request/OcrReq'
 import LangMapper from '../utils/LangMapper'
-import { BaiduOcrError, BaiduOcrResult } from '@/network/response/OcrResp'
+import { BaiduOcrError, BaiduOcrErrorCode, BaiduOcrResult } from '@/network/response/OcrResp'
 import conf from '@/config/Conf'
 import DateUtil from '@/utils/DateUtil'
 import { BaiduTokenReq } from '@/network/request/BaiduTokenReq'
 import { BaiduToken, BaiduTokenError, BaiduTokenErrorCode } from '@/network/response/BaiduToken'
 import { compareTwoStrings } from 'string-similarity'
 import { awaitTo, ResponseWrapper } from '@/utils/NetExt'
-import { remote, ipcRenderer } from 'electron'
+import { remote, ipcRenderer, Notification } from 'electron'
 import CaptureManager from '@/ocr/CaptureManager'
 import { KEYS } from '@/electron/event/IPC'
+import NotificationUtil from '@/utils/NotificationUtil'
 
 /**
  * 文字识别
@@ -25,6 +26,7 @@ export class OcrClient {
   // scheduler: Scheduler | null = null
   private recognizeText = ''
   private resultText = ''
+  private lastNotifyTime = 0
 
   static getInstance() {
     if (this.client == null) {
@@ -105,8 +107,11 @@ export class OcrClient {
       {
         headers: {'content-type': 'application/x-www-form-urlencoded'}
       }))
+
     if (!data) {
-      err?.error_code
+      if (err) {
+        this.handleOcrError(err)
+      }
       return
     }
     if (data.words_result.length === 0) {
@@ -121,23 +126,85 @@ export class OcrClient {
       if (similarity < 0.65) {
         this.recognizeText = text
         const cancel = axios.CancelToken.source()
-        const resp: AxiosResponse<BaiduTranslateResp> = await axios.get(
+        const {data, err} = await awaitTo<BaiduTranslateResp, BaiduTranslateResp>(axios.get(
           'http://api.fanyi.baidu.com/api/trans/vip/translate',
           {
             params: new BaiduTranslateReq(text),
             cancelToken: cancel.token
-          })
-        const data = resp.data
-        if (!data.error_code) {
-          if (data.trans_result && data.trans_result.length > 0) {
-            const src = data.trans_result[0].src
-            const dst = data.trans_result[0].dst
-            this.resultText = dst
-            store.commit(Mutations.MUTATION_RESULT_TEXT, dst)
+          }))
+        if (data) {
+          if (!data.error_code) {
+            if (data.trans_result && data.trans_result.length > 0) {
+              const src = data.trans_result[0].src
+              const dst = data.trans_result[0].dst
+              this.resultText = dst
+              store.commit(Mutations.MUTATION_RESULT_TEXT, dst)
+            }
+          } else {
+            this.handleTranslateError(data.error_code)
           }
-        } else {
         }
       }
+    }
+  }
+
+  handleOcrError(err: BaiduOcrError) {
+    const current = Date.now()
+    if (current - this.lastNotifyTime > 1000 * 60) {
+      let title = ''
+      let body = ''
+      switch (err.error_code) {
+        case BaiduOcrErrorCode.DAY_ZERO:
+          title = '百度ocr当天次数用尽'
+          body = '百度ocr当天次数用尽，请切换其他方式'
+          break
+        case BaiduOcrErrorCode.ALL_ZERO:
+          title = '百度ocr所有次数用尽'
+          body = '百度ocr所有次数用尽，请切换其他方式'
+          break
+        case BaiduOcrErrorCode.SIZE_ERROR:
+          title = '识别区域太大'
+          body = '选择识别区域过大，请重新选择'
+          break
+        case BaiduOcrErrorCode.INVALID_TOKEN:
+          title = '百度ocr认证失败'
+          body = '百度ocr认证失败，请检查appId和Secret是否正确'
+          break
+      }
+      if (title.length > 0) {
+        NotificationUtil.showSimple(title, body)
+      }
+      this.lastNotifyTime = current
+    }
+  }
+
+  handleTranslateError(code: number) {
+    const current = Date.now()
+    if (current - this.lastNotifyTime > 1000 * 60) {
+      let title = ''
+      let body = ''
+      switch (code) {
+        case BaiduTranslateErrorCode.BALANCE_OVER:
+          title = '账户余额不足'
+          body = '百度翻译次数已用完，请使用其他方式'
+          break
+        case BaiduTranslateErrorCode.AUTH_FAILED:
+          title = '账户认证未通过'
+          body = '百度翻译账户认证未通过，请到控制台查看进度'
+          break
+        case BaiduTranslateErrorCode.INVALID_ACCESS:
+          title = '用户未授权'
+          body = '百度翻译授权失败，请检查appId是否正确，服务是否已开通'
+          break
+        case BaiduTranslateErrorCode.IP_LOCKED:
+          title = 'IP已被锁定'
+          body = '由于同一IP当日使用了多个百度翻译账号，IP被封禁，次日解封'
+          break
+      }
+      if (title.length > 0) {
+        NotificationUtil.showSimple(title, body)
+      }
+      this.lastNotifyTime = current
     }
   }
 }

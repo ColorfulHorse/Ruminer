@@ -45,6 +45,7 @@ import colors from '@/assets/styles/colors.scss'
 import { ipcRenderer, remote } from 'electron'
 import { KEYS } from '@/electron/event/IPC'
 import pkg from 'root/package.json'
+import CommonUtil from '@/utils/CommonUtil'
 
 @Component({
   name: 'Home'
@@ -54,7 +55,11 @@ export default class Home extends Vue {
   version = process.env.NODE_ENV === 'production' ? pkg.version : 'Dev'
 
   created() {
-    this.$router.push('main')
+    if (CommonUtil.checkConfig()) {
+      this.$router.push('main')
+    } else {
+      this.$router.push('config')
+    }
     ipcRenderer.on(KEYS.ROUTE_API_CONFIG, () => {
       this.$router.push('config')
     })

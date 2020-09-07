@@ -3,7 +3,7 @@ export interface BaiduTranslateResult {
   dst: string
 }
 
-export interface BaiduTranslateErrorCode {
+export const BaiduTranslateErrorCode = {
   // 标准版 完全免费，不限使用字符量（QPS=1）；
   // 高级版 每月前200万字符免费，超出后仅收取超出部分费用（QPS=10），49元/百万字符；
   SUCCEED: 52000,

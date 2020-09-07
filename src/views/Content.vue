@@ -102,8 +102,9 @@ export default class Content extends Vue {
   }
 
   #root {
-    width: 100%;
-    height: 100%;
+    width: 800px;
+    height: auto;
+    min-height: 200px;
     padding: 10px;
     background-color: transparent;
   }

@@ -11,6 +11,7 @@ import store from '@/store/index'
 import HotKeyUtil from '@/utils/HotKeyUtil'
 import CommonUtil from '@/utils/CommonUtil'
 import SelectWin from '@/electron/windows/SelectWin'
+import NotificationUtil from '@/utils/NotificationUtil'
 
 'use strict'
 declare const __static: string
@@ -98,13 +99,7 @@ export default class App {
       return prev && curr
     })
     if (!ok) {
-      const notification = new Notification({
-        title: '快捷键冲突',
-        body: '部分快捷键冲突，请重新设置',
-        silent: false,
-        timeoutType: 'default'
-      })
-      notification.show()
+      NotificationUtil.showSimple('快捷键冲突', '部分快捷键冲突，请重新设置')
     }
   }
 
@@ -179,7 +174,13 @@ export default class App {
     if (this.captureWin != null) {
       this.captureWin.win.close()
     }
-    if (CommonUtil.checkConfig(this)) {
+    if (CommonUtil.checkConfig()) {
+      NotificationUtil.showSimple('api 设置', 'api key 未设置，无法正常使用，点击设置', () => {
+        if (this.mainWin != null) {
+          this.mainWin.win.webContents.send(KEYS.ROUTE_API_CONFIG)
+          this.showMain()
+        }
+      })
       if (this.contentWin == null) {
         this.contentWin = new ContentWin(this)
       }
