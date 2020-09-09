@@ -2,6 +2,7 @@
 
 
 ## todo list:
+- 快捷键设置ui修改
 - 禁止盈利用户协议弹窗
 - 未设置key直接导航到设置页面
 - 由于不同窗口在不同渲染进程，考虑不使用vuex
@@ -11,6 +12,12 @@
 
 ## bug list:
 - win32 api获取窗口位置时，vs全屏状态top left值为 -9 -9
+- 窗口resizable设为false时mouseenter mouseleave事件有时无效
+
+## electron bug list:
+- [webSecurity false 无效](https://github.com/electron/electron/issues/23664)
+- [getSize 多出1px](https://github.com/electron/electron/issues/25295)
+- [透明窗口拖出屏幕黑屏](https://github.com/electron/electron/issues/23215)
 
 ## 流程整理
 捕获单个窗口的画面检测文字

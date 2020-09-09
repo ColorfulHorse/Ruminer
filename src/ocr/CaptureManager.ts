@@ -1,16 +1,13 @@
-import { desktopCapturer, ipcRenderer, Display, remote, BrowserWindow } from 'electron'
 import { Rect } from '@/graphics/Graphics'
 import { OcrClient } from './OcrClient'
-import conf from '../config/Conf'
-import IPC from '@/electron/event/IPC'
+import conf, { MediaSource } from '../config/Conf'
 import { MainLog } from '@/utils/MainLog'
-import { DModel } from 'win32-api'
 
-declare const __static: string
 export default class CaptureManager {
   videoStream: MediaStream | null = null
   capturing = false
   timer = -1
+  mediaSource: MediaSource | null = null
 
   private static _instance: CaptureManager
 
@@ -25,9 +22,10 @@ export default class CaptureManager {
   }
 
   // 开始捕捉屏幕
-  async start() {
+  start() {
     const source = conf.temp.get('source')
     if (source) {
+      this.mediaSource = source
       navigator.mediaDevices.getUserMedia({
         audio: false,
         video: ({
@@ -52,10 +50,26 @@ export default class CaptureManager {
   }
 
   /**
+   * 选择窗口改变后需要重启
+   */
+  restart() {
+    if (this.capturing) {
+      const source = conf.temp.get('source')
+      if (this.mediaSource && source) {
+        if (this.mediaSource.mode !== source.mode || this.mediaSource.sourceId !== source.sourceId) {
+          MainLog.info(`restart capture, mode:${source.mode}, id: ${source.sourceId}`)
+          this.stop()
+          this.start()
+        }
+      }
+    }
+  }
+
+  /**
    *
    * @param stream 捕获屏幕截图
    */
-  async startCaptureImage(stream: MediaStream) {
+  startCaptureImage(stream: MediaStream) {
     this.videoStream = stream
     const video = document.createElement('video')
     const canvas = document.createElement('canvas')
@@ -89,6 +103,7 @@ export default class CaptureManager {
   }
 
   stop() {
+    MainLog.info('stop capture')
     this.capturing = false
     if (this.timer !== -1) {
       window.clearInterval(this.timer)

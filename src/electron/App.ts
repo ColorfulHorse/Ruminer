@@ -23,9 +23,10 @@ export default class App {
   captureWin: CaptureWin | null = null
   contentWin: ContentWin | null = null
   selectWin: SelectWin | null = null
-  openDevTools = true
+  openDevTools = false
 
   constructor() {
+    app.requestSingleInstanceLock()
     app.commandLine.appendSwitch('disable-features', 'OutOfBlinkCors')
     protocol.registerSchemesAsPrivileged([{ scheme: 'ruminer', privileges: { secure: true, standard: true } }])
     this.init().then(() => {
@@ -64,6 +65,10 @@ export default class App {
       if (process.platform !== 'darwin') {
         app.quit()
       }
+    })
+
+    app.on('second-instance', () => {
+      this.showMain()
     })
 
     app.on('will-quit', () => {
@@ -175,30 +180,31 @@ export default class App {
       this.captureWin.win.close()
     }
     if (CommonUtil.checkConfig()) {
-      NotificationUtil.showSimple('api 设置', 'api key 未设置，无法正常使用，点击设置', () => {
-        if (this.mainWin != null) {
-          this.mainWin.win.webContents.send(KEYS.ROUTE_API_CONFIG)
-          this.showMain()
-        }
-      })
       if (this.contentWin == null) {
         this.contentWin = new ContentWin(this)
+      }else {
+        // 已经在检测，需要判断是否需要切换模式
+        this.contentWin.win.webContents.send(KEYS.RESTART_RECOGNIZE)
       }
       // macOS
       // app.dock.hide()
       // this.contentWin.win.setVisibleOnAllWorkspaces(true)
       this.contentWin.win.setAlwaysOnTop(true, 'screen-saver', 999)
       this.contentWin.win.show()
+    }else {
+      NotificationUtil.showSimple('api 设置', 'api key 未设置，无法正常使用，点击设置', () => {
+        if (this.mainWin != null) {
+          this.mainWin.win.webContents.send(KEYS.ROUTE_API_CONFIG)
+          this.showMain()
+        }
+      })
     }
   }
 
   showOverlay(rect?: Rectangle) {
-    if (this.contentWin != null) {
-      this.contentWin.win.setAlwaysOnTop(false)
-    }
     if (this.captureWin == null) {
       this.captureWin = new CaptureWin(this, rect)
-      this.captureWin.win.setAlwaysOnTop(true, 'pop-up-menu')
+      this.captureWin.win.setAlwaysOnTop(true, 'screen-saver', 999)
       this.captureWin.win.show()
     }
   }

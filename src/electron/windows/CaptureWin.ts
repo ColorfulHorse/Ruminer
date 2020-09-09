@@ -16,7 +16,6 @@ export class CaptureWin implements IWin{
         transparent: true,
         show: false,
         skipTaskbar: true,
-        focusable: true,
         webPreferences: {
           nodeIntegration: Boolean(process.env.ELECTRON_NODE_INTEGRATION),
           enableRemoteModule: true,
@@ -24,18 +23,20 @@ export class CaptureWin implements IWin{
       })
     } else {
       this.win = new BrowserWindow({
+        maximizable: false,
         resizable: false,
         frame: false,
         transparent: true,
+        show: false,
         skipTaskbar: true,
-        focusable: true,
+        webPreferences: {
+          nodeIntegration: Boolean(process.env.ELECTRON_NODE_INTEGRATION),
+          enableRemoteModule: true,
+        },
         x: rect.x,
         y: rect.y,
         width: rect.width,
         height: rect.height,
-        webPreferences: {
-          nodeIntegration: Boolean(process.env.ELECTRON_NODE_INTEGRATION)
-        }
       })
     }
     this.app = app

@@ -9,6 +9,6 @@ export default class CommonUtil {
     const ocrSecret = conf.translate.get('baiduOcrSecret')
     const translateId = conf.translate.get('baiduTransAppId')
     const translateSecret = conf.translate.get('baiduTransSecret')
-    return !(ocrApiKey.length == 0 || ocrSecret.length == 0 || translateId.length == 0 || translateSecret.length == 0);
+    return !(ocrApiKey.length === 0 || ocrSecret.length === 0 || translateId.length === 0 || translateSecret.length === 0)
   }
 }

@@ -4,6 +4,7 @@ const path = require('path')
 function resolve (dir) {
   return path.join(__dirname, dir)
 }
+
 module.exports = {
   productionSourceMap: isDev,
   devServer: {
@@ -77,9 +78,9 @@ module.exports = {
     // }
   },
   chainWebpack: config => {
+    config.resolve.alias
+      .set('root', resolve('./'))
     if (isDev) {
-      config.resolve.alias
-        .set('root', resolve('./'))
       config
         .plugin('webpack-bundle-analyzer')
         .use(require('webpack-bundle-analyzer').BundleAnalyzerPlugin)
@@ -106,6 +107,14 @@ module.exports = {
         productName: 'Ruminer',
         appId: 'com.greensun.ruminer',
         copyright: 'green sun',
+        nsis: {
+          installerIcon: 'public/favicon.ico',
+          installerHeader: 'public/logo.png',
+          installerHeaderIcon: 'public/favicon.ico',
+          oneClick: false,
+          allowToChangeInstallationDirectory: true,
+          runAfterFinish: false
+        },
         asar: true,
         win: {
           icon: 'public/favicon.ico'

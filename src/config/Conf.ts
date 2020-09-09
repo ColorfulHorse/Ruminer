@@ -20,19 +20,20 @@ export interface TempConf {
 }
 
 export interface MediaSource {
+  mode: 'screen' | 'window'
   width: number,
   height: number,
   sourceId: string
 }
 
 export interface CommonConf {
-  captureRect: Rect | null
+  firstInstall: boolean
 }
 
 export interface HotKeyConf {
   captureScreen: HotKey
   captureWindow: HotKey
-  startRecognize: HotKey
+  // startRecognize: HotKey
 }
 
 export interface HotKey {
@@ -60,7 +61,7 @@ export default {
   common: new ElectronStore<CommonConf>({
     name: 'commonConf',
     defaults: {
-      captureRect: null
+      firstInstall: true
     }
   }),
   temp: new ElectronStore<TempConf>({
@@ -74,8 +75,8 @@ export default {
     name: 'hotkeyConf',
     defaults: {
       captureScreen: { name: '捕获屏幕', key: 'captureScreen', value: 'Shift+Alt+D', valid: true },
-      captureWindow: { name: '捕获窗口', key: 'captureWindow', value: 'Shift+Alt+W', valid: true },
-      startRecognize: { name: '开始翻译', key: 'startRecognize', value: 'Shift+Alt+Q', valid: true }
+      captureWindow: { name: '捕获窗口', key: 'captureWindow', value: 'Shift+Alt+W', valid: true }
+      // startRecognize: { name: '开始翻译', key: 'startRecognize', value: 'Shift+Alt+Q', valid: true }
     }
   }),
   translate: new ElectronStore<TranslateConf>({

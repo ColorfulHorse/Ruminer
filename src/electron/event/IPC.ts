@@ -21,10 +21,15 @@ export const KEYS = {
   OPEN_CONTENT: 'OPEN_CONTENT',
   CLOSE_CONTENT: 'CLOSE_CONTENT',
   LOCK_CONTENT: 'LOCK_CONTENT',
-  FINISH_RECOGNIZE: 'FINISH_RECOGNIZE',
+  // 获取窗口大小
+  GET_CONTENT_SIZE: 'GET_CONTENT_SIZE',
+  // 监听内容窗口大小
+  CONTENT_SIZE_CHANGED: 'CONTENT_SIZE_CHANGED',
   HOTKEY_INVALID: 'CHANGE_HOTKEY',
   CHANGE_HOTKEY: 'CHANGE_HOTKEY',
   GET_SCREEN: 'GET_SCREEN',
+  // 当捕获窗口改变时需要重启截屏定时器
+  RESTART_RECOGNIZE: 'RESTART_RECOGNIZE',
 
   // 主界面切换到配置页
   ROUTE_API_CONFIG: 'ROUTE_API_CONFIG',
@@ -56,6 +61,7 @@ export default class IPC {
     ipcMain.on(KEYS.OPEN_CAPTURE_WINDOW, (event, sourceId: string) => {
       const {width, height} = screen.getPrimaryDisplay().bounds
       conf.temp.set('source', {
+        mode: 'screen',
         width: width,
         height: height,
         sourceId: sourceId
@@ -97,6 +103,13 @@ export default class IPC {
       if (app.contentWin != null) {
         app.contentWin.win.close()
       }
+    })
+
+    ipcMain.handle(KEYS.GET_CONTENT_SIZE, () => {
+      if (app.contentWin != null) {
+        return [app.contentWin.width, app.contentWin.height]
+      }
+      return [0, 0]
     })
 
     // 选择窗口完成
@@ -149,6 +162,7 @@ export default class IPC {
       log.info(`FrameBounds left:${rect.left}, top:${rect.top}, right:${rect.right}, bottom:${rect.bottom}`)
       // log.info(`WindowRect left:${rect2.left}, top:${rect2.top}, right:${rect2.right}, bottom:${rect2.bottom}`)
       conf.temp.set('source', {
+        mode: 'window',
         width: rectangle.width,
         height: rectangle.height,
         sourceId: sourceId

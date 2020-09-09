@@ -6,20 +6,20 @@ export interface ResponseWrapper<T, U> {
 }
 
 export function awaitTo<T, U = any>(promise: Promise<AxiosResponse<T>>): Promise<ResponseWrapper<T, U>> {
-   return promise
+  return promise
     .then<ResponseWrapper<T, U>>(data => {
       return {
         data: data.data,
         err: null
       }
     })
-     .catch((err: AxiosError<U>) => {
-       const errResp = err.response?.data
-       return {
-         data: null,
-         err: errResp ?? null
-       }
-     })
+    .catch((err: AxiosError<U>) => {
+      const errResp = err.response?.data
+      return {
+        data: null,
+        err: errResp ?? null
+      }
+    })
 }
 
 // export function awaitTo2<T, U = any>(promise: Promise<AxiosResponse<T>>): Promise<[T | null, U | null]> {

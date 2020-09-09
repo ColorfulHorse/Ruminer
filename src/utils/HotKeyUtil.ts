@@ -27,11 +27,11 @@ export default class HotKeyUtil {
           }
         }
         break
-      case HotKeys.START_RECOGNIZE:
-        callback = () => {
-          app.showContent()
-        }
-        break
+      // case HotKeys.START_RECOGNIZE:
+      //   callback = () => {
+      //     app.showContent()
+      //   }
+      //   break
     }
     hotkey.valid = false
     if (callback != null) {

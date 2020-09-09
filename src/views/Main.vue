@@ -21,12 +21,6 @@
           <p class="tips">{{ $store.state.hotkey.captureWindow.value }}</p>
         </div>
       </el-col>
-      <el-col :span="8">
-        <div class="action-wrapper" @click="startRecognize">
-          <p class="action">开始翻译</p>
-          <p class="tips">{{ $store.state.hotkey.startRecognize.value }}</p>
-        </div>
-      </el-col>
     </el-row>
   </el-main>
 </template>
@@ -34,7 +28,7 @@
 <script lang="ts">
 
 import { Component, Vue } from 'vue-property-decorator'
-import { ipcRenderer, desktopCapturer, remote } from 'electron'
+import { desktopCapturer, ipcRenderer } from 'electron'
 import { KEYS } from '@/electron/event/IPC'
 
 @Component({
@@ -59,14 +53,8 @@ export default class Main extends Vue {
     this.capture('window')
   }
 
-  startRecognize() {
-    ipcRenderer.send(KEYS.OPEN_CONTENT)
-  }
-
   async capture(mode: 'screen' | 'window') {
     if (mode === 'screen') {
-      const screen = remote.screen
-      const {width, height} = screen.getPrimaryDisplay().bounds
       const sources = await desktopCapturer.getSources({types: ['screen']})
       const source = sources[0]
       ipcRenderer.send(KEYS.OPEN_CAPTURE_WINDOW, source.id)

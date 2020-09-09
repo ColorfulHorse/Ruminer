@@ -35,6 +35,19 @@
             </transition>
           </el-main>
         </el-container>
+      <el-dialog
+          title="用户协议"
+          :visible.sync="dialogVisible"
+          :modal-append-to-body="false"
+          :close-on-click-modal="false"
+          :close-on-press-escape="false"
+          :show-close="false">
+        <p class="dialog-content">此软件仅供个人学习交流使用，不可用于商业或非法用途，不可私自使用此软件牟利，违反本条约后果自负。</p>
+        <div slot="footer" class="dialog-footer">
+          <el-checkbox v-model="agreed">我同意</el-checkbox>
+          <el-button :disabled="!agreed" size="small" type="primary" @click="agree">确 定</el-button>
+        </div>
+      </el-dialog>
     </el-container>
 </template>
 
@@ -53,6 +66,8 @@ import CommonUtil from '@/utils/CommonUtil'
 export default class Home extends Vue {
   colors = colors
   version = process.env.NODE_ENV === 'production' ? pkg.version : 'Dev'
+  dialogVisible = false
+  agreed = false
 
   created() {
     if (CommonUtil.checkConfig()) {
@@ -63,10 +78,16 @@ export default class Home extends Vue {
     ipcRenderer.on(KEYS.ROUTE_API_CONFIG, () => {
       this.$router.push('config')
     })
+    this.dialogVisible = this.$conf.common.get('firstInstall')
   }
 
   minimize() {
     remote.BrowserWindow.getFocusedWindow()?.minimize()
+  }
+
+  agree() {
+    this.$conf.common.set('firstInstall', false)
+    this.dialogVisible = false
   }
 
   close() {
@@ -144,6 +165,26 @@ export default class Home extends Vue {
           }
         }
       }
+    }
+
+    .dialog-content {
+      font-size: 15px;
+      line-height: 25px;
+      text-align: center;
+    }
+
+    .dialog-footer {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .el-checkbox {
+      margin-bottom: 20px;
+    }
+
+    /deep/.v-modal {
+      opacity: 0.3;
     }
   }
 </style>

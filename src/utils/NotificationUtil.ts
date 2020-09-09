@@ -1,5 +1,5 @@
 import { remote, Notification } from 'electron'
-import path from "path"
+import path from 'path'
 
 export default class NotificationUtil {
   static showSimple(title: string, body: string, click?: () => void) {

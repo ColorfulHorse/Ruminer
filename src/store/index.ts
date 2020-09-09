@@ -12,8 +12,8 @@ const rootStore: StoreOptions<RootStore> = {
     // 快捷键
     hotkey: {
       captureScreen: conf.hotkey.get('captureScreen'),
-      captureWindow: conf.hotkey.get('captureWindow'),
-      startRecognize: conf.hotkey.get('startRecognize')
+      captureWindow: conf.hotkey.get('captureWindow')
+      // startRecognize: conf.hotkey.get('startRecognize')
     },
     translate: {
       source: conf.translate.get('source'),
