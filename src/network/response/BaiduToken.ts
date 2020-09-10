@@ -16,4 +16,3 @@ export interface BaiduTokenError {
   error: string
   error_description: string
 }
-

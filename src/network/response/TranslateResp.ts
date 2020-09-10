@@ -9,7 +9,7 @@ export const BaiduTranslateErrorCode = {
   SUCCEED: 52000,
   // 请检查您的appid是否正确，或者服务是否开通
   INVALID_ACCESS: 52003,
-  // 认证未通过或未生效	 请前往我的认证查看认证进度
+  // 认证未通过或未生效,请前往我的认证查看认证进度
   AUTH_FAILED: 90107,
   // 账户余额不足
   BALANCE_OVER: 54004,
@@ -25,5 +25,3 @@ export interface BaiduTranslateResp {
   trans_result: BaiduTranslateResult[]
   error_code: number | undefined
 }
-
-

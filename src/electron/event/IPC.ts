@@ -5,6 +5,7 @@ import SelectWin from '@/electron/windows/SelectWin'
 import HotKeyUtil from '@/utils/HotKeyUtil'
 import { windowApi } from '@/electron/ffi/WindowApi'
 import App from '@/electron/App'
+import { getAvailableFonts, getAvailableFontsSync } from 'font-manager'
 
 export const KEYS = {
   OPEN_DEVTOOL: 'OPEN_DEVTOOL',
@@ -38,6 +39,10 @@ export const KEYS = {
   MAIN_PROXY: 'MAIN_PROXY',
 
   MAIN_LOG: 'MAIN_LOG',
+  GET_SYSTEM_FONTS: 'GET_SYSTEM_FONTS',
+  // 翻译窗口样式改变
+  CONTENT_STYLE_CHANGED: 'CONTENT_STYLE_CHANGED',
+
   MINIMIZE_MAIN_WINDOW() {
 
   }
@@ -129,7 +134,12 @@ export default class IPC {
         // app.contentWin.win.blur()
       }
     })
+
+    ipcMain.handle(KEYS.GET_SYSTEM_FONTS, () =>  {
+      return getAvailableFontsSync().map(value => value.family)
+    })
   }
+
 
   /**
    * 选择选中窗口区域

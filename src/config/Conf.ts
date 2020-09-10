@@ -28,6 +28,28 @@ export interface MediaSource {
 
 export interface CommonConf {
   firstInstall: boolean
+  contentStyle: ContentStyle
+}
+
+export interface ContentStyle {
+  // 字体颜色
+  fontColor: string
+  fontSize: number
+  fontAlign: string
+  fontFamily: string
+  fontWeight: number
+  bgColor: string
+}
+
+export function defaultContentStyle () {
+  return {
+    fontColor: '#42b983',
+    fontSize: 16,
+    fontAlign: 'center',
+    fontFamily: 'sans-serif',
+    fontWeight: 400,
+    bgColor: '#00000000'
+  }
 }
 
 export interface HotKeyConf {
@@ -61,7 +83,8 @@ export default {
   common: new ElectronStore<CommonConf>({
     name: 'commonConf',
     defaults: {
-      firstInstall: true
+      firstInstall: true,
+      contentStyle: defaultContentStyle()
     }
   }),
   temp: new ElectronStore<TempConf>({

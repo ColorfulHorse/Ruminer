@@ -14,6 +14,7 @@ const Config = () => import('@/views/Config.vue')
 const Overlay = () => import('@/views/Overlay.vue')
 const Content = () => import('@/views/Content.vue')
 const Select = () => import('@/views/Select.vue')
+const ContentSetting = () => import('@/views/ContentSetting.vue')
 
 Vue.use(VueRouter)
 
@@ -51,6 +52,16 @@ const routes: Array<RouteConfig> = [
           name: '快捷键',
           icon: 'el-icon-jianpan',
           subPath: 'keymap'
+        }
+      },
+      {
+        path: '/content-setting',
+        name: 'content-setting',
+        component: ContentSetting,
+        meta: {
+          name: '显示设置',
+          icon: 'el-icon-jianpan',
+          subPath: 'content-setting'
         }
       }
     ]
