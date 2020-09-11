@@ -2,6 +2,7 @@ import { Rect } from '@/graphics/Graphics'
 import { OcrClient } from './OcrClient'
 import conf, { MediaSource } from '../config/Conf'
 import { MainLog } from '@/utils/MainLog'
+import NotificationUtil from '@/utils/NotificationUtil'
 
 export default class CaptureManager {
   videoStream: MediaStream | null = null
@@ -23,6 +24,11 @@ export default class CaptureManager {
 
   // 开始捕捉屏幕
   start() {
+    if (this.capturing) {
+      return
+    }
+    this.capturing = true
+    MainLog.info('start capturing')
     const source = conf.temp.get('source')
     if (source) {
       this.mediaSource = source
@@ -45,7 +51,10 @@ export default class CaptureManager {
         .then(stream => {
           this.startCaptureImage(stream)
         })
-        .catch(err => console.log('capture', err))
+        .catch(err => {
+          this.showError()
+          this.stop()
+        })
     }
   }
 
@@ -79,38 +88,49 @@ export default class CaptureManager {
     }
     video.srcObject = stream
     video.onloadedmetadata = async () => {
-      await video.play()
-      this.timer = window.setInterval(async () => {
-        // 截取屏幕图片
-        const rect: Rect | null = conf.temp.get('captureRect')
-        if (rect != null) {
-          // canvas.height = rect.bottom - rect.top
-          // canvas.width = rect.right - rect.left
-          const width = rect.right - rect.left
-          const height = rect.bottom - rect.top
-          canvas.height = rect.bottom - rect.top
-          canvas.width = rect.right - rect.left
-          const bm = await createImageBitmap(video, rect.left, rect.top, width, height)
-          if (ctx != null) {
-            ctx.drawImage(bm, 0, 0, width, height)
-            const base64 = canvas.toDataURL('image/jpeg')
-            bm.close()
-            await OcrClient.getInstance().recognize(base64)
+      video.play().then(() => {
+        this.timer = window.setInterval(async () => {
+          // 截取屏幕图片
+          const rect: Rect | null = conf.temp.get('captureRect')
+          if (rect != null) {
+            // canvas.height = rect.bottom - rect.top
+            // canvas.width = rect.right - rect.left
+            const width = rect.right - rect.left
+            const height = rect.bottom - rect.top
+            canvas.height = rect.bottom - rect.top
+            canvas.width = rect.right - rect.left
+            const bm = await createImageBitmap(video, rect.left, rect.top, width, height)
+            if (ctx != null) {
+              ctx.drawImage(bm, 0, 0, width, height)
+              const base64 = canvas.toDataURL('image/jpeg')
+              bm.close()
+              await OcrClient.getInstance().recognize(base64)
+            }
           }
-        }
-      }, 600)
+        }, 600)
+      }).catch(err => {
+        this.showError()
+        this.stop()
+      })
     }
   }
 
   stop() {
-    MainLog.info('stop capture')
+    if (this.capturing) {
+      MainLog.info('stop capture')
+    }
     this.capturing = false
     if (this.timer !== -1) {
       window.clearInterval(this.timer)
+      this.timer = -1
     }
     if (this.videoStream != null) {
-      this.videoStream.getVideoTracks()[0].stop()
+      this.videoStream.getVideoTracks().forEach(value => value.stop())
       this.videoStream = null
     }
+  }
+
+  showError() {
+    NotificationUtil.showSimple('读取屏幕内容错误', '读取屏幕或窗口内容错误，窗口可能已经被关闭，请重试')
   }
 }

@@ -4,16 +4,32 @@
       <div id="action_wrapper">
         <transition name="fade">
           <ul id="actions" v-if="inside">
-            <li @click="capture"><i class="el-icon-scissors"/></li>
-            <li @click="selectWindow"><i class="el-icon-windows"/></li>
-            <li @click="minus"><i class="el-icon-minus"/></li>
-            <li @click="plus"><i class="el-icon-plus"/></li>
-            <li @click="close"><i class="el-icon-close"/></li>
+            <el-tooltip :content="manager.capturing ? '停止检测' : '开始检测'" placement="bottom">
+              <li @click="pauseOrStart()"><i :class="manager.capturing ? 'el-icon-pause' : 'el-icon-start'"/></li>
+            </el-tooltip>
+            <el-tooltip content="选取屏幕位置" placement="bottom">
+              <li @click="capture"><i class="el-icon-scissors"/></li>
+            </el-tooltip>
+            <el-tooltip content="选取检测窗口" placement="bottom">
+              <li @click="selectWindow"><i class="el-icon-windows"/></li>
+            </el-tooltip>
+            <el-tooltip content="修改样式" placement="bottom">
+              <li @click="editStyle"><i class="el-icon-style"/></li>
+            </el-tooltip>
+            <el-tooltip content="缩小字体" placement="bottom">
+              <li @click="minus"><i class="el-icon-minus"/></li>
+            </el-tooltip>
+            <el-tooltip content="放大字体" placement="bottom">
+             <li @click="plus"><i class="el-icon-plus"/></li>
+            </el-tooltip>
+            <el-tooltip content="关闭窗口" placement="bottom">
+              <li @click="close"><i class="el-icon-close"/></li>
+            </el-tooltip>
           </ul>
         </transition>
       </div>
       <div id="content">
-        <p :style="{ fontSize : (textSize + 'px') }">{{$store.state.translate.resultText}}</p>
+        <p :style="textStyle">{{$store.state.translate.resultText}}</p>
       </div>
     </div>
   </div>
@@ -26,15 +42,16 @@ import { DesktopCapturerSource, ipcRenderer, remote } from 'electron'
 import CaptureManager from '../ocr/CaptureManager'
 import IPC, { KEYS } from '@/electron/event/IPC'
 import { MainLog } from '@/utils/MainLog'
+import { defaultContentStyle } from '@/config/Conf'
 
 @Component({
   name: 'Content'
 })
 export default class Content extends Vue {
+  manager = CaptureManager.getInstance()
+  contentStyle = defaultContentStyle()
   textSize = 24
-
   inside = false
-
   dragging = false
   wX = -1
   wY = -1
@@ -42,6 +59,21 @@ export default class Content extends Vue {
   screenY = -1
   winWidth = 0
   winHeight = 0
+
+  get textStyle() {
+    return {
+      background: this.contentStyle.bgColor,
+      color: this.contentStyle.fontColor,
+      fontWeight: this.contentStyle.fontWeight,
+      fontSize: this.contentStyle.fontSize + 'px',
+      fontFamily: this.contentStyle.fontFamily,
+      textAlign: this.contentStyle.fontAlign
+    }
+  }
+
+  created() {
+    this.contentStyle = this.$conf.common.get('contentStyle')
+  }
 
   mounted() {
     ipcRenderer.invoke(KEYS.GET_CONTENT_SIZE).then((size: number[]) => {
@@ -54,6 +86,10 @@ export default class Content extends Vue {
       this.winWidth = size[0]
       this.winHeight = size[1]
       MainLog.info(`original: ${this.winWidth}, height: ${this.winHeight}`)
+    })
+
+    ipcRenderer.on(KEYS.CONTENT_STYLE_CHANGED, () => {
+      this.contentStyle = this.$conf.common.get('contentStyle')
     })
 
     ipcRenderer.on(KEYS.RESTART_RECOGNIZE, () => {
@@ -99,6 +135,10 @@ export default class Content extends Vue {
     ipcRenderer.send(KEYS.MAIN_PROXY, KEYS.CAPTURE_WINDOW)
   }
 
+  editStyle() {
+    ipcRenderer.send(KEYS.MAIN_PROXY, KEYS.ROUTE_STYLE_CONFIG)
+  }
+
   minus() {
     if (this.textSize >= 16) {
       this.textSize -= 5
@@ -108,6 +148,14 @@ export default class Content extends Vue {
   plus() {
     if (this.textSize <= 36) {
       this.textSize += 5
+    }
+  }
+
+  pauseOrStart() {
+    if (this.manager.capturing) {
+      this.manager.stop()
+    } else {
+      this.manager.start()
     }
   }
 
@@ -235,7 +283,6 @@ export default class Content extends Vue {
     overflow-y: scroll;
     p {
       width: 100%;
-      color: transparent;
       text-align: center;
       align-self: center;
       /*background-image: linear-gradient(to bottom, blue, red);*/

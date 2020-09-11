@@ -55,13 +55,13 @@ const routes: Array<RouteConfig> = [
         }
       },
       {
-        path: '/content-setting',
-        name: 'content-setting',
+        path: 'content-style',
+        name: 'content-style',
         component: ContentSetting,
         meta: {
           name: '显示设置',
-          icon: 'el-icon-jianpan',
-          subPath: 'content-setting'
+          icon: 'el-icon-style',
+          subPath: 'content-style'
         }
       }
     ]

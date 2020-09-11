@@ -1,3 +1,8 @@
+import { LONG, WCHAR_String } from 'win32-def/dist/lib/win-model/common'
+import { StructInstanceBase } from 'win32-def/dist/lib/win-model/struct'
+import * as ref from 'ref-napi'
+import refArray from 'ref-array-napi'
+
 export enum DWMWINDOWATTRIBUTE {
   DWMWA_NCRENDERING_ENABLED = 1,
   DWMWA_NCRENDERING_POLICY,
@@ -15,6 +20,86 @@ export enum DWMWINDOWATTRIBUTE {
   DWMWA_CLOAKED,
   DWMWA_FREEZE_REPRESENTATION,
   DWMWA_LAST
+}
+
+export interface TEXTMETRICW_Struct extends StructInstanceBase {
+  tmHeight: number
+  tmAscent: number
+  tmDescent: number
+  tmInternalLeading: number
+  tmExternalLeading: number
+  tmAveCharWidth: number
+  tmMaxCharWidth: number
+  tmWeight: number
+  tmOverhang: number
+  tmDigitizedAspectX: number
+  tmDigitizedAspectY: number
+  tmFirstChar: string
+  tmLastChar: string
+  tmDefaultChar: string
+  tmBreakChar: string
+  tmItalic: number
+  tmUnderlined: number
+  tmStruckOut: number
+  tmPitchAndFamily: number
+  tmCharSet: number
+}
+
+export interface LOGFONTW_Struct extends StructInstanceBase {
+  lfHeight: number
+  lfWidth: number
+  lfEscapement: number
+  lfOrientation: number
+  lfWeight: number
+  lfItalic: number
+  lfUnderline: number
+  lfStrikeOut: number
+  lfCharSet: number
+  lfOutPrecision: number
+  lfClipPrecision: number
+  lfQuality: number
+  lfPitchAndFamily: number
+  lfFaceName: string
+}
+
+export const LOGFONTW = {
+  lfHeight: ref.types.long,
+  lfWidth: ref.types.long,
+  lfEscapement: ref.types.long,
+  lfOrientation: ref.types.long,
+  lfWeight: ref.types.byte,
+  lfItalic: ref.types.byte,
+  lfUnderline: ref.types.byte,
+  lfStrikeOut: ref.types.byte,
+  lfCharSet: ref.types.byte,
+  lfOutPrecision: ref.types.byte,
+  lfClipPrecision: ref.types.byte,
+  lfQuality: ref.types.byte,
+  lfPitchAndFamily: ref.types.byte,
+  lfFaceName: refArray(ref.types.char)
+}
+
+export declare const TEXTMETRICW: {
+  tmHeight: string
+  tmAscent: string
+  tmDescent: string
+  tmInternalLeading: string
+  tmExternalLeading: string
+  tmAveCharWidth: string
+  tmMaxCharWidth: string
+  tmWeight: string
+  tmOverhang: string
+  tmDigitizedAspectX: string
+  tmDigitizedAspectY: string
+  tmFirstChar: string
+  tmLastChar: string
+  tmDefaultChar: string
+  tmBreakChar: string
+  tmItalic: string
+  tmUnderlined: string
+  tmStruckOut: string
+  tmPitchAndFamily: string
+  tmCharSet: string
 }
 
 // export interface DWM {

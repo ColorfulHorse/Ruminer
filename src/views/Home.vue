@@ -42,7 +42,7 @@
           :close-on-click-modal="false"
           :close-on-press-escape="false"
           :show-close="false">
-        <p class="dialog-content">此软件仅供个人学习交流使用，不可用于商业或非法用途，不可私自使用此软件牟利，违反本条约后果自负。</p>
+        <p class="dialog-content">此软件仅供个人学习交流使用，不可用于商业或非法用途，不可私自使用此软件牟利，违反本条约后果自负。如果你是通过收费途径获取本软件，请联系我：qq 812194178</p>
         <div slot="footer" class="dialog-footer">
           <el-checkbox v-model="agreed">我同意</el-checkbox>
           <el-button :disabled="!agreed" size="small" type="primary" @click="agree">确 定</el-button>
@@ -78,6 +78,9 @@ export default class Home extends Vue {
     ipcRenderer.on(KEYS.ROUTE_API_CONFIG, () => {
       this.$router.push('config')
     })
+    ipcRenderer.on(KEYS.ROUTE_STYLE_CONFIG, () => {
+      this.$router.push('content-style')
+    })
     this.dialogVisible = this.$conf.common.get('firstInstall')
   }
 
@@ -102,6 +105,11 @@ export default class Home extends Vue {
   #home {
     height: 100%;
     width: 100%;
+    overflow: hidden;
+
+    .el-container {
+      overflow-y: scroll;
+    }
 
     .el-header {
       position: relative;

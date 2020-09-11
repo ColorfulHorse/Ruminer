@@ -44,11 +44,11 @@ export interface ContentStyle {
 export function defaultContentStyle () {
   return {
     fontColor: '#42b983',
-    fontSize: 16,
+    fontSize: 24,
     fontAlign: 'center',
     fontFamily: 'sans-serif',
     fontWeight: 400,
-    bgColor: '#00000000'
+    bgColor: 'rgba(0, 0, 0, 0)'
   }
 }
 

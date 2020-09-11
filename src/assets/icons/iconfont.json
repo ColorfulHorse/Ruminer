@@ -6,6 +6,27 @@
   "description": "",
   "glyphs": [
     {
+      "icon_id": "17093563",
+      "name": "pause",
+      "font_class": "pause",
+      "unicode": "e608",
+      "unicode_decimal": 58888
+    },
+    {
+      "icon_id": "17093564",
+      "name": "start",
+      "font_class": "start",
+      "unicode": "e609",
+      "unicode_decimal": 58889
+    },
+    {
+      "icon_id": "17091691",
+      "name": "样式",
+      "font_class": "style",
+      "unicode": "e603",
+      "unicode_decimal": 58883
+    },
+    {
       "icon_id": "16741617",
       "name": "windows",
       "font_class": "windows",

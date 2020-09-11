@@ -23,7 +23,7 @@ export default class App {
   captureWin: CaptureWin | null = null
   contentWin: ContentWin | null = null
   selectWin: SelectWin | null = null
-  openDevTools = false
+  openDevTools = true
 
   constructor() {
     app.requestSingleInstanceLock()

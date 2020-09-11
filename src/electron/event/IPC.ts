@@ -5,7 +5,6 @@ import SelectWin from '@/electron/windows/SelectWin'
 import HotKeyUtil from '@/utils/HotKeyUtil'
 import { windowApi } from '@/electron/ffi/WindowApi'
 import App from '@/electron/App'
-import { getAvailableFonts, getAvailableFontsSync } from 'font-manager'
 
 export const KEYS = {
   OPEN_DEVTOOL: 'OPEN_DEVTOOL',
@@ -34,6 +33,8 @@ export const KEYS = {
 
   // 主界面切换到配置页
   ROUTE_API_CONFIG: 'ROUTE_API_CONFIG',
+  // 主界面切换到配置页
+  ROUTE_STYLE_CONFIG: 'ROUTE_STYLE_CONFIG',
 
   // 用于渲染进程发送消息给主界面渲染进程
   MAIN_PROXY: 'MAIN_PROXY',
@@ -76,7 +77,7 @@ export default class IPC {
 
     ipcMain.on(KEYS.MAIN_PROXY, (event, key: string) => {
       app.mainWin?.win.webContents.send(key)
-      if (key === KEYS.ROUTE_API_CONFIG) {
+      if (key === KEYS.ROUTE_API_CONFIG || key === KEYS.ROUTE_STYLE_CONFIG) {
         app.showMain()
       }
     })
@@ -110,6 +111,12 @@ export default class IPC {
       }
     })
 
+    ipcMain.on(KEYS.CONTENT_STYLE_CHANGED, () => {
+      if (app.contentWin != null) {
+        app.contentWin.win.webContents.send(KEYS.CONTENT_STYLE_CHANGED)
+      }
+    })
+
     ipcMain.handle(KEYS.GET_CONTENT_SIZE, () => {
       if (app.contentWin != null) {
         return [app.contentWin.width, app.contentWin.height]
@@ -135,11 +142,13 @@ export default class IPC {
       }
     })
 
-    ipcMain.handle(KEYS.GET_SYSTEM_FONTS, () =>  {
-      return getAvailableFontsSync().map(value => value.family)
+    ipcMain.on(KEYS.GET_SYSTEM_FONTS, () => {
+      if (app.mainWin) {
+        const hwnd = app.mainWin.win.getNativeWindowHandle().readUInt32LE(0)
+        windowApi.getSystemFonts(hwnd)
+      }
     })
   }
-
 
   /**
    * 选择选中窗口区域
