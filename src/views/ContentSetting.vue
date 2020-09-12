@@ -126,7 +126,7 @@ export default class ContentSetting extends Vue {
   }
 
   beforeCreate() {
-    ipcRenderer.send(KEYS.GET_SYSTEM_FONTS)
+    // ipcRenderer.send(KEYS.GET_SYSTEM_FONTS)
     getFonts()
       .then(fonts => {
         this.fonts = fonts.map(value => value.replace(/"/g, ''))

@@ -1,16 +1,16 @@
 import ffi, { Library } from 'ffi-napi'
 import { DStruct, U, DModel as M, DTypes as T, FModel, DStructExt } from 'win32-api'
 import log from 'electron-log'
-import { DWMWINDOWATTRIBUTE, LOGFONTW, LOGFONTW_Struct, TEXTMETRICW, TEXTMETRICW_Struct } from './types'
+import { DWMWINDOWATTRIBUTE, ENUMLOGFONTEXW, LOGFONTW, LOGFONTW_Struct, TEXTMETRICW, TEXTMETRICW_Struct } from './types'
 import StructDi from 'ref-struct-di'
-import * as ref from 'ref-napi'
+import ref, { NULL } from 'ref-napi'
 import refArray from 'ref-array-napi'
 import { Win32Fns } from 'win32-api/dist/lib/user32/api'
-import { Type } from 'ref-napi'
+import wchar, { string, toString } from 'ref-wchar-napi'
 
 export const Struct = StructDi(ref)
 
-export class WindowApi {
+export class WindowsApi {
   private _DWM: any | null = null
   private _Gdi32: any | null = null
   private _user32b: any | null = null
@@ -56,14 +56,15 @@ export class WindowApi {
       log.info('init Gdi32')
       log.info(Date.now())
       this._DWM = ffi.Library('Gdi32', {
-        EnumFontFamiliesExW: [T.INT, [T.HDC, 'pointer', 'pointer', T.LPARAM, T.DWORD]]
+        EnumFontFamiliesExW: [T.INT, [T.HDC, 'pointer', 'pointer', T.LPARAM, T.DWORD]],
+        EnumFontFamiliesW: [T.INT, [T.HDC, T.POINT, 'pointer', T.LPARAM]]
       })
       log.info(Date.now())
     }
     return this._DWM
   }
 
-  static _instance: WindowApi | null = null
+  static _instance: WindowsApi | null = null
 
   private constructor() {
   }
@@ -79,50 +80,36 @@ export class WindowApi {
     }
   }
 
-  getSystemFonts(hwnd: number) {
-    const hdc = this.user32b.GetWindowDC(hwnd)
+  /**
+   * 遍历系统字体
+   * https://docs.microsoft.com/en-us/windows/win32/api/wingdi/nf-wingdi-enumfontfamiliesexw
+   * https://docs.microsoft.com/en-us/windows/win32/api/gdiplusheaders/nf-gdiplusheaders-fontcollection-getfamilies
+   */
+  getSystemFonts() {
+    const fonts: Array<string> = []
+    const hdc = this.user32b.GetWindowDC(0)
     log.info(`hdc: ${hdc}`)
-    const enumWindowsProc = ffi.Callback(
+    const LogFontType = new Struct(LOGFONTW)
+    const ENUMLOGFONTEXWType = new Struct(ENUMLOGFONTEXW)
+    const enumFontsProc = ffi.Callback(
       T.INT,
       ['pointer', 'pointer', T.DWORD, T.LPARAM],
-      (logfontw: M._POINTER, textmetricw: M._POINTER, dword: M.DWORD, lParam: M.LPARAM): M.INT => {
-        log.info(logfontw)
-        log.info(logfontw.deref(logfontw))
-        log.info(textmetricw)
-        log.info(textmetricw.deref(logfontw))
-        return 0
+      (lpelfe: Buffer, lpntme: Buffer, FontType: any, lParam: any): M.INT => {
+        // lpelfe = ref.reinterpret(lpelfe, LogFontType.size)
+        // const data = ref.get(lpelfe, 0, LogFontType)
+        lpelfe = ref.reinterpret(lpelfe, ENUMLOGFONTEXWType.size)
+        const data = ref.get(lpelfe, 0, ENUMLOGFONTEXWType)
+        // const font = ref.reinterpret(data.lfFaceName, wchar.size * 32)
+        log.info(lParam)
+        const font = toString(data.elfFullName.buffer).replace('/\0+$/', '')
+        fonts.push(font)
+        return 1
       })
-    const CharArray100 = refArray(ref.types.char, 32)
-    const logFont = new Struct({
-      lfHeight: ref.types.long,
-      lfWidth: ref.types.long,
-      lfEscapement: ref.types.long,
-      lfOrientation: ref.types.long,
-      lfWeight: ref.types.byte,
-      lfItalic: ref.types.byte,
-      lfUnderline: ref.types.byte,
-      lfStrikeOut: ref.types.byte,
-      lfCharSet: ref.types.byte,
-      lfOutPrecision: ref.types.byte,
-      lfClipPrecision: ref.types.byte,
-      lfQuality: ref.types.byte,
-      lfPitchAndFamily: ref.types.byte,
-      lfFaceName: CharArray100
-    })()
-    log.info(`logFont length: ${logFont.ref().length}`)
-    logFont.lfPitchAndFamily = 0
-    // DEFAULT_CHARSET
+    const logFont = LogFontType()
+    const buf = Buffer.alloc(32)
+    string.set(buf, 0, '')
     logFont.lfCharSet = 1
-    // const CharArray100 = refArray(ref.types.char, 32)
-    const bufferValue = Buffer.from('')
-    // const value1 = new CharArray100()
-    // for (let i = 0, l = bufferValue.length; i < l; i++) {
-    //   value1[i] = bufferValue[i]
-    // }
-    const strArray = [...bufferValue]
-    const value2 = ref.alloc(CharArray100, strArray)
-    logFont.lfFaceName = value2
-    this.Gdi32.EnumFontFamiliesExW(hdc, logFont.ref(), enumWindowsProc, 0, 0)
+    const res = this.Gdi32.EnumFontFamiliesExW(hdc, logFont.ref(), enumFontsProc, 222, 0)
   }
 
   /**
@@ -155,11 +142,11 @@ export class WindowApi {
 
   static getInstance() {
     if (this._instance == null) {
-      this._instance = new WindowApi()
+      this._instance = new WindowsApi()
     }
     return this._instance
   }
 }
 
-export const windowApi = WindowApi.getInstance()
+export const windowsApi = WindowsApi.getInstance()
 // export const win32 = WindowApi.getInstance().user32

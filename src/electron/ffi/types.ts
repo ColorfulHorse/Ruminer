@@ -2,6 +2,10 @@ import { LONG, WCHAR_String } from 'win32-def/dist/lib/win-model/common'
 import { StructInstanceBase } from 'win32-def/dist/lib/win-model/struct'
 import * as ref from 'ref-napi'
 import refArray from 'ref-array-napi'
+import wchar, { string } from 'ref-wchar-napi'
+import StructDi from 'ref-struct-di'
+
+export const Struct = StructDi(ref)
 
 export enum DWMWINDOWATTRIBUTE {
   DWMWA_NCRENDERING_ENABLED = 1,
@@ -76,7 +80,14 @@ export const LOGFONTW = {
   lfClipPrecision: ref.types.byte,
   lfQuality: ref.types.byte,
   lfPitchAndFamily: ref.types.byte,
-  lfFaceName: refArray(ref.types.char)
+  lfFaceName: refArray(wchar, 32)
+}
+
+export const ENUMLOGFONTEXW = {
+  elfLogFont: new Struct(LOGFONTW),
+  elfFullName: refArray(wchar, 32),
+  elfStyle: refArray(wchar, 32),
+  elfScript: refArray(wchar, 32)
 }
 
 export declare const TEXTMETRICW: {

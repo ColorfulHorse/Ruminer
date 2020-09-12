@@ -92,7 +92,7 @@ module.exports = {
       disableMainProcessTypescript: false, // Manually disable typescript plugin for main process. Enable if you want to use regular js for the main process (src/background.js by default).
       mainProcessTypeChecking: false, // Manua
       mainProcessWatch: ['src/electron/**/*.ts'],
-      externals: ['ruminer', 'ref-napi', 'ffi-napi', 'vue', 'vue-router', 'element-ui', 'element-theme-chalk', 'axios', 'vuex'],
+      externals: ['ruminer', 'ref-napi', 'ffi-napi', 'iconv', 'vue', 'vue-router', 'element-ui', 'element-theme-chalk', 'axios', 'vuex'],
       customFileProtocol: 'ruminer://./',
       // externals: ['ref-napi', 'ffi-napi']
       // externals: {

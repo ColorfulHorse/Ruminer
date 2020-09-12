@@ -3,7 +3,7 @@ import log from 'electron-log'
 import conf, { HotKey } from '@/config/Conf'
 import SelectWin from '@/electron/windows/SelectWin'
 import HotKeyUtil from '@/utils/HotKeyUtil'
-import { windowApi } from '@/electron/ffi/WindowApi'
+import { windowsApi } from '@/electron/ffi/WindowsApi'
 import App from '@/electron/App'
 
 export const KEYS = {
@@ -142,12 +142,9 @@ export default class IPC {
       }
     })
 
-    ipcMain.on(KEYS.GET_SYSTEM_FONTS, () => {
-      if (app.mainWin) {
-        const hwnd = app.mainWin.win.getNativeWindowHandle().readUInt32LE(0)
-        windowApi.getSystemFonts(hwnd)
-      }
-    })
+    // ipcMain.on(KEYS.GET_SYSTEM_FONTS, () => {
+    //   windowsApi.getSystemFonts()
+    // })
   }
 
   /**
@@ -165,10 +162,10 @@ export default class IPC {
     // const title = buf.toString('ucs2').replace('/\0+$/', '')
     // const rect2: M.RECT_Struct = new Struct(DStruct.RECT)()
     // 目标窗口移到最前面
-    windowApi.user32.BringWindowToTop(hWnd)
+    windowsApi.user32.BringWindowToTop(hWnd)
     // windowApi.user32.GetWindowRect(hWnd, rect2.ref())
     // 获取窗口位置
-    const rect = windowApi.getWinFrameBounds(hWnd)
+    const rect = windowsApi.getWinFrameBounds(hWnd)
     if (rect != null) {
       let rectangle: Rectangle = {
         x: rect.left,

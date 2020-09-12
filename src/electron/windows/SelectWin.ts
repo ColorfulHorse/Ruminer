@@ -6,7 +6,7 @@ import IPC from '@/electron/event/IPC'
 import conf from '@/config/Conf'
 import * as ref from 'ref-napi'
 import { DModel as M, DStruct, U, DTypes as T } from 'win32-api'
-import { Struct, windowApi } from '@/electron/ffi/WindowApi'
+import { Struct, windowsApi } from '@/electron/ffi/WindowsApi'
 
 export default class SelectWin implements IWin {
   app: App
