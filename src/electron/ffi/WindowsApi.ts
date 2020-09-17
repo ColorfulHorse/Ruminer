@@ -20,23 +20,18 @@ export class WindowsApi {
     // 初始化需要200ms，可以放到别处初始化
     if (this._user32 == null) {
       log.info('init user32')
-      log.info(Date.now())
       this._user32 = U.load(['IsWindowVisible', 'BringWindowToTop', 'BringWindowToTop', 'GetWindowTextW', 'GetWindowRect', 'GetWindowDC'])
-      log.info(Date.now())
     }
     return this._user32
   }
 
   get DWM() {
     if (this._DWM == null) {
-      log.info('init DWM')
-      log.info(Date.now())
       this._DWM = ffi.Library('Dwmapi', {
         // https://docs.microsoft.com/zh-cn/windows/win32/api/dwmapi/nf-dwmapi-dwmgetwindowattribute
         // 返回状态码，参数1.窗口句柄，2.窗口信息key，3,窗口信息结果对象指针，4.窗口信息结果对象大小
         DwmGetWindowAttribute: [T.HRESULT, [T.HWND, T.DWORD, T.PVOID, T.DWORD]]
       })
-      log.info(Date.now())
     }
     return this._DWM
   }
@@ -95,13 +90,16 @@ export class WindowsApi {
       T.INT,
       ['pointer', 'pointer', T.DWORD, T.LPARAM],
       (lpelfe: Buffer, lpntme: Buffer, FontType: any, lParam: any): M.INT => {
-        // lpelfe = ref.reinterpret(lpelfe, LogFontType.size)
-        // const data = ref.get(lpelfe, 0, LogFontType)
-        lpelfe = ref.reinterpret(lpelfe, ENUMLOGFONTEXWType.size)
+        log.info(`address: ${lpelfe.address(lpelfe)}`)
+        lpelfe = ref.reinterpretUntilZeros(lpelfe, ENUMLOGFONTEXWType.size)
+        // log.info(lpelfe)
+        if (lpelfe == null) {
+          log.info('enum null')
+          return 0
+        }
         const data = ref.get(lpelfe, 0, ENUMLOGFONTEXWType)
-        // const font = ref.reinterpret(data.lfFaceName, wchar.size * 32)
-        log.info(lParam)
         const font = toString(data.elfFullName.buffer).replace('/\0+$/', '')
+        // log.info(`find font: ${font}`)
         fonts.push(font)
         return 1
       })

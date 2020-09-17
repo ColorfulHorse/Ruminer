@@ -126,15 +126,20 @@ export default class ContentSetting extends Vue {
   }
 
   beforeCreate() {
+    console.log(Date.now())
+    ipcRenderer.invoke(KEYS.GET_SYSTEM_FONTS).then((fonts: Array<string>) => {
+      this.fonts = fonts
+      console.log(Date.now())
+    })
     // ipcRenderer.send(KEYS.GET_SYSTEM_FONTS)
-    getFonts()
-      .then(fonts => {
-        this.fonts = fonts.map(value => value.replace(/"/g, ''))
-        console.log(Date.now())
-      })
-      .catch(err => {
-        console.log(err)
-      })
+    // getFonts()
+    //   .then(fonts => {
+    //     this.fonts = fonts.map(value => value.replace(/"/g, ''))
+    //     console.log(Date.now())
+    //   })
+    //   .catch(err => {
+    //     console.log(err)
+    //   })
   }
 
   created() {

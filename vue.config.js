@@ -1,5 +1,6 @@
 const isDev = process.env.NODE_ENV !== 'production'
 const CompressionWebpackPlugin = require('compression-webpack-plugin')
+const CopyWebpackPlugin = require('copy-webpack-plugin')
 const path = require('path')
 function resolve (dir) {
   return path.join(__dirname, dir)
@@ -10,22 +11,6 @@ module.exports = {
   devServer: {
     host: '0.0.0.0',
     port: 8080
-    // proxy: {
-    //   '/baidufanyi': {
-    //     target: 'http://api.fanyi.baidu.com',
-    //     changeOrigin: true,
-    //     pathRewrite: {
-    //       '^/baidufanyi': ''
-    //     }
-    //   },
-    //   '/baiduocr': {
-    //     target: 'https://aip.baidubce.com',
-    //     changeOrigin: true,
-    //     pathRewrite: {
-    //       '^/baiduocr': ''
-    //     }
-    //   }
-    // }
   },
   css: {
     loaderOptions: {
@@ -39,6 +24,14 @@ module.exports = {
     // externals: {
     //   'tesseract.js': 'Tesseract'
     // },
+    // config.plugins.push(
+    //   new CopyWebpackPlugin([
+    //     {
+    //       from: resolve('src/native/winapi/build/Release/winapi.node'),
+    //       to: path.join(__static, 'winapi.node')
+    //     }
+    //   ])
+    // )
     config.devtool = 'source-map'
     // config.externals = {
     //   vue: 'Vue',
@@ -92,21 +85,43 @@ module.exports = {
       disableMainProcessTypescript: false, // Manually disable typescript plugin for main process. Enable if you want to use regular js for the main process (src/background.js by default).
       mainProcessTypeChecking: false, // Manua
       mainProcessWatch: ['src/electron/**/*.ts'],
-      externals: ['ruminer', 'ref-napi', 'ffi-napi', 'iconv', 'vue', 'vue-router', 'element-ui', 'element-theme-chalk', 'axios', 'vuex'],
+      externals: [
+        'ruminer',
+        'winapi.node',
+        'ref-napi',
+        'ffi-napi',
+        'iconv',
+        'vue',
+        'vue-router',
+        'element-ui',
+        'element-theme-chalk',
+        'axios',
+        'vuex'
+      ],
       customFileProtocol: 'ruminer://./',
-      // externals: ['ref-napi', 'ffi-napi']
-      // externals: {
-      //   'ref-napi': 'ref-napi',
-      //   'ffi-napi': 'ffi-napi',
-      //   vue: 'Vue',
-      //   'vue-router': 'VueRouter',
-      //   'element-ui': 'ELEMENT',
-      //   axios: 'axios'
-      // }
+      // chainWebpackMainProcess: config => {
+      //   config.module
+      //     .rule('node')
+      //     .test(/\.node$/)
+      //     .use('node-loader')
+      //     .loader('node-loader')
+      //     .end()
+      // },
+      // chainWebpackRendererProcess: config => {
+      //   config.module
+      //     .rule('node')
+      //     .test(/\.node$/)
+      //     .use('node-loader')
+      //     .loader('node-loader')
+      //     .end()
+      // },
       builderOptions: {
         productName: 'Ruminer',
         appId: 'com.greensun.ruminer',
         copyright: 'green sun',
+        extraResources: [
+          'src/native/winapi/build/Release/winapi.node'
+        ],
         nsis: {
           installerIcon: 'public/favicon.ico',
           installerHeader: 'public/logo.png',

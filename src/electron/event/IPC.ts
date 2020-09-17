@@ -5,6 +5,7 @@ import SelectWin from '@/electron/windows/SelectWin'
 import HotKeyUtil from '@/utils/HotKeyUtil'
 import { windowsApi } from '@/electron/ffi/WindowsApi'
 import App from '@/electron/App'
+import { getSystemFonts } from '@/native/winapi/src'
 
 export const KEYS = {
   OPEN_DEVTOOL: 'OPEN_DEVTOOL',
@@ -142,9 +143,9 @@ export default class IPC {
       }
     })
 
-    // ipcMain.on(KEYS.GET_SYSTEM_FONTS, () => {
-    //   windowsApi.getSystemFonts()
-    // })
+    ipcMain.handle(KEYS.GET_SYSTEM_FONTS, () => {
+      return getSystemFonts()
+    })
   }
 
   /**

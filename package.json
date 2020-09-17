@@ -1,6 +1,6 @@
 {
   "name": "ruminer",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "private": true,
   "main": "./background.js",
   "scripts": {
@@ -15,6 +15,7 @@
   },
   "dependencies": {
     "axios": "^0.19.2",
+    "bindings": "^1.5.0",
     "core-js": "^3.6.5",
     "electron-log": "^4.2.2",
     "electron-store": "^6.0.0",
@@ -23,6 +24,8 @@
     "font-list": "^1.2.11",
     "iconv": "^3.0.0",
     "md5": "^2.3.0",
+    "node-addon-api": "^2.0.0",
+    "node-gyp-build": "^4.2.3",
     "qs": "^6.9.4",
     "ref-array-napi": "^1.2.1",
     "ref-napi": "^3.0.0",
@@ -58,7 +61,8 @@
     "@vue/eslint-config-typescript": "^5.0.2",
     "compression-webpack-plugin": "^5.0.1",
     "concurrently": "^5.2.0",
-    "electron": "^9.3.0",
+    "copy-webpack-plugin": "^6.1.0",
+    "electron": "^10.1.1",
     "electron-is-dev": "^1.2.0",
     "electron-rebuild": "^1.11.0",
     "eslint": "^6.7.2",
@@ -67,6 +71,8 @@
     "eslint-plugin-promise": "^4.2.1",
     "eslint-plugin-standard": "^4.0.0",
     "eslint-plugin-vue": "^6.2.2",
+    "file-loader": "^6.1.0",
+    "node-loader": "^1.0.1",
     "node-sass": "^4.12.0",
     "sass-loader": "^8.0.2",
     "ts-node": "^8.10.2",

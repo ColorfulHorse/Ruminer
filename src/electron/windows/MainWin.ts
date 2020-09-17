@@ -2,6 +2,7 @@ import { BrowserWindow, ipcMain } from 'electron'
 import App from '../App'
 import IWin from '@/electron/windows/IWin'
 
+
 export class MainWin implements IWin {
   app: App
   win: BrowserWindow
@@ -37,7 +38,9 @@ export class MainWin implements IWin {
       this.win.show()
       this.win.focus()
     })
+
     this.win.loadURL(`${this.app.indexUrl}`).then(() => {
+      // log.info(getSystemFonts())
       if (this.app.openDevTools) {
         this.win.webContents.openDevTools()
       }

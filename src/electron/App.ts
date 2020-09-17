@@ -12,6 +12,9 @@ import HotKeyUtil from '@/utils/HotKeyUtil'
 import CommonUtil from '@/utils/CommonUtil'
 import SelectWin from '@/electron/windows/SelectWin'
 import NotificationUtil from '@/utils/NotificationUtil'
+import log from 'electron-log'
+
+declare const __webpack_public_path__: string;
 
 'use strict'
 declare const __static: string
@@ -46,6 +49,9 @@ export default class App {
   }
 
   init() {
+    log.info(process.cwd())
+    log.info(app.getAppPath())
+    log.info(process.resourcesPath)
     if (this.isDevelopment) {
       if (process.platform === 'win32') {
         process.on('message', data => {
