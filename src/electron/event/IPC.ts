@@ -6,6 +6,9 @@ import HotKeyUtil from '@/utils/HotKeyUtil'
 import { windowsApi } from '@/electron/ffi/WindowsApi'
 import App from '@/electron/App'
 import { getSystemFonts } from '@/native/winapi/src'
+import ocr from '@/native/ocr/src'
+import path from 'path'
+import { MainLog } from '@/utils/MainLog'
 
 export const KEYS = {
   OPEN_DEVTOOL: 'OPEN_DEVTOOL',
@@ -44,6 +47,10 @@ export const KEYS = {
   GET_SYSTEM_FONTS: 'GET_SYSTEM_FONTS',
   // 翻译窗口样式改变
   CONTENT_STYLE_CHANGED: 'CONTENT_STYLE_CHANGED',
+
+  OCR_INIT: 'OCR_INIT',
+  OCR_DESTROY: 'OCR_DESTROY',
+  OCR_RECOGNIZE: 'OCR_RECOGNIZE',
 
   MINIMIZE_MAIN_WINDOW() {
 
@@ -145,6 +152,23 @@ export default class IPC {
 
     ipcMain.handle(KEYS.GET_SYSTEM_FONTS, () => {
       return getSystemFonts()
+    })
+
+    ipcMain.handle(KEYS.OCR_INIT, () => {
+      const dataPath = path.join(__static, 'tess')
+      log.info(`dataPath: ${dataPath}`)
+      ocr.init(dataPath)
+      const ret = ocr.loadLanguage('eng')
+      log.info(`load lang: ${ret}`)
+      return 0
+    })
+
+    ipcMain.on(KEYS.OCR_DESTROY, () => {
+      ocr.destroy()
+    })
+
+    ipcMain.handle(KEYS.OCR_RECOGNIZE, (event, base64: string) => {
+      return ocr.recognize(base64)
     })
   }
 

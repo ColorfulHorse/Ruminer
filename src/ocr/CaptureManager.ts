@@ -27,6 +27,7 @@ export default class CaptureManager {
     if (this.capturing) {
       return
     }
+    OcrClient.getInstance().start()
     this.capturing = true
     MainLog.info('start capturing')
     const source = conf.temp.get('source')
@@ -119,6 +120,7 @@ export default class CaptureManager {
     if (this.capturing) {
       MainLog.info('stop capture')
     }
+    OcrClient.getInstance().stop()
     this.capturing = false
     if (this.timer !== -1) {
       window.clearInterval(this.timer)

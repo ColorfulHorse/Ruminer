@@ -1,5 +1,8 @@
 #include <lib.h>
 
+TessBaseAPI *api = nullptr;
+string dataPath = nullptr;
+
 void init(string path) {
     if (api == nullptr) {
         api = new TessBaseAPI();

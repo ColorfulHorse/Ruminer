@@ -32,7 +32,7 @@ Object Init(Env env, Object exports) {
     exports["init"] = Function::New(env, Initialize);
     exports["loadLanguage"] = Function::New(env, LoadLang);
     exports["recognize"] = Function::New(env, Recognize);
-    exports["destroy"] = Function::New(env, Recognize);
+    exports["destroy"] = Function::New(env, Destroy);
     return exports;
 }
 
