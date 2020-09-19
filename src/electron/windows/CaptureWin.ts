@@ -35,6 +35,8 @@ export class CaptureWin implements IWin{
         },
         x: rect.x,
         y: rect.y,
+        minWidth: rect.width,
+        minHeight: rect.height,
         width: rect.width,
         height: rect.height,
       })

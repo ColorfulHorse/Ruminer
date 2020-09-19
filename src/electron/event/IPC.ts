@@ -67,6 +67,7 @@ export default class IPC {
 
     ipcMain.on(KEYS.OPEN_CAPTURE_WINDOW, (event, sourceId: string) => {
       const {width, height} = screen.getPrimaryDisplay().bounds
+      log.info(`screen width:${width}, height:${height}`)
       conf.temp.set('source', {
         mode: 'screen',
         width: width,

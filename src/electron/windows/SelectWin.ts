@@ -38,6 +38,7 @@ export default class SelectWin implements IWin {
 
   init() {
     this.win.on('ready-to-show', () => {
+      this.win.setAlwaysOnTop(true, 'screen-saver', 999)
       this.win.show()
     })
     this.win.on('closed', () => {
