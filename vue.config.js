@@ -120,11 +120,18 @@ module.exports = {
         appId: 'com.greensun.ruminer',
         copyright: 'green sun',
         extraResources: [
-          'src/native/winapi/build/Release/winapi.node',
-          'src/native/ocr/build/Release/ocr.node'
-        ],
-        extraFiles: [
-          'src/native/ocr/build/Release'
+          {
+            from: 'src/native/ocr/build/Release/ocr.node',
+            to: '.'
+          },
+          {
+            from: 'src/native/winapi/build/Release/winapi.node',
+            to: '.'
+          },
+          {
+            from: 'libs',
+            to: '.'
+          }
         ],
         nsis: {
           installerIcon: 'public/favicon.ico',
