@@ -1,6 +1,6 @@
 import { loadAddonFile } from '@/utils/NativeUtil'
 
-const ocr = loadAddonFile('src/native/ocr/build/Release/ocr.node')
+const ocr = loadAddonFile('ocr')
 
 // const ocr = {
 //   init: (langPath: string):void => {

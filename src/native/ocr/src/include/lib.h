@@ -16,4 +16,4 @@ string recognize(string base64);
 
 void destroy();
 
-#endif 
+#endif

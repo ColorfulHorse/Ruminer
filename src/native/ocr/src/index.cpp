@@ -1,6 +1,7 @@
 #include <napi.h>
 #include <string>
 #include "include/lib.h"
+#pragma comment(lib, "tesseract41.lib")
 
 using namespace Napi;
 

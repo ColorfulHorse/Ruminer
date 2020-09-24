@@ -2,7 +2,6 @@ import { LONG, WCHAR_String } from 'win32-def/dist/lib/win-model/common'
 import { StructInstanceBase } from 'win32-def/dist/lib/win-model/struct'
 import * as ref from 'ref-napi'
 import refArray from 'ref-array-napi'
-import wchar, { string } from 'ref-wchar-napi'
 import StructDi from 'ref-struct-di'
 
 export const Struct = StructDi(ref)
@@ -66,29 +65,29 @@ export interface LOGFONTW_Struct extends StructInstanceBase {
   lfFaceName: string
 }
 
-export const LOGFONTW = {
-  lfHeight: ref.types.long,
-  lfWidth: ref.types.long,
-  lfEscapement: ref.types.long,
-  lfOrientation: ref.types.long,
-  lfWeight: ref.types.byte,
-  lfItalic: ref.types.byte,
-  lfUnderline: ref.types.byte,
-  lfStrikeOut: ref.types.byte,
-  lfCharSet: ref.types.byte,
-  lfOutPrecision: ref.types.byte,
-  lfClipPrecision: ref.types.byte,
-  lfQuality: ref.types.byte,
-  lfPitchAndFamily: ref.types.byte,
-  lfFaceName: refArray(wchar, 32)
-}
-
-export const ENUMLOGFONTEXW = {
-  elfLogFont: new Struct(LOGFONTW),
-  elfFullName: refArray(wchar, 32),
-  elfStyle: refArray(wchar, 32),
-  elfScript: refArray(wchar, 32)
-}
+// export const LOGFONTW = {
+//   lfHeight: ref.types.long,
+//   lfWidth: ref.types.long,
+//   lfEscapement: ref.types.long,
+//   lfOrientation: ref.types.long,
+//   lfWeight: ref.types.byte,
+//   lfItalic: ref.types.byte,
+//   lfUnderline: ref.types.byte,
+//   lfStrikeOut: ref.types.byte,
+//   lfCharSet: ref.types.byte,
+//   lfOutPrecision: ref.types.byte,
+//   lfClipPrecision: ref.types.byte,
+//   lfQuality: ref.types.byte,
+//   lfPitchAndFamily: ref.types.byte,
+//   lfFaceName: refArray(wchar, 32)
+// }
+//
+// export const ENUMLOGFONTEXW = {
+//   elfLogFont: new Struct(LOGFONTW),
+//   elfFullName: refArray(wchar, 32),
+//   elfStyle: refArray(wchar, 32),
+//   elfScript: refArray(wchar, 32)
+// }
 
 export declare const TEXTMETRICW: {
   tmHeight: string

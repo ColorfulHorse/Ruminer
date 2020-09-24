@@ -42,8 +42,6 @@
  * </pre>
  */
 
-    /* Bound on max initial ptra size */
-LEPT_DLL extern const l_uint32  MaxInitPtraSize;
 
 /*------------------------------------------------------------------------*
  *                     Generic Ptr Array Structs                          *
