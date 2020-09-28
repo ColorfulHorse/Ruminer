@@ -105,40 +105,40 @@ module.exports = {
         'vuex'
       ],
       customFileProtocol: 'ruminer://./',
-      chainWebpackMainProcess: config => {
-        config.module
-          .rule('node')
-          .test(/\.node$/)
-          .use('node-loader')
-          .loader('node-loader')
-          .end()
-      },
-      chainWebpackRendererProcess: config => {
-        config.module
-          .rule('node')
-          .test(/\.node$/)
-          .use('node-loader')
-          .loader('node-loader')
-          .end()
-      },
+      // chainWebpackMainProcess: config => {
+      //   config.module
+      //     .rule('node')
+      //     .test(/\.node$/)
+      //     .use('node-loader')
+      //     .loader('node-loader')
+      //     .end()
+      // },
+      // chainWebpackRendererProcess: config => {
+      //   config.module
+      //     .rule('node')
+      //     .test(/\.node$/)
+      //     .use('node-loader')
+      //     .loader('node-loader')
+      //     .end()
+      // },
       builderOptions: {
         productName: 'Ruminer',
         appId: 'com.greensun.ruminer',
         copyright: 'green sun',
-        // extraResources: [
-        //   {
-        //     from: 'src/native/ocr/build/Release/ocr.node',
-        //     to: '.'
-        //   },
-        //   {
-        //     from: 'src/native/winapi/build/Release/winapi.node',
-        //     to: '.'
-        //   },
-        //   {
-        //     from: 'libs',
-        //     to: '.'
-        //   }
-        // ],
+        extraFiles: [
+          {
+            from: 'src/native/ocr/build/Release',
+            to: '.'
+          },
+          {
+            from: 'src/native/ocr/libs',
+            to: '.'
+          },
+          {
+            from: 'src/native/winapi/build/Release/winapi.node',
+            to: '.'
+          }
+        ],
         nsis: {
           installerIcon: 'public/favicon.ico',
           installerHeader: 'public/logo.png',

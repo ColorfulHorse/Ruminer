@@ -9,6 +9,7 @@ import { getSystemFonts } from '@/native/winapi/src'
 import ocr from '@/native/ocr/src'
 import path from 'path'
 import { MainLog } from '@/utils/MainLog'
+import LangMapper from '@/utils/LangMapper'
 
 export const KEYS = {
   OPEN_DEVTOOL: 'OPEN_DEVTOOL',
@@ -90,6 +91,11 @@ export default class IPC {
       }
     })
 
+    // 重启检测
+    ipcMain.on(KEYS.RESTART_RECOGNIZE, () => {
+      app.contentWin?.win.webContents.send(KEYS.RESTART_RECOGNIZE)
+    })
+
     ipcMain.on(KEYS.OPEN_SELECT_WINDOW, (event, sources: string) => {
       if (app.selectWin == null) {
         app.selectWin = new SelectWin(app, sources)
@@ -158,7 +164,8 @@ export default class IPC {
       const dataPath = path.join(__static, 'tess')
       log.info(`dataPath: ${dataPath}`)
       ocr.init(dataPath)
-      const ret = ocr.loadLanguage('eng')
+      const source = conf.translate.get('source')
+      const ret = ocr.loadLanguage(source)
       log.info(`load lang: ${ret}`)
       return 0
     })
@@ -168,7 +175,11 @@ export default class IPC {
     })
 
     ipcMain.handle(KEYS.OCR_RECOGNIZE, (event, base64: string) => {
-      return ocr.recognize(base64)
+      log.info(`start time: ${Date.now()}`)
+      const str = ocr.recognize(base64)
+      log.info(`end time: ${Date.now()}`)
+      log.info(str)
+      return str
     })
   }
 

@@ -49,6 +49,8 @@ import { Component, Vue } from 'vue-property-decorator'
 import LangMapper from '@/utils/LangMapper'
 import { Mutations } from '@/constant/Constants'
 import { Form } from 'element-ui'
+import { ipcRenderer } from 'electron'
+import { KEYS } from '@/electron/event/IPC'
 
 @Component({
   name: 'Config'
@@ -92,7 +94,8 @@ export default class Config extends Vue {
 
   set source(value: string) {
     this.$store.commit(Mutations.MUTATION_SOURCE_LANG, value)
-    console.log(this.$store.state)
+    // 如果启用了本地ocr，变更源语言以后需要重启检测api
+    ipcRenderer.send(KEYS.RESTART_RECOGNIZE)
   }
 
   get target() {

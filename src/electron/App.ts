@@ -13,6 +13,7 @@ import CommonUtil from '@/utils/CommonUtil'
 import SelectWin from '@/electron/windows/SelectWin'
 import NotificationUtil from '@/utils/NotificationUtil'
 import log from 'electron-log'
+import ocr from '@/native/ocr/src'
 
 declare const __webpack_public_path__: string;
 
@@ -26,7 +27,7 @@ export default class App {
   captureWin: CaptureWin | null = null
   contentWin: ContentWin | null = null
   selectWin: SelectWin | null = null
-  openDevTools = true
+  openDevTools = false
 
   constructor() {
     app.requestSingleInstanceLock()

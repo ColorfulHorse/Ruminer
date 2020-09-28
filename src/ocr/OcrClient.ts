@@ -81,13 +81,14 @@ export class OcrClient {
    * @param base64 识别图片
    */
   async recognize(base64: string) {
-    const text = await ipcRenderer.invoke(KEYS.OCR_RECOGNIZE, base64)
-    MainLog.info(`recognize text: ${text}`)
+    const img = base64.split(',')[1]
+    const text = await ipcRenderer.invoke(KEYS.OCR_RECOGNIZE, img)
+    MainLog.info(`ocr text: ${text}`)
     if (text.trim().length > 2) {
       const similarity = compareTwoStrings(text, this.recognizeText)
       console.log(`similarity:${similarity}, last: ${this.recognizeText}, current${text}`)
       // 相似度太高的语句不翻译
-      if (similarity < 0.65) {
+      if (similarity < 1) {
         this.recognizeText = text
         const cancel = axios.CancelToken.source()
         const {data, err} = await awaitTo<BaiduTranslateResp, BaiduTranslateResp>(axios.get(
@@ -108,6 +109,8 @@ export class OcrClient {
             this.handleTranslateError(data.error_code)
           }
         }
+      } else {
+        MainLog.info('skip translate')
       }
     }
   }

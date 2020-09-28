@@ -1,7 +1,7 @@
-#include <lib.h>
+#include "include/lib.h"
 
 TessBaseAPI *api = nullptr;
-string dataPath = nullptr;
+string dataPath = "";
 
 void init(string path) {
     if (api == nullptr) {
@@ -15,13 +15,10 @@ int loadLanguage(string lang) {
 }
 
 string recognize(string base64) {
-    l_int32 size1;
-    size_t size2;
-    l_uint8* source = decodeBase64(base64.c_str(), strlen(base64.c_str()), &size1);
-    l_uint8* data = zlibUncompress(source, size1, &size2);
-    PIX * pix = pixReadMem(data, size2);
+    l_int32 size;
+    l_uint8* source = decodeBase64(base64.c_str(), strlen(base64.c_str()), &size);
+    PIX * pix = pixReadMem(source, size);
     lept_free(source);
-    lept_free(data);
     api->SetImage(pix);
     char* result = api->GetUTF8Text();
     pixDestroy(&pix);
@@ -31,6 +28,8 @@ string recognize(string base64) {
 void destroy() {
     if (api != nullptr) {
         api->End();
+        delete api;
+        api = nullptr;
     }
-    dataPath = nullptr;
+    dataPath = "";
 }

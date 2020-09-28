@@ -28,50 +28,49 @@
           {
             'variables': {
                'root_dir': "<(module_root_dir)/../../../libs",
+               'lib_dir': "D:/tools/vcpkg/installed/x64-windows/lib"
                },
-            # "copies": [{
-            #   'destination': '<(root_dir)',
-            #   'files': [
-            #     "<(module_root_dir)/lib/org.sw.demo.google.tesseract.libtesseract-master.dll",
-            #     "<(module_root_dir)/lib/org.sw.demo.danbloomberg.leptonica-1.80.0.dll",
-            #     "<(module_root_dir)/lib/org.sw.demo.libarchive.libarchive-3.4.3.dll",
-            #     "<(module_root_dir)/lib/org.sw.demo.google.tesseract.libtesseract-master.lib",
-            #     "<(module_root_dir)/lib/org.sw.demo.danbloomberg.leptonica-1.80.0.lib",
-            #     "<(module_root_dir)/lib/org.sw.demo.libarchive.libarchive-3.4.3.lib",
-            #     "<(module_root_dir)/lib/org.sw.demo.google.tesseract.libtesseract-master.exp",
-            #     "<(module_root_dir)/lib/org.sw.demo.danbloomberg.leptonica-1.80.0.exp",
-            #     "<(module_root_dir)/lib/org.sw.demo.libarchive.libarchive-3.4.3.exp"
-            #     ]
-            # }],
-            # "libraries": [
-            #   "-l<(module_root_dir)/lib/org.sw.demo.google.tesseract.libtesseract-master.lib",
-            #   "-l<(module_root_dir)/lib/org.sw.demo.danbloomberg.leptonica-1.80.0.lib",
-
-            #   "-l<(module_root_dir)/lib/org.sw.demo.libarchive.libarchive-3.4.3.lib"
-            # ]
             "libraries": [
+              # "-l<(lib_dir)/tesseract41.lib",
               "-l<(module_root_dir)/libs/tesseract41.lib"
-              # "-ljpeg62",
-              # "-lleptonica-1.78.0",
-              # "-llibpng16",
-              # "-llzma",
-              # "-ltiff",
-              # "-lwebp",
-              # "-lzlib1"
+              # "-lKernel32"
+              # "-l<(lib_dir)/leptonica-1.78.0.lib",
+              # "-l<(lib_dir)/jpeg.lib",
+              # "-l<(lib_dir)/gif.lib",
+              # "-l<(lib_dir)/libpng16.lib",
+              # "-l<(lib_dir)/tiff.lib",
+              # "-l<(lib_dir)/lzma.lib",
+              # "-l<(lib_dir)/zlib.lib",
+              # "-l<(lib_dir)/webp.lib",
+              # "-l<(lib_dir)/archive.lib",
+              # "-l<(lib_dir)/turbojpeg.lib",
+              # "-l<(lib_dir)/bz2.lib"
             ]
             # "libraries": [
-            #   "../lib/libtesseract.lib",
-            #   "../lib/leptonica.lib",
-            #   "../lib/libarchive.lib"
+            #   # "-l<(lib_dir)/tesseract41.lib",
+            #   "-L<(module_root_dir)/libs",
+            #   "-ltesseract41.lib"
+            #   # "-lleptonica-1.78.0.lib",
+            #   # "-ljpeg.lib",
+            #   # "-lgif.lib",
+            #   # "-llibpng16.lib",
+            #   # "-ltiff.lib",
+            #   # "-llzma.lib",
+            #   # "-lzlib.lib",
+            #   # "-lwebp.lib",
+            #   # "-larchive.lib",
+            #   # "-lturbojpeg.lib",
+            #   # "-lbz2.lib"
             # ]
-            # 'link_settings': {
-            #   'libraries': [
-            #     '-Wl,-rpath,<!@(qmake -query "QT_INSTALL_PREFIX")/lib',
-            #     '-l<(module_root_dir)/lib/libtesseract',
-            #     '-l<(module_root_dir)/lib/libtesseract',
-            #     '-l<(module_root_dir)/lib/libtesseract'
-            #   ]
-            # }
+            # "libraries": [
+            #   "-ljpeg62.dll",
+            #   "-lleptonica-1.78.0.dll",
+            #   "-llibpng16.dll",
+            #   "-llzma.dll",
+            #   "-ltiff.dll",
+            #   "-lwebp.dll",
+            #   "-lzlib1.dll"
+            # ]
           }
         ]
       ]
