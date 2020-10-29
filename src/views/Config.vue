@@ -1,6 +1,6 @@
 <template>
   <el-main>
-    <el-form :model="formData" :rules="rules" ref="form" label-width="30%" label-position="left">
+    <el-form ref="form" label-width="30%" label-position="left">
       <el-row>
         <el-col :span="11">
           <el-form-item label="源语言" label-width="80px">
@@ -27,19 +27,15 @@
           </el-form-item>
         </el-col>
       </el-row>
-      <el-form-item label="百度 OcrApiKey" prop="ocrKey">
-        <el-input v-model="formData.ocrKey" @input="ocrKey"/>
+      <el-form-item label="翻译平台" style="margin-bottom: 15px">
       </el-form-item>
-      <el-form-item label="百度 OcrSecret" prop="ocrSecret">
-        <el-input v-model="formData.ocrSecret" @input="ocrSecret"/>
-      </el-form-item>
-      <el-form-item label="百度翻译 AppId" prop="transAppId">
-        <el-input v-model="formData.transAppId" @input="transAppId"/>
-      </el-form-item>
-      <el-form-item label="百度翻译 AppSecret" prop="transSecret">
-        <el-input v-model="formData.transSecret" @input="transSecret"/>
-      </el-form-item>
+      <el-radio-group v-model="platform" @change="changePlatform">
+        <el-radio-button v-for="item in platforms" :key="item.id" :label="item"></el-radio-button>
+      </el-radio-group>
     </el-form>
+    <keep-alive>
+      <router-view/>
+    </keep-alive>
   </el-main>
 </template>
 
@@ -47,8 +43,8 @@
 
 import { Component, Vue } from 'vue-property-decorator'
 import LangMapper from '@/utils/LangMapper'
-import { Mutations } from '@/constant/Constants'
-import { Form } from 'element-ui'
+import { Mutations, Platform, Platforms } from '@/constant/Constants'
+import conf from '@/config/Conf'
 import { ipcRenderer } from 'electron'
 import { KEYS } from '@/electron/event/IPC'
 
@@ -56,36 +52,14 @@ import { KEYS } from '@/electron/event/IPC'
   name: 'Config'
 })
 export default class Config extends Vue {
-  formData = {
-    ocrKey: this.$store.state.translate.baiduOcrApiKey,
-    ocrSecret: this.$store.state.translate.baiduOcrSecret,
-    transAppId: this.$store.state.translate.baiduTransAppId,
-    transSecret: this.$store.state.translate.baiduTransSecret
-  }
-
-  rules = {
-    ocrKey: [
-      {required: true, message: '请输入百度ocr api key', trigger: 'blur'}
-    ],
-    ocrSecret: [
-      {required: true, message: '请输入百度ocr api secret', trigger: 'blur'}
-    ],
-    transAppId: [
-      {required: true, message: '请输入百度翻译 appId', trigger: 'blur'}
-    ],
-    transSecret: [
-      {required: true, message: '请输入百度翻译 secret', trigger: 'blur'}
-    ]
-  }
+  // 翻译平台
+  platforms = Platforms
+  platform = Platforms[conf.translate.get('platform')]
 
   langs = [...LangMapper.map.values()]
 
-  mounted() {
-    (this.$refs.form as Form).validate()
-      .then(valid => {})
-      .catch(error => {
-        console.log(error)
-      })
+  created() {
+    // this.changePlatform()
   }
 
   get source() {
@@ -106,40 +80,43 @@ export default class Config extends Vue {
     this.$store.commit(Mutations.MUTATION_TARGET_LANG, value)
   }
 
-  ocrKey(value: string) {
-    this.$store.commit(Mutations.MUTATION_BAIDU_OCRAPIKEY, value)
-  }
-
-  ocrSecret(value: string) {
-    this.$store.commit(Mutations.MUTATION_BAIDU_OCRAPISECRET, value)
-  }
-
-  transAppId(value: string) {
-    this.$store.commit(Mutations.MUTATION_BAIDU_TRANSLATE_APPID, value)
-  }
-
-  transSecret(value: string) {
-    this.$store.commit(Mutations.MUTATION_BAIDU_TRANSLATE_SECRET, value)
+  changePlatform() {
+    const index = this.platforms.indexOf(this.platform)
+    let route = 'BaiduConfig'
+    switch (index) {
+      case Platform.tencent:
+        route = 'TxConfig'
+        break
+    }
+    this.$router.push({name: route})
+    this.$conf.translate.set('platform', this.platforms.indexOf(this.platform))
   }
 }
 </script>
 
 <style lang="scss" scoped>
-  .el-form-item {
-    margin-bottom: 30px;
+.el-main {
+  overflow-y: scroll;
+}
 
-    /deep/label {
-      color: $main-text;
-    }
+.el-form {
+  margin-bottom: 30px;
+}
+.el-form-item {
+  margin-bottom: 30px;
 
-    /deep/.el-input__inner {
-      border-radius: 30px;
-    }
+  /deep/ label {
+    color: $main-text;
+  }
 
-    .el-input {
-      /deep/.el-input__inner {
-        line-height: 38px;
-      }
+  /deep/ .el-input__inner {
+    border-radius: 30px;
+  }
+
+  .el-input {
+    /deep/ .el-input__inner {
+      line-height: 38px;
     }
   }
+}
 </style>

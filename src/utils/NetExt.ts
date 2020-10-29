@@ -5,9 +5,19 @@ export interface ResponseWrapper<T, U> {
   err: U | null
 }
 
-export function awaitTo<T, U = any>(promise: Promise<AxiosResponse<T>>): Promise<ResponseWrapper<T, U>> {
+export interface AxiosResponseWrapper<T, U> {
+  data: T | null
+  err: ErrorResponse<U> | null
+}
+
+export interface ErrorResponse<T> {
+  code: string | null
+  data: T | null
+}
+
+export function axiosTask<T, U = any>(promise: Promise<AxiosResponse<T>>): Promise<AxiosResponseWrapper<T, U>> {
   return promise
-    .then<ResponseWrapper<T, U>>(data => {
+    .then<AxiosResponseWrapper<T, U>>(data => {
       return {
         data: data.data,
         err: null
@@ -17,7 +27,26 @@ export function awaitTo<T, U = any>(promise: Promise<AxiosResponse<T>>): Promise
       const errResp = err.response?.data
       return {
         data: null,
-        err: errResp ?? null
+        err: {
+          code: err.code ?? null,
+          data: errResp ?? null
+        }
+      }
+    })
+}
+
+export function task<T = any, U = any>(promise: Promise<T>): Promise<ResponseWrapper<T, U>> {
+  return promise
+    .then<ResponseWrapper<T, U>>(data => {
+      return {
+        data: data,
+        err: null
+      }
+    })
+    .catch((err: U) => {
+      return {
+        data: null,
+        err: err
       }
     })
 }

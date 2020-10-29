@@ -11,6 +11,9 @@ export default class HotKeyUtil {
   static readonly START_RECOGNIZE = 'startRecognize'
 
   static register(hotkey: HotKey, app: App) {
+    if (!hotkey.enable) {
+      return hotkey
+    }
     let callback: (() => void) | null = null
     switch (hotkey.key) {
       case HotKeys.CAPTURE_SCREEN:
@@ -45,6 +48,12 @@ export default class HotKeyUtil {
         }
       }
     }
+    return hotkey
+  }
+
+  static unregister(hotkey: HotKey) {
+    globalShortcut.unregister(hotkey.value)
+    hotkey.enable = false
     return hotkey
   }
 

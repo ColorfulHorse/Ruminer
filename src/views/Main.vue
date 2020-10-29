@@ -1,127 +1,196 @@
 <template>
-  <el-main>
-    <el-row type="flex">
-      <el-col :span="24">
-        <div class="sf-wrapper">
-          <el-image class="sf-logo" fit="contain" lazy :src="require('../../public/logo.png')"/>
-          <div class="sf-name">{{ $app.name }}</div>
+    <el-container id="home">
+        <el-header height="30px">
+            <div class="title">
+                {{ $app.name }} - {{ version }}
+            </div>
+            <div class="actions">
+                <i class="el-icon-minus" @click="minimize"></i>
+                <i class="el-icon-close" @click="close"></i>
+            </div>
+        </el-header>
+        <el-container>
+          <el-aside>
+            <el-menu
+                :default-active="'/main/' + this.$route.meta.navPath"
+                :background-color="colors.menuBg"
+                :text-color="colors.menuText"
+                :active-text-color="colors.menuActiveText"
+                :unique-opened="true"
+                router>
+              <el-menu-item
+                  v-for="item in $router.options.routes.find((value) => value.name==='Main').children"
+                  :key="item.id"
+                  :index="'/main/' + item.meta.navPath">
+                <i :class="item.meta.icon"></i>
+                <span slot="title">{{item.meta.name}}</span>
+              </el-menu-item>
+            </el-menu>
+          </el-aside>
+          <el-main>
+            <transition name="fade-transform" mode="out-in">
+              <keep-alive>
+                <router-view></router-view>
+              </keep-alive>
+            </transition>
+          </el-main>
+        </el-container>
+      <el-dialog
+          title="用户协议"
+          :visible.sync="dialogVisible"
+          :modal-append-to-body="false"
+          :close-on-click-modal="false"
+          :close-on-press-escape="false"
+          :show-close="false">
+        <p class="dialog-content">此软件仅供个人学习交流使用，不可用于商业或非法用途，不可私自使用此软件牟利，违反本条约后果自负。</p>
+        <p class="dialog-content">如果你是通过收费途径获取本软件，请联系我：</p>
+        <p class="dialog-content">qq 812194178</p>
+
+        <div slot="footer" class="dialog-footer">
+          <el-checkbox v-model="agreed">我同意</el-checkbox>
+          <el-button :disabled="!agreed" size="small" type="primary" @click="agree">确 定</el-button>
         </div>
-      </el-col>
-    </el-row>
-    <el-row :gutter="20">
-      <el-col :span="8">
-        <div class="action-wrapper" @click="captureScreen">
-          <p class="action">捕获屏幕</p>
-          <p class="tips">{{ $store.state.hotkey.captureScreen.value }}</p>
-        </div>
-      </el-col>
-      <el-col :span="8">
-        <div class="action-wrapper" @click="captureWindow">
-          <p class="action">捕获窗口</p>
-          <p class="tips">{{ $store.state.hotkey.captureWindow.value }}</p>
-        </div>
-      </el-col>
-    </el-row>
-  </el-main>
+      </el-dialog>
+    </el-container>
 </template>
 
 <script lang="ts">
-
+// @ is an alias to /src
 import { Component, Vue } from 'vue-property-decorator'
-import { desktopCapturer, ipcRenderer } from 'electron'
+import colors from '@/assets/styles/colors.scss'
+import { ipcRenderer, remote } from 'electron'
 import { KEYS } from '@/electron/event/IPC'
+import pkg from 'root/package.json'
+import CommonUtil from '@/utils/CommonUtil'
 
 @Component({
   name: 'Main'
 })
-export default class Main extends Vue {
-  mounted() {
-    ipcRenderer.on(KEYS.CAPTURE_WINDOW, () => {
-      this.captureWindow()
+export default class Home extends Vue {
+  colors = colors
+  version = process.env.NODE_ENV === 'production' ? pkg.version : 'Dev'
+  dialogVisible = false
+  agreed = false
+
+  created() {
+    ipcRenderer.on(KEYS.ROUTE_API_CONFIG, () => {
+      this.$router.push('/main/config')
     })
-
-    ipcRenderer.on(KEYS.CAPTURE_SCREEN, () => {
-      this.captureScreen()
+    ipcRenderer.on(KEYS.ROUTE_STYLE_CONFIG, () => {
+      this.$router.push('/main/content-style')
     })
+    this.dialogVisible = this.$conf.common.get('firstInstall')
   }
 
-  captureScreen() {
-    this.capture('screen')
+  minimize() {
+    remote.BrowserWindow.getFocusedWindow()?.minimize()
   }
 
-  captureWindow() {
-    this.capture('window')
+  agree() {
+    this.$conf.common.set('firstInstall', false)
+    this.dialogVisible = false
   }
 
-  async capture(mode: 'screen' | 'window') {
-    if (mode === 'screen') {
-      const sources = await desktopCapturer.getSources({types: ['screen']})
-      const source = sources[0]
-      ipcRenderer.send(KEYS.OPEN_CAPTURE_WINDOW, source.id)
-    } else {
-      const sources = await desktopCapturer.getSources({types: ['window']})
-      ipcRenderer.send(KEYS.OPEN_SELECT_WINDOW, JSON.stringify({
-        data: sources
-      }))
-    }
+  close() {
+    const win = remote.BrowserWindow.getFocusedWindow()
+    win?.setSkipTaskbar(true)
+    win?.hide()
   }
 }
 </script>
 
 <style scoped lang="scss">
-  .el-row {
-    .sf-wrapper {
-      width: 100%;
-      padding: 24px 0;
-      display: flex;
-      flex-direction: row;
-      align-items: center;
-      justify-content: center;
+  #home {
+    height: 100%;
+    width: 100%;
+    overflow: hidden;
 
-      .sf-logo {
-        width: 64px;
-        height: 64px;
-        margin-right: 20px;
-      }
+    .el-container {
+      overflow-y: scroll;
+    }
 
-      .sf-name {
-        font-family: Avenir, Helvetica, Arial, sans-serif;
+    .el-header {
+      position: relative;
+      -webkit-app-region: drag;
+
+      .title {
+        width: 100%;
+        height: 30px;
+        text-align: center;
         color: $main-text;
-        font-size: 32px;
-        font-weight: 400;
+        font-size: 14px;
+        padding: 0 5px;
+        line-height: 30px;
+      }
+      .actions {
+        height: 30px;
+        position: absolute;
+        right: 0;
+        top: 0;
+        margin-right: 5px;
+      }
+      i {
+        font-size: 18px;
+        padding: 5px;
+        color: $main-text;
+        cursor: pointer;
+        -webkit-app-region: no-drag;
+      }
+      .el-icon-minus:hover {
+        color: #409EFF;
+      }
+      .el-icon-close:hover {
+        color: #F15140;
       }
     }
 
-    .el-col {
-      .action-wrapper {
-        background-color: #f1f1f1;
-        border-radius: 0 10px 0 10px;
-        padding: 20px 10px;
-        text-align: center;
-        vertical-align: middle;
-        cursor: pointer;
-        &:hover {
-          background-color: #dcdcdc;
+    .el-aside {
+      width: 25% !important;
+      height: 100%;
+      .el-menu {
+        height: 100%;
+        border-right: none;
+        &-item {
+          padding: 0 15% !important;
+          &.is-active:before {
+            content: '';
+            position: absolute;
+            width: 3px;
+            height: 20px;
+            right: 0;
+            top: 18px;
+            background: $menuActiveText;
+          }
+
+          [class^="el-icon-"] {
+            margin-right: 16px;
+            width: 24px;
+            text-align: center;
+            font-size: 20px;
+            vertical-align: middle;
+          }
         }
       }
+    }
 
-      .action {
-        font-family: Avenir, Helvetica, Arial, sans-serif;
-        -webkit-font-smoothing: antialiased;
-        -moz-osx-font-smoothing: grayscale;
-        font-size: 18px;
-        font-weight: 600;
-      }
+    .dialog-content {
+      font-size: 15px;
+      line-height: 25px;
+      text-align: center;
+    }
 
-      .tips {
-        font-family: Avenir, Helvetica, Arial, sans-serif;
-        -webkit-font-smoothing: antialiased;
-        -moz-osx-font-smoothing: grayscale;
-        font-size: 16px;
-        font-weight: 100;
-        color: $secondary-text;
-        margin-top: 20px;
-      }
+    .dialog-footer {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .el-checkbox {
+      margin-bottom: 20px;
+    }
+
+    /deep/.v-modal {
+      opacity: 0.3;
     }
   }
 </style>

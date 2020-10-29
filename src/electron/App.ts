@@ -14,6 +14,7 @@ import SelectWin from '@/electron/windows/SelectWin'
 import NotificationUtil from '@/utils/NotificationUtil'
 import log from 'electron-log'
 import ocr from '@/native/ocr/src'
+import { MainLog } from '@/utils/MainLog'
 
 declare const __webpack_public_path__: string;
 
@@ -183,6 +184,7 @@ export default class App {
    * 显示文字窗口
    */
   showContent() {
+    log.info('showContent')
     if (this.captureWin != null) {
       this.captureWin.win.close()
     }

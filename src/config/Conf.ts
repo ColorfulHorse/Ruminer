@@ -4,6 +4,7 @@
 import { Rect } from '@/graphics/Graphics'
 import ElectronStore from 'electron-store'
 import { BaiduToken } from '@/network/response/BaiduToken'
+import { Platform } from '@/constant/Constants'
 
 export interface RootConf {
   common: ElectronStore<CommonConf>
@@ -65,6 +66,7 @@ export interface HotKey {
   old?: string
   value: string
   valid: boolean
+  enable: boolean
 }
 
 export interface TranslateConf {
@@ -72,11 +74,15 @@ export interface TranslateConf {
   source: string
   // 目标语言
   target: string
+  // 翻译平台
+  platform: Platform
   baiduToken: BaiduToken | null
   baiduOcrSecret: string
   baiduOcrApiKey: string
   baiduTransAppId: string
   baiduTransSecret: string
+  tencentSecretId: string
+  tencentSecretKey: string
 }
 
 export default {
@@ -97,21 +103,24 @@ export default {
   hotkey: new ElectronStore<HotKeyConf>({
     name: 'hotkeyConf',
     defaults: {
-      captureScreen: { name: '捕获屏幕', key: 'captureScreen', value: 'Shift+Alt+D', valid: true },
-      captureWindow: { name: '捕获窗口', key: 'captureWindow', value: 'Shift+Alt+W', valid: true }
+      captureScreen: { name: '捕获屏幕', key: 'captureScreen', value: 'Shift+Alt+D', valid: true, enable: true },
+      captureWindow: { name: '捕获窗口', key: 'captureWindow', value: 'Shift+Alt+W', valid: true, enable: true }
       // startRecognize: { name: '开始翻译', key: 'startRecognize', value: 'Shift+Alt+Q', valid: true }
     }
   }),
   translate: new ElectronStore<TranslateConf>({
     name: 'translateConf',
     defaults: {
-      source: 'en',
-      target: 'zh',
+      source: 'eng',
+      target: 'chi_sim',
+      platform: Platform.baidu,
       baiduToken: null,
       baiduOcrApiKey: '',
       baiduOcrSecret: '',
       baiduTransAppId: '',
-      baiduTransSecret: ''
+      baiduTransSecret: '',
+      tencentSecretId: '',
+      tencentSecretKey: ''
     }
   })
 }
