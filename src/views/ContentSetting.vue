@@ -71,7 +71,6 @@ import { Component, Vue } from 'vue-property-decorator'
 import { defaultContentStyle } from '@/config/Conf'
 import { KEYS } from '@/electron/event/IPC'
 import { ipcRenderer } from 'electron'
-import { getFonts } from 'font-list'
 
 @Component({
   name: 'content-style'

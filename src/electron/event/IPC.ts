@@ -6,6 +6,10 @@ import HotKeyUtil from '@/utils/HotKeyUtil'
 import { windowsApi } from '@/electron/ffi/WindowsApi'
 import App from '@/electron/App'
 import { getSystemFonts } from '@/native/winapi/src'
+import ocr from '@/native/ocr/src'
+import path from 'path'
+import { MainLog } from '@/utils/MainLog'
+import LangMapper from '@/utils/LangMapper'
 
 export const KEYS = {
   OPEN_DEVTOOL: 'OPEN_DEVTOOL',
@@ -28,13 +32,15 @@ export const KEYS = {
   CONTENT_SIZE_CHANGED: 'CONTENT_SIZE_CHANGED',
   HOTKEY_INVALID: 'CHANGE_HOTKEY',
   CHANGE_HOTKEY: 'CHANGE_HOTKEY',
+  // 禁用快捷键
+  TOGGLE_HOTKEY: 'TOGGLE_HOTKEY',
   GET_SCREEN: 'GET_SCREEN',
   // 当捕获窗口改变时需要重启截屏定时器
   RESTART_RECOGNIZE: 'RESTART_RECOGNIZE',
 
   // 主界面切换到配置页
   ROUTE_API_CONFIG: 'ROUTE_API_CONFIG',
-  // 主界面切换到配置页
+  // 主界面切换到样式页
   ROUTE_STYLE_CONFIG: 'ROUTE_STYLE_CONFIG',
 
   // 用于渲染进程发送消息给主界面渲染进程
@@ -44,6 +50,10 @@ export const KEYS = {
   GET_SYSTEM_FONTS: 'GET_SYSTEM_FONTS',
   // 翻译窗口样式改变
   CONTENT_STYLE_CHANGED: 'CONTENT_STYLE_CHANGED',
+
+  OCR_INIT: 'OCR_INIT',
+  OCR_DESTROY: 'OCR_DESTROY',
+  OCR_RECOGNIZE: 'OCR_RECOGNIZE',
 
   MINIMIZE_MAIN_WINDOW() {
 
@@ -82,6 +92,11 @@ export default class IPC {
       if (key === KEYS.ROUTE_API_CONFIG || key === KEYS.ROUTE_STYLE_CONFIG) {
         app.showMain()
       }
+    })
+
+    // 重启检测
+    ipcMain.on(KEYS.RESTART_RECOGNIZE, () => {
+      app.contentWin?.win.webContents.send(KEYS.RESTART_RECOGNIZE)
     })
 
     ipcMain.on(KEYS.OPEN_SELECT_WINDOW, (event, sources: string) => {
@@ -136,6 +151,16 @@ export default class IPC {
       return HotKeyUtil.register(hotkey, app)
     })
 
+    ipcMain.handle(KEYS.TOGGLE_HOTKEY, async (event, hotkey: HotKey) => {
+      // 禁用/启用快捷键
+      if (hotkey.enable) {
+        return HotKeyUtil.unregister(hotkey)
+      } else {
+        hotkey.enable = true
+        return HotKeyUtil.register(hotkey, app)
+      }
+    })
+
     // 锁定窗口大小
     ipcMain.on(KEYS.LOCK_CONTENT, () => {
       if (app.contentWin != null) {
@@ -146,6 +171,28 @@ export default class IPC {
 
     ipcMain.handle(KEYS.GET_SYSTEM_FONTS, () => {
       return getSystemFonts()
+    })
+
+    ipcMain.handle(KEYS.OCR_INIT, () => {
+      const dataPath = path.join(__static, 'tess')
+      log.info(`dataPath: ${dataPath}`)
+      ocr.init(dataPath)
+      const source = conf.translate.get('source')
+      const ret = ocr.loadLanguage(source)
+      log.info(`load lang: ${ret}`)
+      return 0
+    })
+
+    ipcMain.on(KEYS.OCR_DESTROY, () => {
+      ocr.destroy()
+    })
+
+    ipcMain.handle(KEYS.OCR_RECOGNIZE, (event, base64: string) => {
+      // log.info(`start time: ${Date.now()}`)
+      const str = ocr.recognize(base64)
+      // log.info(`end time: ${Date.now()}`)
+      // log.info(str)
+      return str
     })
   }
 

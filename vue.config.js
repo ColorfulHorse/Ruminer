@@ -71,6 +71,12 @@ module.exports = {
     // }
   },
   chainWebpack: config => {
+    // config.module
+    //   .rule('node')
+    //   .test(/\.node$/)
+    //   .use('node-loader')
+    //   .loader('node-loader')
+    //   .end()
     config.resolve.alias
       .set('root', resolve('./'))
     if (isDev) {
@@ -119,8 +125,19 @@ module.exports = {
         productName: 'Ruminer',
         appId: 'com.greensun.ruminer',
         copyright: 'green sun',
-        extraResources: [
-          'src/native/winapi/build/Release/winapi.node'
+        extraFiles: [
+          {
+            from: 'src/native/ocr/build/Release',
+            to: '.'
+          },
+          {
+            from: 'src/native/ocr/libs',
+            to: '.'
+          },
+          {
+            from: 'src/native/winapi/build/Release/winapi.node',
+            to: '.'
+          }
         ],
         nsis: {
           installerIcon: 'public/favicon.ico',

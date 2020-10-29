@@ -9,6 +9,7 @@ export default class CaptureManager {
   capturing = false
   timer = -1
   mediaSource: MediaSource | null = null
+  sourceLang = ''
 
   private static _instance: CaptureManager
 
@@ -27,9 +28,12 @@ export default class CaptureManager {
     if (this.capturing) {
       return
     }
+    OcrClient.getInstance().start()
     this.capturing = true
     MainLog.info('start capturing')
     const source = conf.temp.get('source')
+    // 源语言
+    this.sourceLang = conf.translate.get('source')
     if (source) {
       this.mediaSource = source
       navigator.mediaDevices.getUserMedia({
@@ -59,17 +63,26 @@ export default class CaptureManager {
   }
 
   /**
-   * 选择窗口改变后需要重启
+   * 选择窗口改变或者更换源语言后需要重启
    */
   restart() {
     if (this.capturing) {
+      let needRestart = false
       const source = conf.temp.get('source')
+      const lang = conf.translate.get('source')
       if (this.mediaSource && source) {
         if (this.mediaSource.mode !== source.mode || this.mediaSource.sourceId !== source.sourceId) {
           MainLog.info(`restart capture, mode:${source.mode}, id: ${source.sourceId}`)
-          this.stop()
-          this.start()
+          needRestart = true
         }
+      }
+      if (this.sourceLang !== lang) {
+        MainLog.info(`restart capture, change to lang:${lang}`)
+        needRestart = true
+      }
+      if (needRestart) {
+        this.stop()
+        this.start()
       }
     }
   }
@@ -88,7 +101,24 @@ export default class CaptureManager {
     }
     video.srcObject = stream
     video.onloadedmetadata = async () => {
-      video.play().then(() => {
+      video.play().then(async () => {
+        // // 截取屏幕图片
+        // const rect: Rect | null = conf.temp.get('captureRect')
+        // if (rect != null) {
+        //   // canvas.height = rect.bottom - rect.top
+        //   // canvas.width = rect.right - rect.left
+        //   const width = rect.right - rect.left
+        //   const height = rect.bottom - rect.top
+        //   canvas.height = rect.bottom - rect.top
+        //   canvas.width = rect.right - rect.left
+        //   const bm = await createImageBitmap(video, rect.left, rect.top, width, height)
+        //   if (ctx != null) {
+        //     ctx.drawImage(bm, 0, 0, width, height)
+        //     const base64 = canvas.toDataURL('image/jpeg')
+        //     bm.close()
+        //     await OcrClient.getInstance().recognize(base64)
+        //   }
+        // }
         this.timer = window.setInterval(async () => {
           // 截取屏幕图片
           const rect: Rect | null = conf.temp.get('captureRect')
@@ -128,6 +158,7 @@ export default class CaptureManager {
       this.videoStream.getVideoTracks().forEach(value => value.stop())
       this.videoStream = null
     }
+    OcrClient.getInstance().stop()
   }
 
   showError() {

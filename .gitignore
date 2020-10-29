@@ -21,3 +21,4 @@ pnpm-debug.log*
 *.sln
 *.sw?
 /src/native/winapi/build/
+/src/native/ocr/build/

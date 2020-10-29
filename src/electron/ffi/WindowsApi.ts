@@ -1,12 +1,10 @@
-import ffi, { Library } from 'ffi-napi'
-import { DStruct, U, DModel as M, DTypes as T, FModel, DStructExt } from 'win32-api'
+import ffi from 'ffi-napi'
+import { DModel as M, DStruct, DTypes as T, FModel, U } from 'win32-api'
 import log from 'electron-log'
-import { DWMWINDOWATTRIBUTE, ENUMLOGFONTEXW, LOGFONTW, LOGFONTW_Struct, TEXTMETRICW, TEXTMETRICW_Struct } from './types'
+import { DWMWINDOWATTRIBUTE } from './types'
 import StructDi from 'ref-struct-di'
-import ref, { NULL } from 'ref-napi'
-import refArray from 'ref-array-napi'
+import ref from 'ref-napi'
 import { Win32Fns } from 'win32-api/dist/lib/user32/api'
-import wchar, { string, toString } from 'ref-wchar-napi'
 
 export const Struct = StructDi(ref)
 
@@ -80,35 +78,35 @@ export class WindowsApi {
    * https://docs.microsoft.com/en-us/windows/win32/api/wingdi/nf-wingdi-enumfontfamiliesexw
    * https://docs.microsoft.com/en-us/windows/win32/api/gdiplusheaders/nf-gdiplusheaders-fontcollection-getfamilies
    */
-  getSystemFonts() {
-    const fonts: Array<string> = []
-    const hdc = this.user32b.GetWindowDC(0)
-    log.info(`hdc: ${hdc}`)
-    const LogFontType = new Struct(LOGFONTW)
-    const ENUMLOGFONTEXWType = new Struct(ENUMLOGFONTEXW)
-    const enumFontsProc = ffi.Callback(
-      T.INT,
-      ['pointer', 'pointer', T.DWORD, T.LPARAM],
-      (lpelfe: Buffer, lpntme: Buffer, FontType: any, lParam: any): M.INT => {
-        log.info(`address: ${lpelfe.address(lpelfe)}`)
-        lpelfe = ref.reinterpretUntilZeros(lpelfe, ENUMLOGFONTEXWType.size)
-        // log.info(lpelfe)
-        if (lpelfe == null) {
-          log.info('enum null')
-          return 0
-        }
-        const data = ref.get(lpelfe, 0, ENUMLOGFONTEXWType)
-        const font = toString(data.elfFullName.buffer).replace('/\0+$/', '')
-        // log.info(`find font: ${font}`)
-        fonts.push(font)
-        return 1
-      })
-    const logFont = LogFontType()
-    const buf = Buffer.alloc(32)
-    string.set(buf, 0, '')
-    logFont.lfCharSet = 1
-    const res = this.Gdi32.EnumFontFamiliesExW(hdc, logFont.ref(), enumFontsProc, 222, 0)
-  }
+  // getSystemFonts() {
+  //   const fonts: Array<string> = []
+  //   const hdc = this.user32b.GetWindowDC(0)
+  //   log.info(`hdc: ${hdc}`)
+  //   const LogFontType = new Struct(LOGFONTW)
+  //   const ENUMLOGFONTEXWType = new Struct(ENUMLOGFONTEXW)
+  //   const enumFontsProc = ffi.Callback(
+  //     T.INT,
+  //     ['pointer', 'pointer', T.DWORD, T.LPARAM],
+  //     (lpelfe: Buffer, lpntme: Buffer, FontType: any, lParam: any): M.INT => {
+  //       log.info(`address: ${lpelfe.address(lpelfe)}`)
+  //       lpelfe = ref.reinterpretUntilZeros(lpelfe, ENUMLOGFONTEXWType.size)
+  //       // log.info(lpelfe)
+  //       if (lpelfe == null) {
+  //         log.info('enum null')
+  //         return 0
+  //       }
+  //       const data = ref.get(lpelfe, 0, ENUMLOGFONTEXWType)
+  //       const font = toString(data.elfFullName.buffer).replace('/\0+$/', '')
+  //       // log.info(`find font: ${font}`)
+  //       fonts.push(font)
+  //       return 1
+  //     })
+  //   const logFont = LogFontType()
+  //   const buf = Buffer.alloc(32)
+  //   string.set(buf, 0, '')
+  //   logFont.lfCharSet = 1
+  //   const res = this.Gdi32.EnumFontFamiliesExW(hdc, logFont.ref(), enumFontsProc, 222, 0)
+  // }
 
   /**
    * 遍历屏幕窗口回调

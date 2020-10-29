@@ -1,16 +1,14 @@
 import VueRouter, { RouteConfig } from 'vue-router'
 import Vue from 'vue'
-// import Home from '@/views/Home.vue'
-// import Main from '@/views/Main.vue'
-// import KeyMap from '@/views/KeyMap.vue'
-// import Config from '@/views/Config.vue'
-// import Overlay from '@/views/Overlay.vue'
-// import Content from '@/views/Content.vue'
-// import Select from '@/views/Select.vue'
+import conf from '@/config/Conf'
+import { Platform } from '@/constant/Constants'
+import CommonUtil from '@/utils/CommonUtil'
 const Home = () => import('@/views/Home.vue')
 const Main = () => import('@/views/Main.vue')
 const KeyMap = () => import('@/views/KeyMap.vue')
 const Config = () => import('@/views/Config.vue')
+const BaiduConfig = () => import('@/views/BaiduConfig.vue')
+const TxConfig = () => import('@/views/TxConfig.vue')
 const Overlay = () => import('@/views/Overlay.vue')
 const Content = () => import('@/views/Content.vue')
 const Select = () => import('@/views/Select.vue')
@@ -21,28 +19,67 @@ Vue.use(VueRouter)
 const routes: Array<RouteConfig> = [
   {
     path: '/',
-    name: 'Home',
-    component: Home,
+    redirect: '/main'
+  },
+  {
+    path: '/main',
+    name: 'Main',
+    component: Main,
+    redirect: () => {
+      if (CommonUtil.checkConfig()) {
+        return '/main/home'
+      } else {
+        return '/main/config'
+      }
+    },
     children: [
       {
-        path: 'main',
-        name: 'Main',
-        component: Main,
+        path: 'home',
+        name: 'Home',
+        component: Home,
         meta: {
           name: '主页',
           icon: 'el-icon-house',
-          subPath: 'main'
+          navPath: 'home'
         }
       },
       {
         path: 'config',
         name: 'Config',
         component: Config,
+        redirect: () => {
+          const index = conf.translate.get('platform')
+          let route = 'BaiduConfig'
+          switch (index) {
+            case Platform.tencent:
+              route = 'TxConfig'
+              break
+          }
+          return {name: route}
+        },
         meta: {
           name: '配置',
           icon: 'el-icon-setting',
-          subPath: 'config'
-        }
+          navPath: 'config'
+        },
+        children: [
+          {
+            path: 'baidu-config',
+            name: 'BaiduConfig',
+            component: BaiduConfig,
+            meta: {
+              navPath: 'config'
+            }
+          },
+          {
+            path: 'tx-config',
+            name: 'TxConfig',
+            component: TxConfig,
+            meta: {
+              navPath: 'config'
+            }
+          }
+        ]
       },
       {
         path: 'keymap',
@@ -51,7 +88,7 @@ const routes: Array<RouteConfig> = [
         meta: {
           name: '快捷键',
           icon: 'el-icon-jianpan',
-          subPath: 'keymap'
+          navPath: 'keymap'
         }
       },
       {
@@ -61,7 +98,7 @@ const routes: Array<RouteConfig> = [
         meta: {
           name: '显示设置',
           icon: 'el-icon-style',
-          subPath: 'content-style'
+          navPath: 'content-style'
         }
       }
     ]

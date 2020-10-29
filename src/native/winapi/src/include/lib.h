@@ -1,3 +1,6 @@
+#ifndef WINAPI_LIB_H
+#define WINAPI_LIB_H
+
 #include <string>
 #include <vector>
 #include <objidl.h>
@@ -6,3 +9,5 @@
 using namespace std;
 
 vector<string> getSystemFonts();
+
+#endif

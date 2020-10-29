@@ -6,6 +6,17 @@ export const appInfo: AppInfo = {
   name: 'Ruminer'
 }
 
+export const Urls = {
+  baiduTranslate: 'http://api.fanyi.baidu.com/api/trans/vip/translate'
+}
+
+export enum Platform {
+  baidu,
+  tencent
+}
+
+export const Platforms = ['百度', '腾讯']
+
 export class StoreKey {
   static readonly CAPTURE_RECT = 'CAPTURE_RECT'
   // 捕捉屏幕

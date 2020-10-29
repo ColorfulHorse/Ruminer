@@ -1,18 +1,63 @@
 <template>
   <el-main ref="container">
-    <el-row v-for="item in Object.keys($store.state.hotkey)" :key="item.id" type="flex" align="middle">
-      <el-col :span="6">
-        <p class="label">{{$store.state.hotkey[item].name + '：'}}</p>
-      </el-col>
-      <el-col :span="10">
-          <el-button @click="changeHotKey($store.state.hotkey[item])">{{$store.state.hotkey[item].value}}</el-button>
-      </el-col>
-      <el-col :span="4">
-        <el-tooltip effect="dark" content="快捷键冲突，请重新设置" placement="top">
-          <i class="el-icon-warning invalid" v-if="!$store.state.hotkey[item].valid"/>
-        </el-tooltip>
-      </el-col>
-    </el-row>
+    <el-table
+        :data="hotKeys"
+        size="medium"
+        row-class-name="tb-row"
+        al
+    >
+      <el-table-column
+          label="快捷键名称"
+          align="center"
+      >
+        <template slot-scope="scope">
+          {{ scope.row.name }}
+        </template>
+      </el-table-column>
+      <el-table-column
+          label="快捷键绑定"
+          prop="value"
+          align="center"
+      >
+      </el-table-column>
+      <el-table-column
+          label="状态"
+          align="center"
+      >
+        <template slot-scope="scope">
+          <el-tooltip effect="dark" content="快捷键冲突，请重新设置" placement="top" :disabled="scope.row.valid">
+            <el-tag
+                size="mini"
+                :type="scope.row.enable ? (scope.row.valid ? 'success' : 'danger') : 'danger'"
+            >
+              {{ scope.row.enable ? (scope.row.valid ? '已启用' : '冲突') : '已禁用' }}
+            </el-tag>
+          </el-tooltip>
+        </template>
+      </el-table-column>
+      <el-table-column
+          label="操作"
+          align="center">
+        <template slot-scope="scope">
+          <el-button
+              @click="toggleEnable(scope.$index, scope.row)"
+              size="mini"
+              :class="{
+                  disabled: scope.row.enable
+                }"
+              type="text">
+            {{ scope.row.enable ? '禁用' : '启用' }}
+          </el-button>
+          <el-button
+              class="edit"
+              size="mini"
+              @click="changeHotKey(scope.row)"
+              type="text">
+            编辑
+          </el-button>
+        </template>
+      </el-table-column>
+    </el-table>
     <el-dialog
         title="设置快捷键"
         :visible.sync="dialogVisible"
@@ -49,12 +94,14 @@
 <script lang="ts">
 
 import { Component, Vue } from 'vue-property-decorator'
-import { HotKey } from '@/config/Conf'
+import { HotKey, HotKeyConf } from '@/config/Conf'
 import { ipcRenderer } from 'electron'
 import { Mutations } from '@/constant/Constants'
 import HotKeyUtil from '@/utils/HotKeyUtil'
 import { ElInput } from 'element-ui/types/input'
 import { KEYS } from '@/electron/event/IPC'
+import { State } from 'vuex-class'
+import RootStore from '@/store/RootStore'
 
 @Component({
   name: 'KeyMap'
@@ -63,8 +110,22 @@ export default class KeyMap extends Vue {
   dialogVisible = false
   newHotKey: HotKey | null = null
 
+  @State((state: RootStore) => {
+    const keys = Object.keys(state.hotkey) as Array<keyof HotKeyConf>
+    return keys.map(value => {
+      return state.hotkey[value]
+    })
+  })
+  hotKeys?: HotKey[]
+
+  created() {
+    const keys = Object.keys(this.$store.state.hotkey) as Array<keyof HotKeyConf>
+    this.hotKeys = keys.map(value => {
+      return this.$store.state.hotkey[value]
+    })
+  }
+
   keyDetect(event: KeyboardEvent) {
-    console.log(event.key)
     if (this.newHotKey != null) {
       const key = HotKeyUtil.getKeys(event)
       if (key) {
@@ -83,6 +144,11 @@ export default class KeyMap extends Vue {
     this.dialogVisible = true
   }
 
+  async toggleEnable(index: number, hotKey: HotKey) {
+    const key: HotKey = await ipcRenderer.invoke(KEYS.TOGGLE_HOTKEY, hotKey)
+    this.$store.commit(Mutations.MUTATION_CHANGE_HOTKEY, key)
+  }
+
   async updateHotkey() {
     const hotKey: HotKey = await ipcRenderer.invoke(KEYS.CHANGE_HOTKEY, this.newHotKey)
     if (this.newHotKey) {
@@ -97,37 +163,66 @@ export default class KeyMap extends Vue {
 </script>
 
 <style scoped lang="scss">
-  .el-col {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    .label {
-      color: $main-text;
-    }
-    .el-button {
-      border: $divider solid 2px;
-      padding: 8px 10px;
-      text-align: center;
-      flex: 1;
-      cursor: pointer;
-    }
-  }
-  .invalid {
-    font-size: 20px;
-    margin-left: 20px;
-    color: red;
-  }
-  .el-row:not(:first-of-type) {
-    margin-top: 20px;
+$table-text: $main-text;
+
+/deep/ .el-table {
+  background-color: transparent;
+  color: $table-text;
+
+  thead {
+    color: $table-text;
   }
 
-  /deep/.el-dialog {
-    .el-form-item {
-      margin-bottom: 0;
+  th, tr {
+    background-color: transparent;
+  }
+
+  &::before {
+    display: none;
+  }
+
+  th {
+    border: none;
+  }
+
+  td {
+    border: none;
+  }
+
+  &__body {
+    tr.el-table__row--striped {
+      td {
+        background: transparent;
+      }
     }
   }
 
-  .el-alert {
-    margin-top: 10px;
+  &--enable-row-hover {
+    .el-table__body {
+      tr:hover > td {
+        background: rgba(0, 0, 0, 0.1);
+      }
+    }
   }
+
+  .el-button {
+    &.disabled {
+      color: #F56C6C;
+
+      &:hover {
+        color: #f78989;
+      }
+    }
+  }
+}
+
+/deep/ .el-dialog {
+  .el-form-item {
+    margin-bottom: 0;
+  }
+}
+
+.el-alert {
+  margin-top: 10px;
+}
 </style>
