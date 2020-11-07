@@ -198,7 +198,7 @@ export default class App {
       // macOS
       // app.dock.hide()
       // this.contentWin.win.setVisibleOnAllWorkspaces(true)
-      this.contentWin.win.setAlwaysOnTop(true, 'screen-saver', 999)
+      this.contentWin.win.setAlwaysOnTop(true, 'screen-saver')
       this.contentWin.win.show()
     }else {
       NotificationUtil.showSimple('api 设置', 'api key 未设置，无法正常使用，点击设置', () => {

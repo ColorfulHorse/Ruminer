@@ -70,7 +70,7 @@ export class OcrClient {
     const img = base64.split(',')[1]
     // 调用ocr
     const text = await ipcRenderer.invoke(KEYS.OCR_RECOGNIZE, img)
-    // MainLog.info(`ocr text: ${text}`)
+    MainLog.info(`ocr text: ${text}`)
     if (text.trim().length > 2) {
       const similarity = compareTwoStrings(text, this.recognizeText)
       // console.log(`similarity:${similarity}, last: ${this.recognizeText}, current${text}`)

@@ -24,7 +24,6 @@ export default class SelectWin implements IWin {
       center: true,
       // 隐藏任务栏图标
       skipTaskbar: true,
-      alwaysOnTop: true,
       webPreferences: {
         nodeIntegration: Boolean(process.env.ELECTRON_NODE_INTEGRATION),
         nodeIntegrationInWorker: true,

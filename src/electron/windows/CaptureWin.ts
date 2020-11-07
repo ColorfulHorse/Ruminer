@@ -13,6 +13,7 @@ export class CaptureWin implements IWin{
         resizable: false,
         fullscreen: true,
         frame: false,
+        // focusable: true,
         transparent: true,
         show: false,
         skipTaskbar: true,

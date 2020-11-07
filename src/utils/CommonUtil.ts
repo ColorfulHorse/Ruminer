@@ -10,11 +10,9 @@ export default class CommonUtil {
     let ok = false
     switch (platform) {
       case Platform.baidu: {
-        const ocrApiKey = conf.translate.get('baiduOcrApiKey')
-        const ocrSecret = conf.translate.get('baiduOcrSecret')
         const translateId = conf.translate.get('baiduTransAppId')
         const translateSecret = conf.translate.get('baiduTransSecret')
-        ok = !(ocrApiKey.length === 0 || ocrSecret.length === 0 || translateId.length === 0 || translateSecret.length === 0)
+        ok = !(translateId.length === 0 || translateSecret.length === 0)
       }
         break
       case Platform.tencent: {

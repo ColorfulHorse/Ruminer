@@ -130,10 +130,10 @@ module.exports = {
             from: 'src/native/ocr/build/Release',
             to: '.'
           },
-          {
-            from: 'src/native/ocr/libs',
-            to: '.'
-          },
+          // {
+          //   from: 'src/native/ocr/libs',
+          //   to: '.'
+          // },
           {
             from: 'src/native/winapi/build/Release/winapi.node',
             to: '.'
