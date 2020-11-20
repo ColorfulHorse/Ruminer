@@ -56,6 +56,7 @@ export default class Overlay extends Vue {
         // 绘制遮罩
         ctx.clearRect(0, 0, this.canvas.width, this.canvas.height)
         ctx.fillStyle = 'rgba(0,0,0,0.4)'
+        ctx.fill()
         ctx.fillRect(0, 0, this.canvas.width, this.canvas.height)
         if (rect != null) {
           ctx.fillStyle = 'rgba(0, 0, 0, 0)'

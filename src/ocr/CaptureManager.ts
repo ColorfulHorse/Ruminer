@@ -93,7 +93,7 @@ export default class CaptureManager {
    */
   startCaptureImage(stream: MediaStream) {
     this.videoStream = stream
-    const video = document.createElement('video')
+    const video: HTMLVideoElement = document.createElement('video')
     const canvas = document.createElement('canvas')
     let ctx: CanvasRenderingContext2D | null
     if (canvas != null) {
@@ -127,14 +127,15 @@ export default class CaptureManager {
             // canvas.width = rect.right - rect.left
             const width = rect.right - rect.left
             const height = rect.bottom - rect.top
-            canvas.height = rect.bottom - rect.top
-            canvas.width = rect.right - rect.left
-            const bm = await createImageBitmap(video, rect.left, rect.top, width, height)
+            canvas.width = width
+            canvas.height = height
+            // const bm = await createImageBitmap(video, rect.left, rect.top, width, height)
             if (ctx != null) {
-              ctx.drawImage(bm, 0, 0, width, height)
+              // ctx.drawImage(bm, 0, 0, width, height)
+              ctx.drawImage(video, rect.left, rect.top, width, height, 0, 0, width, height)
               // const base64 = canvas.toDataURL('image/jpeg')
-              const base64 = canvas.toDataURL('image/webp', 1)
-              bm.close()
+              const base64 = canvas.toDataURL('image/png')
+              // bm.close()
               // console.log(base64)
               await OcrClient.getInstance().recognize(base64)
             }

@@ -19,10 +19,13 @@ string recognize(string base64) {
     l_uint8* source = decodeBase64(base64.c_str(), strlen(base64.c_str()), &size);
     PIX * pix = pixReadMem(source, size);
     lept_free(source);
+    // PIX * pix = pixRead("D:/code/web/Ruminer/public/test2.png");
+    // api->SetVariable("user_defined_dpi", "96");
     api->SetImage(pix);
-    char* result = api->GetUTF8Text();
+    api->SetSourceResolution(96);
+    string result = api->GetUTF8Text();
     pixDestroy(&pix);
-    return string(result);
+    return result;
 }
 
 void destroy() {

@@ -77,11 +77,11 @@ export class OcrClient {
       // 相似度太高的语句不翻译
       if (similarity < 0.7) {
         this.recognizeText = text
-        const result = await Api.translate(text)
-        if (result.length > 0) {
-          this.resultText = result
-          store.commit(Mutations.MUTATION_RESULT_TEXT, result)
-        }
+        // const result = await Api.translate(text)
+        // if (result.length > 0) {
+        //   this.resultText = result
+        //   store.commit(Mutations.MUTATION_RESULT_TEXT, result)
+        // }
       }
     } else {
       // MainLog.info('skip translate')
