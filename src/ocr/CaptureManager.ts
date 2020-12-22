@@ -102,45 +102,48 @@ export default class CaptureManager {
     video.srcObject = stream
     video.onloadedmetadata = async () => {
       video.play().then(async () => {
-        // // 截取屏幕图片
-        // const rect: Rect | null = conf.temp.get('captureRect')
-        // if (rect != null) {
-        //   // canvas.height = rect.bottom - rect.top
-        //   // canvas.width = rect.right - rect.left
-        //   const width = rect.right - rect.left
-        //   const height = rect.bottom - rect.top
-        //   canvas.height = rect.bottom - rect.top
-        //   canvas.width = rect.right - rect.left
-        //   const bm = await createImageBitmap(video, rect.left, rect.top, width, height)
-        //   if (ctx != null) {
-        //     ctx.drawImage(bm, 0, 0, width, height)
-        //     const base64 = canvas.toDataURL('image/jpeg')
-        //     bm.close()
-        //     await OcrClient.getInstance().recognize(base64)
-        //   }
-        // }
-        this.timer = window.setInterval(async () => {
-          // 截取屏幕图片
-          const rect: Rect | null = conf.temp.get('captureRect')
-          if (rect != null) {
-            // canvas.height = rect.bottom - rect.top
-            // canvas.width = rect.right - rect.left
-            const width = rect.right - rect.left
-            const height = rect.bottom - rect.top
-            canvas.width = width
-            canvas.height = height
-            // const bm = await createImageBitmap(video, rect.left, rect.top, width, height)
-            if (ctx != null) {
-              // ctx.drawImage(bm, 0, 0, width, height)
-              ctx.drawImage(video, rect.left, rect.top, width, height, 0, 0, width, height)
-              // const base64 = canvas.toDataURL('image/jpeg')
-              const base64 = canvas.toDataURL('image/png')
-              // bm.close()
-              // console.log(base64)
-              await OcrClient.getInstance().recognize(base64)
-            }
+        // 截取屏幕图片
+        const rect: Rect | null = conf.temp.get('captureRect')
+        if (rect != null) {
+          // canvas.height = rect.bottom - rect.top
+          // canvas.width = rect.right - rect.left
+          const width = rect.right - rect.left
+          const height = rect.bottom - rect.top
+          canvas.width = width
+          canvas.height = height
+          // const bm = await createImageBitmap(video, rect.left, rect.top, width, height)
+          if (ctx != null) {
+            // ctx.drawImage(bm, 0, 0, width, height)
+            ctx.drawImage(video, rect.left, rect.top, width, height, 0, 0, width, height)
+            // const base64 = canvas.toDataURL('image/jpeg')
+            const base64 = canvas.toDataURL('image/png')
+            // bm.close()
+            // console.log(base64)
+            await OcrClient.getInstance().recognize(base64)
           }
-        }, 600)
+        }
+        // this.timer = window.setInterval(async () => {
+        //   // 截取屏幕图片
+        //   const rect: Rect | null = conf.temp.get('captureRect')
+        //   if (rect != null) {
+        //     // canvas.height = rect.bottom - rect.top
+        //     // canvas.width = rect.right - rect.left
+        //     const width = rect.right - rect.left
+        //     const height = rect.bottom - rect.top
+        //     canvas.width = width
+        //     canvas.height = height
+        //     // const bm = await createImageBitmap(video, rect.left, rect.top, width, height)
+        //     if (ctx != null) {
+        //       // ctx.drawImage(bm, 0, 0, width, height)
+        //       ctx.drawImage(video, rect.left, rect.top, width, height, 0, 0, width, height)
+        //       // const base64 = canvas.toDataURL('image/jpeg')
+        //       const base64 = canvas.toDataURL('image/png')
+        //       // bm.close()
+        //       // console.log(base64)
+        //       await OcrClient.getInstance().recognize(base64)
+        //     }
+        //   }
+        // }, 600)
       }).catch(err => {
         this.showError()
         this.stop()

@@ -32,7 +32,8 @@
                },
             "libraries": [
               # "-l<(lib_dir)/tesseract41.lib",
-              "-l<(module_root_dir)/libs/tesseract41.lib"
+              "-l<(module_root_dir)/libs/tesseract41.lib",
+              "-l<(module_root_dir)/libs/opencv_imgproc.lib"
               # "-lKernel32"
               # "-l<(lib_dir)/leptonica-1.78.0.lib",
               # "-l<(lib_dir)/jpeg.lib",
