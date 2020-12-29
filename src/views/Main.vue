@@ -103,6 +103,7 @@ export default class Home extends Vue {
   #home {
     height: 100%;
     width: 100%;
+    padding-bottom: 10px;
     overflow: hidden;
 
     .el-container {

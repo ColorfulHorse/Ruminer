@@ -38,7 +38,7 @@
 <script lang="ts">
 
 import { Component, Vue } from 'vue-property-decorator'
-import { DesktopCapturerSource, ipcRenderer, remote } from 'electron'
+import { desktopCapturer, ipcRenderer, remote } from 'electron'
 import CaptureManager from '../ocr/CaptureManager'
 import IPC, { KEYS } from '@/electron/event/IPC'
 import { MainLog } from '@/utils/MainLog'
@@ -125,9 +125,11 @@ export default class Content extends Vue {
     }
   }
 
-  capture() {
+  async capture() {
     // 截取屏幕
-    ipcRenderer.send(KEYS.OPEN_CAPTURE_WINDOW)
+    const sources = await desktopCapturer.getSources({types: ['screen']})
+    const source = sources[0]
+    ipcRenderer.send(KEYS.OPEN_CAPTURE_WINDOW, source.id)
   }
 
   selectWindow() {

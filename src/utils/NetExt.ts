@@ -50,9 +50,3 @@ export function task<T = any, U = any>(promise: Promise<T>): Promise<ResponseWra
       }
     })
 }
-
-// export function awaitTo2<T, U = any>(promise: Promise<AxiosResponse<T>>): Promise<[T | null, U | null]> {
-//   return promise
-//     .then<[T, null]>(data => [data.data, null])
-//     .catch<[null, U]>(err => [null, err]);
-// }

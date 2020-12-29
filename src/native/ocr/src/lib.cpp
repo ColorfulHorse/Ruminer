@@ -34,7 +34,7 @@ string recognize(string base64) {
     // cv::Mat img = pixToMat(pix);
     // cv::imwrite("D:/code/web/Ruminer/public/clone.jpg", img);
     cv::cvtColor(img, img, cv::COLOR_BGR2GRAY);
-    cv::adaptiveThreshold(img, img, 255, cv::ADAPTIVE_THRESH_GAUSSIAN_C, cv::THRESH_BINARY, 7, -30);
+    cv::adaptiveThreshold(img, img, 255, cv::ADAPTIVE_THRESH_GAUSSIAN_C, cv::THRESH_BINARY, 7, 10);
     // cv::imwrite("D:/code/web/Ruminer/public/binary.jpg", img);
     PIX * pix = mat8ToPix(&img);
     // pix = pixConvertRGBToGray(pix, 0.299f, 0.587f, 0.114f);

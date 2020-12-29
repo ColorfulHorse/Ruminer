@@ -79,11 +79,11 @@ module.exports = {
     //   .end()
     config.resolve.alias
       .set('root', resolve('./'))
-    if (isDev) {
-      config
-        .plugin('webpack-bundle-analyzer')
-        .use(require('webpack-bundle-analyzer').BundleAnalyzerPlugin)
-    }
+    // if (isDev) {
+    //   config
+    //     .plugin('webpack-bundle-analyzer')
+    //     .use(require('webpack-bundle-analyzer').BundleAnalyzerPlugin)
+    // }
   },
   pluginOptions: {
     electronBuilder: {

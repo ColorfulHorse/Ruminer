@@ -7,7 +7,13 @@ export default class CommonUtil {
    */
   static checkConfig(): boolean {
     const platform = conf.translate.get('platform')
+    const localOCR = conf.translate.get('localOCR')
     let ok = false
+    if (localOCR) {
+      const baiduOcrApiKey = conf.translate.get('baiduOcrApiKey')
+      const baiduOcrSecret = conf.translate.get('baiduOcrSecret')
+      ok = !(baiduOcrApiKey.length === 0 || baiduOcrSecret.length === 0)
+    }
     switch (platform) {
       case Platform.baidu: {
         const translateId = conf.translate.get('baiduTransAppId')

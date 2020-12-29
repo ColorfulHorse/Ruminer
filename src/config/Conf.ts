@@ -76,6 +76,7 @@ export interface TranslateConf {
   target: string
   // 翻译平台
   platform: Platform
+  localOCR: boolean
   baiduToken: BaiduToken | null
   baiduOcrSecret: string
   baiduOcrApiKey: string
@@ -114,6 +115,7 @@ export default {
       source: 'eng',
       target: 'chi_sim',
       platform: Platform.baidu,
+      localOCR: false,
       baiduToken: null,
       baiduOcrApiKey: '',
       baiduOcrSecret: '',

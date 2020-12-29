@@ -184,7 +184,6 @@ export default class App {
    * 显示文字窗口
    */
   showContent() {
-    log.info('showContent')
     if (this.captureWin != null) {
       this.captureWin.win.close()
     }

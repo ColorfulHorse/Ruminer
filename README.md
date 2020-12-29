@@ -2,15 +2,10 @@
 
 
 ## todo list:
-- 添加检测频率设置
-- 禁止盈利用户协议弹窗
-- 接入多个翻译api，美化ui
-- 添加NLP
-- 使用开源库替换计费api
+- tesseract-ocr抗干扰能力差，只有在纯色背景下才较为准确，需要做预处理
 
 ## bug list:
 - win32 api获取窗口位置时，vs全屏状态top left值为 -9 -9
-- 窗口resizable设为false时mouseenter mouseleave事件有时无效
 
 ## electron bug list:
 - [webSecurity false 无效](https://github.com/electron/electron/issues/23664)
@@ -24,4 +19,3 @@
 - 主进程调用win32 api获取选中窗口位置信息，弹出captureWin用于裁剪捕获区域
 - 弹出结果显示窗口(ContentWin)，开始进行检测
 - 某些游戏全屏以及暴风影音全屏时无法使文字窗口浮在最上层
-- tesseract-ocr抗干扰能力差，只有在纯色背景下才较为准确，需要做预处理

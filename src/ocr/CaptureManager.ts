@@ -5,11 +5,12 @@ import { MainLog } from '@/utils/MainLog'
 import NotificationUtil from '@/utils/NotificationUtil'
 
 export default class CaptureManager {
-  videoStream: MediaStream | null = null
+  private videoStream: MediaStream | null = null
   capturing = false
   timer = -1
-  mediaSource: MediaSource | null = null
-  sourceLang = ''
+  private mediaSource: MediaSource | null = null
+  private sourceLang = ''
+  private localOCR = false
 
   private static _instance: CaptureManager
 
@@ -24,16 +25,19 @@ export default class CaptureManager {
   }
 
   // 开始捕捉屏幕
-  start() {
+  async start() {
     if (this.capturing) {
       return
     }
-    OcrClient.getInstance().start()
     this.capturing = true
     MainLog.info('start capturing')
     const source = conf.temp.get('source')
     // 源语言
     this.sourceLang = conf.translate.get('source')
+    this.localOCR = conf.translate.get('localOCR')
+    if (this.localOCR) {
+      await OcrClient.getInstance().start()
+    }
     if (source) {
       this.mediaSource = source
       navigator.mediaDevices.getUserMedia({
@@ -56,6 +60,7 @@ export default class CaptureManager {
           this.startCaptureImage(stream)
         })
         .catch(err => {
+          MainLog.info(err.toString())
           this.showError()
           this.stop()
         })
@@ -65,24 +70,31 @@ export default class CaptureManager {
   /**
    * 选择窗口改变或者更换源语言后需要重启
    */
-  restart() {
+  async restart() {
     if (this.capturing) {
       let needRestart = false
       const source = conf.temp.get('source')
       const lang = conf.translate.get('source')
+      const localOCR = conf.translate.get('localOCR')
       if (this.mediaSource && source) {
         if (this.mediaSource.mode !== source.mode || this.mediaSource.sourceId !== source.sourceId) {
-          MainLog.info(`restart capture, mode:${source.mode}, id: ${source.sourceId}`)
+          // 改变捕获源需要重启
           needRestart = true
+        } else if (localOCR === true) {
+          if (this.sourceLang !== lang) {
+            // 开启了本地ocr并且改变了语言需要重启
+            needRestart = true
+          } else {
+            await OcrClient.getInstance().start()
+          }
+        } else if (localOCR === false) {
+          await OcrClient.getInstance().stop()
         }
       }
-      if (this.sourceLang !== lang) {
-        MainLog.info(`restart capture, change to lang:${lang}`)
-        needRestart = true
-      }
       if (needRestart) {
-        this.stop()
-        this.start()
+        MainLog.info(`restart capture, change to lang:${lang}, localOCR:${localOCR}`)
+        await this.stop()
+        await this.start()
       }
     }
   }
@@ -102,48 +114,48 @@ export default class CaptureManager {
     video.srcObject = stream
     video.onloadedmetadata = async () => {
       video.play().then(async () => {
-        // 截取屏幕图片
-        const rect: Rect | null = conf.temp.get('captureRect')
-        if (rect != null) {
-          // canvas.height = rect.bottom - rect.top
-          // canvas.width = rect.right - rect.left
-          const width = rect.right - rect.left
-          const height = rect.bottom - rect.top
-          canvas.width = width
-          canvas.height = height
-          // const bm = await createImageBitmap(video, rect.left, rect.top, width, height)
-          if (ctx != null) {
-            // ctx.drawImage(bm, 0, 0, width, height)
-            ctx.drawImage(video, rect.left, rect.top, width, height, 0, 0, width, height)
-            // const base64 = canvas.toDataURL('image/jpeg')
-            const base64 = canvas.toDataURL('image/png')
-            // bm.close()
-            // console.log(base64)
-            await OcrClient.getInstance().recognize(base64)
-          }
-        }
-        // this.timer = window.setInterval(async () => {
-        //   // 截取屏幕图片
-        //   const rect: Rect | null = conf.temp.get('captureRect')
-        //   if (rect != null) {
-        //     // canvas.height = rect.bottom - rect.top
-        //     // canvas.width = rect.right - rect.left
-        //     const width = rect.right - rect.left
-        //     const height = rect.bottom - rect.top
-        //     canvas.width = width
-        //     canvas.height = height
-        //     // const bm = await createImageBitmap(video, rect.left, rect.top, width, height)
-        //     if (ctx != null) {
-        //       // ctx.drawImage(bm, 0, 0, width, height)
-        //       ctx.drawImage(video, rect.left, rect.top, width, height, 0, 0, width, height)
-        //       // const base64 = canvas.toDataURL('image/jpeg')
-        //       const base64 = canvas.toDataURL('image/png')
-        //       // bm.close()
-        //       // console.log(base64)
-        //       await OcrClient.getInstance().recognize(base64)
-        //     }
+        // // 截取屏幕图片
+        // const rect: Rect | null = conf.temp.get('captureRect')
+        // if (rect != null) {
+        //   // canvas.height = rect.bottom - rect.top
+        //   // canvas.width = rect.right - rect.left
+        //   const width = rect.right - rect.left
+        //   const height = rect.bottom - rect.top
+        //   canvas.width = width
+        //   canvas.height = height
+        //   // const bm = await createImageBitmap(video, rect.left, rect.top, width, height)
+        //   if (ctx != null) {
+        //     // ctx.drawImage(bm, 0, 0, width, height)
+        //     ctx.drawImage(video, rect.left, rect.top, width, height, 0, 0, width, height)
+        //     // const base64 = canvas.toDataURL('image/jpeg')
+        //     const base64 = canvas.toDataURL('image/png')
+        //     // bm.close()
+        //     // console.log(base64)
+        //     await OcrClient.getInstance().recognize(base64)
         //   }
-        // }, 600)
+        // }
+        this.timer = window.setInterval(async () => {
+          // 截取屏幕图片
+          const rect: Rect | null = conf.temp.get('captureRect')
+          if (rect != null) {
+            // canvas.height = rect.bottom - rect.top
+            // canvas.width = rect.right - rect.left
+            const width = rect.right - rect.left
+            const height = rect.bottom - rect.top
+            canvas.width = width
+            canvas.height = height
+            // const bm = await createImageBitmap(video, rect.left, rect.top, width, height)
+            if (ctx != null) {
+              // ctx.drawImage(bm, 0, 0, width, height)
+              ctx.drawImage(video, rect.left, rect.top, width, height, 0, 0, width, height)
+              // const base64 = canvas.toDataURL('image/jpeg')
+              const base64 = canvas.toDataURL('image/png')
+              // bm.close()
+              // console.log(base64)
+              await OcrClient.getInstance().recognize(base64)
+            }
+          }
+        }, 600)
       }).catch(err => {
         this.showError()
         this.stop()
@@ -151,7 +163,7 @@ export default class CaptureManager {
     }
   }
 
-  stop() {
+  async stop() {
     if (this.capturing) {
       MainLog.info('stop capture')
     }
@@ -164,7 +176,7 @@ export default class CaptureManager {
       this.videoStream.getVideoTracks().forEach(value => value.stop())
       this.videoStream = null
     }
-    OcrClient.getInstance().stop()
+    await OcrClient.getInstance().stop()
   }
 
   showError() {
