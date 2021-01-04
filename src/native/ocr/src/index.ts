@@ -9,7 +9,7 @@ export default {
   loadLanguage: (lang: string): number => {
     return ocr.loadLanguage(lang)
   },
-  recognize: (base64: string): string => {
+  recognize: (base64: string): Array<string> => {
     return ocr.recognize(base64)
   },
   destroy: () => {

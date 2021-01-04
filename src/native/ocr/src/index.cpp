@@ -17,11 +17,17 @@ Number LoadLang(const CallbackInfo& info) {
     return Napi::Number::New(env, ret);
 }
 
-String Recognize(const CallbackInfo& info) {
+Array Recognize(const CallbackInfo& info) {
     Env env = info.Env();
-    string text = recognize(info[0].ToString());
-    String res = Napi::String::New(env, text);
-    return res;
+    vector<string> textList = recognize(info[0].ToString());
+    Array array = Array::New(env);
+    for (size_t idx = 0; idx < textList.size(); idx++) {
+        // The HandleScope is recommended especially when the loop has many
+        // iterations.
+        Napi::HandleScope scope(env);
+        array[idx] = Napi::String::New(env, textList[idx]);
+    }
+    return array;
 }
 
 void Destroy(const CallbackInfo& info) {
@@ -63,6 +69,7 @@ String test(const CallbackInfo& info) {
     // int ret = api->Init(".", "eng");
     int ret = 0;
     String res = Napi::String::New(env, to_string(ret).append("tess test"));
+    
     // if (tess == nullptr) {
     //      res = Napi::String::New(env, "tess null");
     // }else {

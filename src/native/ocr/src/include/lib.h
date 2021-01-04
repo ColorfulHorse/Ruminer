@@ -13,7 +13,7 @@ void init(string path);
 
 int loadLanguage(string lang);
 
-string recognize(string base64);
+vector<string> recognize(string base64);
 
 void destroy();
 
@@ -27,4 +27,6 @@ static const std::string base64_chars =
 "0123456789+/";
 
 std::string base64_decode(std::string const& encoded_string);
+
+std::vector<cv::Rect> getRect(cv::Mat srcImage);
 #endif

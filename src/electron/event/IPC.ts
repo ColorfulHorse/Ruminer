@@ -188,11 +188,11 @@ export default class IPC {
     })
 
     ipcMain.handle(KEYS.OCR_RECOGNIZE, (event, base64: string) => {
-      // log.info(`start time: ${Date.now()}`)
-      const str = ocr.recognize(base64)
-      // log.info(`end time: ${Date.now()}`)
+      log.info(`start time: ${Date.now()}`)
+      const textList = ocr.recognize(base64)
+      log.info(`end time: ${Date.now()}`)
       // log.info(str)
-      return str
+      return textList.reduce((prev, cur) => `${prev} \n ${cur}`)
     })
   }
 
