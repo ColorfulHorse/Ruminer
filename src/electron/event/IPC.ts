@@ -8,8 +8,6 @@ import App from '@/electron/App'
 import { getSystemFonts } from '@/native/winapi/src'
 import ocr from '@/native/ocr/src'
 import path from 'path'
-import { MainLog } from '@/utils/MainLog'
-import LangMapper from '@/utils/LangMapper'
 
 export const KEYS = {
   OPEN_DEVTOOL: 'OPEN_DEVTOOL',
@@ -192,7 +190,7 @@ export default class IPC {
       const textList = ocr.recognize(base64)
       log.info(`end time: ${Date.now()}`)
       // log.info(str)
-      if (textList.length == 0) {
+      if (textList.length === 0) {
         return ''
       }
       return textList.reduce((prev, cur) => `${prev} \n ${cur}`)
