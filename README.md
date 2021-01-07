@@ -1,9 +1,5 @@
 ## 基于ocr的动态文字翻译工具，可用于游戏、视频，基于electron+vue开发  
 
-
-## todo list:
-- tesseract-ocr抗干扰能力差，只有在纯色背景下才较为准确，需要做预处理
-
 ## bug list:
 - win32 api获取窗口位置时，vs全屏状态top left值为 -9 -9
 
