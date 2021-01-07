@@ -192,6 +192,9 @@ export default class IPC {
       const textList = ocr.recognize(base64)
       log.info(`end time: ${Date.now()}`)
       // log.info(str)
+      if (textList.length == 0) {
+        return ''
+      }
       return textList.reduce((prev, cur) => `${prev} \n ${cur}`)
     })
   }

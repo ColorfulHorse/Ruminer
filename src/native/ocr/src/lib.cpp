@@ -12,46 +12,31 @@ void init(string path) {
 
 int loadLanguage(string lang) {
     int ret = api->Init(dataPath.c_str(), lang.c_str(), OEM_LSTM_ONLY);;
-    if (ret == 0) {
-        // api->SetSourceResolution(96);
-        // api->
-        // api->SetPageSegMode(PSM_SINGLE_BLOCK);
-    }
     return ret;
 }
 
 vector<string> recognize(string base64) {
-    // l_int32 size;
-    // l_uint8* source = decodeBase64(base64.c_str(), strlen(base64.c_str()), &size);
-    // PIX * pix = pixReadMem(source, size);
-    // pix = pixScale(pix, 4, 4);
-    // lept_free(source);
-
-    // PIX * pix = pixRead("D:/code/web/Ruminer/public/test2.png");
     string decoded_string = base64_decode(base64);
     vector<uchar> data(decoded_string.begin(), decoded_string.end());
     cv::Mat img = cv::imdecode(data, cv::IMREAD_UNCHANGED);
     cv::Mat gray;
     cv::cvtColor(img, gray, cv::COLOR_BGR2GRAY);
     vector<cv::Rect> rects = getRect(gray);
-    // PIX * pix = mat8ToPix(&gray);
-    // api->SetImage(pix);
-    // api->SetSourceResolution(96);
     vector<string> res;
     for (size_t i = 0; i < rects.size(); i++) {
         cv::Rect rect = rects[i];
         cv::Mat area(gray, rect);
+        // 二值化
         cv::threshold(area, area, 0, 255, cv::THRESH_BINARY | cv::THRESH_OTSU);
-        // api->SetRectangle(rect.x, rect.y, rect.width, rect.height);
         PIX * pix = mat8ToPix(&area);
         api->SetImage(pix);
+        api->SetSourceResolution(96);
         string result = api->GetUTF8Text();
         pixDestroy(&pix);
-        // if (result.length() > 2) {
-        res.push_back(result);
-        // }
+        if(result.length() > 2) {
+            res.push_back(result);
+        }
     }
-    // pixDestroy(&pix);
     return res;
 }
 
@@ -80,7 +65,6 @@ cv::Mat pixToMat(Pix *pix) {
             } else {
                 l_int32 r, g, b;
                 pixGetRGBPixel(pix, x, y, &r, &g, &b);
-
                 cv::Vec3b color(b, g, r);
                 mat.at<cv::Vec3b>(cv::Point(x, y)) = color;
             }
@@ -90,6 +74,9 @@ cv::Mat pixToMat(Pix *pix) {
     return mat;
 }
 
+/**
+ * Mat灰度图转Pix
+ */
 Pix *mat8ToPix(cv::Mat *mat8) {
     Pix *pixd = pixCreate(mat8->size().width, mat8->size().height, 8);
     for(int y=0; y<mat8->rows; y++) {
@@ -104,6 +91,9 @@ static inline bool is_base64(unsigned char c) {
     return (isalnum(c) || (c == '+') || (c == '/'));
 }
 
+/**
+ * base64解码
+ */
 std::string base64_decode(std::string const& encoded_string) {
     int in_len = encoded_string.size();
     int i = 0;
@@ -138,6 +128,9 @@ std::string base64_decode(std::string const& encoded_string) {
     return ret;
 }
 
+/**
+ * 检测文本区域
+ */
 std::vector<cv::Rect> getRect(cv::Mat gray) {
 	cv::Mat gray_neg;
 	// 取反值灰度
@@ -180,6 +173,7 @@ std::vector<cv::Rect> getRect(cv::Mat gray) {
 	cv::Mat mserResMat;
 	mserResMat = mserMapMat;
 	mserResMat = mserMapMat & mserNegMapMat;	// mser+与mser-位与操作
+    // 开运算
 	cv::Mat mserClosedMat;
 	cv::Mat kernel = cv::getStructuringElement(cv::MORPH_RECT, cv::Size(20, 20));
 	cv::morphologyEx(mserResMat, mserClosedMat,
@@ -187,7 +181,7 @@ std::vector<cv::Rect> getRect(cv::Mat gray) {
 	// 寻找外部轮廓
 	std::vector<std::vector<cv::Point> > plate_contours;
 	cv::findContours(mserClosedMat, plate_contours, cv::RETR_EXTERNAL, cv::CHAIN_APPROX_SIMPLE, cv::Point(0, 0));
-	// 候选车牌区域判断输出
+	// 候选区域判断输出
 	std::vector<cv::Rect> candidates;
 	for (size_t i = 0; i != plate_contours.size(); ++i) {
 		// 求解最小外界矩形
@@ -195,22 +189,20 @@ std::vector<cv::Rect> getRect(cv::Mat gray) {
    		// 宽高比例
 		double wh_ratio = rect.width / double(rect.height);
 		if (wh_ratio > 0.5) {
-            int area = rect.width * rect.height;
-            int size = gray.cols * gray.rows;
-            if (size/area < 300) {
-                // 忽略太小的区域
+            // int area = rect.width * rect.height;
+            // int size = gray.cols * gray.rows;
+            // 忽略太小的区域
+            if (rect.width > 50) {
+                // 加一些间隔以免字符不完整
                 const int margin = 5;
                 int l = rect.x - margin < 0 ? 0 : rect.x - margin;
                 int t = rect.y - margin < 0 ? 0 : rect.y - margin;
                 int r = l + rect.width + margin > gray.cols ? gray.cols : l + rect.width + margin;
                 int b = t + rect.height + margin > gray.rows ? gray.rows : t + rect.height + margin;
-                // 加一些间隔以免字符不完整
                 cv::Rect rec(l, t, r - l, b - t);
                 candidates.push_back(rec);
             }
-            // cv::rectangle(gray, rect, cv::Scalar(0, 0, 255), 1);
 		}
-        // cv::imwrite("D:/code/web/Ruminer/public/gray.png", gray);
 	}
     return candidates;
 }

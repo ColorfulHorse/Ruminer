@@ -16,7 +16,7 @@
         "src/include"
       ],
       "dependencies":[
-      	"<!(node -p \"require('node-addon-api').gyp\")"
+        "<!(node -p \"require('node-addon-api').gyp\")"
       ],
       'defines': [
         'NAPI_DISABLE_CPP_EXCEPTIONS'
@@ -24,10 +24,6 @@
       "conditions": [
         ["OS=='win'",
           {
-            'variables': {
-               'root_dir': "<(module_root_dir)/../../../libs",
-               'lib_dir': "D:/tools/vcpkg/installed/x64-windows/lib"
-               },
             "libraries": [
               "-l<(module_root_dir)/libs/tesseract41.lib",
               "-l<(module_root_dir)/libs/opencv_imgproc.lib",
