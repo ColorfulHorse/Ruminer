@@ -1,12 +1,6 @@
 import App from '@/electron/App'
-import { BrowserWindow, ipcMain, Rectangle, screen } from 'electron'
+import { BrowserWindow } from 'electron'
 import IWin from '@/electron/windows/IWin'
-import log from 'electron-log'
-import IPC from '@/electron/event/IPC'
-import conf from '@/config/Conf'
-import * as ref from 'ref-napi'
-import { DModel as M, DStruct, U, DTypes as T } from 'win32-api'
-import { Struct, windowsApi } from '@/electron/ffi/WindowsApi'
 
 export default class SelectWin implements IWin {
   app: App

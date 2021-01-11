@@ -84,7 +84,7 @@ export class OcrClient {
       const similarity = compareTwoStrings(text, this.recognizeText)
       // console.log(`similarity:${similarity}, last: ${this.recognizeText}, current${text}`)
       // 相似度太高的语句不翻译
-      if (similarity < 0.7) {
+      if (similarity < 0.85) {
         this.recognizeText = text
         const result = await Api.translate(text)
         if (result.length > 0) {
@@ -92,8 +92,6 @@ export class OcrClient {
           store.commit(Mutations.MUTATION_RESULT_TEXT, result)
         }
       }
-    } else {
-      // MainLog.info('skip translate')
     }
   }
 }

@@ -1,4 +1,4 @@
-import { loadAddonFile } from '@/utils/NativeUtil'
+import { loadAddonFile } from '@/utils/PathUtil'
 
 const ocr = loadAddonFile('src/native/ocr/build/Release/ocr.node', 'ocr.node')
 

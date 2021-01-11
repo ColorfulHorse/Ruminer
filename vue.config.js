@@ -133,6 +133,10 @@ module.exports = {
           {
             from: 'src/native/winapi/build/Release/winapi.node',
             to: '.'
+          },
+          {
+            from: 'tess',
+            to: './tess'
           }
         ],
         nsis: {

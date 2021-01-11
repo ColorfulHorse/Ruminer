@@ -172,8 +172,7 @@ export default class IPC {
     })
 
     ipcMain.handle(KEYS.OCR_INIT, () => {
-      const dataPath = path.join(__static, 'tess')
-      log.info(`dataPath: ${dataPath}`)
+      const dataPath = path.join(process.cwd(), 'tess')
       ocr.init(dataPath)
       const source = conf.translate.get('source')
       const ret = ocr.loadLanguage(source)
@@ -186,9 +185,9 @@ export default class IPC {
     })
 
     ipcMain.handle(KEYS.OCR_RECOGNIZE, (event, base64: string) => {
-      log.info(`start time: ${Date.now()}`)
+      // log.info(`start time: ${Date.now()}`)
       const textList = ocr.recognize(base64)
-      log.info(`end time: ${Date.now()}`)
+      // log.info(`end time: ${Date.now()}`)
       // log.info(str)
       if (textList.length === 0) {
         return ''

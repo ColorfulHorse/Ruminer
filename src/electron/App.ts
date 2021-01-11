@@ -51,9 +51,6 @@ export default class App {
   }
 
   init() {
-    log.info(process.cwd())
-    log.info(app.getAppPath())
-    log.info(process.resourcesPath)
     if (this.isDevelopment) {
       if (process.platform === 'win32') {
         process.on('message', data => {
@@ -85,6 +82,7 @@ export default class App {
     })
 
     app.on('activate', () => {
+      const src = process.cwd()
       if (this.mainWin === null) {
         this.mainWin = new MainWin(this)
       }
