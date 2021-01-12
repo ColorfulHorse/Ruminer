@@ -2,6 +2,8 @@
 
 ## [如何使用](https://github.com/ColorfulHorse/Ruminer/wiki)
 
+![display](https://github.com/ColorfulHorse/Ruminer/wiki/screenshoot/record.gif)
+
 ## bug list:
 - win32 api获取窗口位置时，vs全屏状态top left值为 -9 -9
 
