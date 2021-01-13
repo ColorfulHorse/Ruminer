@@ -1,5 +1,9 @@
 ## 基于ocr的动态文字翻译工具，可用于游戏、视频，基于electron+vue开发  
 
+## 下载
+
+### [百度网盘](https://pan.baidu.com/s/1FHcLIu1TqeSlEQPCtSFxdQ)，提取码：beqy 
+
 ## [如何使用](https://github.com/ColorfulHorse/Ruminer/wiki)
 
 ![display](https://github.com/ColorfulHorse/Ruminer/wiki/screenshoot/record.gif)
