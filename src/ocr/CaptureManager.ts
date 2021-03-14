@@ -147,11 +147,12 @@ export default class CaptureManager {
             // const bm = await createImageBitmap(video, rect.left, rect.top, width, height)
             if (ctx != null) {
               // ctx.drawImage(bm, 0, 0, width, height)
+              // ctx.clearRect(0, 0, canvas.width, canvas.height)
               ctx.drawImage(video, rect.left, rect.top, width, height, 0, 0, width, height)
               // const base64 = canvas.toDataURL('image/jpeg')
               const base64 = canvas.toDataURL('image/png')
               // bm.close()
-              // console.log(base64)
+              // MainLog.info(base64)
               await OcrClient.getInstance().recognize(base64)
             }
           }

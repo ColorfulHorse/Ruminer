@@ -79,7 +79,7 @@ export class OcrClient {
       // 百度ocr
       text = await Api.recognize(img)
     }
-    MainLog.info(`ocr text: ${text}`)
+    // MainLog.info(`ocr text: ${text}`)
     if (text.trim().length > 2) {
       const similarity = compareTwoStrings(text, this.recognizeText)
       // console.log(`similarity:${similarity}, last: ${this.recognizeText}, current${text}`)

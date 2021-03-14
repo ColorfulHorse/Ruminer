@@ -183,13 +183,15 @@ export default class Content extends Vue {
       const yLoc = e.screenY - this.wY
       const win = remote.BrowserWindow.getFocusedWindow()
       if (win) {
-        // win.setPosition(xLoc, yLoc)
-        win.setBounds({
-          x: xLoc,
-          y: yLoc,
-          width: this.winWidth,
-          height: this.winHeight
-        })
+        // const [width, height] = win.getSize()
+        // MainLog.info(`x:${xLoc}, y:${yLoc}, width:${width}, height:${height}`)
+        win.setPosition(xLoc, yLoc)
+        // win.setBounds({
+        //   x: xLoc,
+        //   y: yLoc,
+        //   width: width,
+        //   height: height
+        // })
       }
     }
   }
