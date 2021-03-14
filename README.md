@@ -1,10 +1,17 @@
 ## 基于ocr的动态文字翻译工具，可用于游戏、视频，基于electron+vue开发  
 
+## 下载
+
+### [百度网盘](https://pan.baidu.com/s/1FHcLIu1TqeSlEQPCtSFxdQ)，提取码：beqy 
+
+## [如何使用](https://github.com/ColorfulHorse/Ruminer/wiki)
+
+![display](https://github.com/ColorfulHorse/Ruminer/wiki/screenshoot/record.gif)
+
 ## bug list:
 - win32 api获取窗口位置时，vs全屏状态top left值为 -9 -9
 
 ## electron bug list:
-- [webSecurity false 无效](https://github.com/electron/electron/issues/23664)
 - [getSize 多出1px](https://github.com/electron/electron/issues/25295)
 - [透明窗口拖出屏幕黑屏](https://github.com/electron/electron/issues/23215)
 
